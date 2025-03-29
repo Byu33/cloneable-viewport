@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, Calendar, Search, MoreVertical, MapPin } from "lucide-react";
+import { User, Calendar, Search, MoreVertical, MapPin, X } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -186,13 +186,20 @@ const YourEvents = () => {
                       >
                         Attendance
                       </Button>
-                      <Button variant="ghost" className="text-purple-700 text-sm">
+                      <Button 
+                        variant="outline" 
+                        className="w-full border-2 border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-600 py-6 text-base"
+                      >
+                        <X className="w-5 h-5 mr-2 text-gray-400" />
                         Edit Event
                       </Button>
                     </div>
                   ) : (
                     <div className="mt-3">
-                      <Button variant="ghost" className="text-purple-700 text-sm px-0 py-2">
+                      <Button 
+                        variant="outline" 
+                        className="text-gray-500 text-base py-6 w-full border-2 border-gray-300"
+                      >
                         Edit Event
                       </Button>
                     </div>
