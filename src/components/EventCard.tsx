@@ -89,12 +89,14 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
         )}
         
         {!isUpcoming && (
-          <Button 
-            variant="outline" 
-            className="text-gray-500 border-gray-300"
-          >
-            Past
-          </Button>
+          <div className="ml-auto">
+            <Button 
+              variant="outline" 
+              className="text-gray-500 border-gray-300 bg-gray-100"
+            >
+              Feedback Form
+            </Button>
+          </div>
         )}
       </div>
     </div>
