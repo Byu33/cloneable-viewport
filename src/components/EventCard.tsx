@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -18,12 +19,17 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
+  const navigate = useNavigate();
   const { title, time, location, tag, tagColor, attendees, status } = event;
 
   const formatDate = (date: Date) => {
     const month = date.toLocaleString('default', { month: 'short' });
     const day = date.getDate();
     return `${month} ${day}`;
+  };
+
+  const handleCheckIn = () => {
+    navigate('/check-in', { state: { event } });
   };
 
   return (
@@ -47,7 +53,10 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="flex justify-between items-center mt-3">
         {status === "upcoming" ? (
           <>
-            <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
+            <Button 
+              className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
+              onClick={handleCheckIn}
+            >
               Check In
             </Button>
             
