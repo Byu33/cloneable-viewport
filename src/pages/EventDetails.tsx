@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -54,7 +53,6 @@ const EventDetails = () => {
 
       <div className="flex-grow overflow-auto pb-24">
         <div className="px-6 py-8">
-          {/* Card-like format for event title, date, time, and location matching the Going section */}
           <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
             <div className="flex justify-between items-start mb-3">
               <div>
