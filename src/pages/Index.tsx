@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Calendar, User, ChevronDown, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -61,7 +60,7 @@ const Index = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4">
+      <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold">Events</h1>
         <div className="flex gap-4">
           <button className="p-1 bg-white rounded-full">
@@ -92,18 +91,14 @@ const Index = () => {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto px-6 py-4">
-        {/* Upcoming Events Section */}
+        {/* Calendar Section */}
         <div className="mb-6">
-          <button
-            className="flex items-center justify-between w-full mb-2"
-            onClick={() => setIsCalendarExpanded(!isCalendarExpanded)}
-          >
-            <h2 className="text-xl font-semibold">Upcoming Events</h2>
-            {isCalendarExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-          </button>
-          
           {/* Calendar */}
-          <CalendarView isExpanded={isCalendarExpanded} />
+          <CalendarView 
+            isExpanded={isCalendarExpanded} 
+            title="Upcoming Events"
+            onToggleExpand={() => setIsCalendarExpanded(!isCalendarExpanded)}
+          />
 
           {/* Event Cards */}
           <div className="space-y-4 mt-4">

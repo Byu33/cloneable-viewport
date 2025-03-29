@@ -1,11 +1,18 @@
 
 import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface CalendarViewProps {
   isExpanded: boolean;
+  title?: string;
+  onToggleExpand?: () => void;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ isExpanded }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ 
+  isExpanded, 
+  title = "Calendar", 
+  onToggleExpand 
+}) => {
   // Current month data for the calendar
   const currentMonth = new Date();
   const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
@@ -69,6 +76,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({ isExpanded }) => {
 
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm">
+      {/* Title and toggle button */}
+      <button
+        className="flex items-center justify-between w-full mb-4"
+        onClick={onToggleExpand}
+      >
+        <h2 className="text-xl font-semibold">{title}</h2>
+        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+      </button>
+      
       {isExpanded ? (
         // Expanded Calendar View
         <div>
