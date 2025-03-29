@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -38,7 +37,7 @@ const EventDetails = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50 pb-20">
       <header className="flex justify-between items-center px-4 py-3 bg-gray-100">
         <button
           onClick={() => navigate(-1)}
@@ -72,7 +71,7 @@ const EventDetails = () => {
         </div>
       </div>
 
-      <div className="px-6 mb-6">
+      <div className="px-6 mb-6 flex-grow overflow-auto">
         <h2 className="text-xl font-semibold mb-2">Description</h2>
         <p className="text-gray-700">{event.description}</p>
       </div>
@@ -111,7 +110,7 @@ const EventDetails = () => {
         </div>
       </div>
 
-      <div className="px-6 mb-6">
+      <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white shadow-t">
         <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
           Sign Up
         </Button>
