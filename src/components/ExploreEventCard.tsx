@@ -1,4 +1,6 @@
+
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ExploreEventCardProps {
   event: {
@@ -15,7 +17,8 @@ interface ExploreEventCardProps {
 }
 
 const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
-  const { title, time, location, tag, tagColor, attendees, date } = event;
+  const { id, title, time, location, tag, tagColor, attendees, date } = event;
+  const navigate = useNavigate();
 
   // Format date
   const formatDate = (date: Date) => {
@@ -24,8 +27,15 @@ const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
     return `${month} ${day}`;
   };
 
+  const handleClick = () => {
+    navigate(`/event/${id}`);
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-sm w-80 overflow-hidden font-figtree">
+    <div 
+      className="bg-white rounded-xl shadow-sm w-80 overflow-hidden font-figtree cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-[#1A1F2C]">{title}</h3>
