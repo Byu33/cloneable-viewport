@@ -1,6 +1,6 @@
-
 import React, { useState } from "react";
 import { Calendar, User, ChevronDown, ChevronUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import EventCard from "@/components/EventCard";
 import TabBar from "@/components/TabBar";
 import CalendarView from "@/components/CalendarView";
@@ -9,6 +9,15 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("Going");
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
   const tabs = ["Going", "Explore", "Your Events"];
+  const navigate = useNavigate();
+
+  const handleTabClick = (tab: string) => {
+    if (tab === "Explore") {
+      navigate("/explore");
+    } else {
+      setActiveTab(tab);
+    }
+  };
 
   // Mock data for events
   const upcomingEvents = [
@@ -73,7 +82,7 @@ const Index = () => {
                 ? "text-black font-medium border-b-2 border-black"
                 : "text-gray-500"
             }`}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => handleTabClick(tab)}
           >
             {tab}
           </button>
