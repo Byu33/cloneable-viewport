@@ -1,5 +1,5 @@
-
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -18,6 +18,7 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
+  const navigate = useNavigate();
   const { title, time, location, tag, tagColor, attendees, status } = event;
 
   const formatDate = (date: Date) => {
@@ -26,11 +27,24 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
     return `${month} ${day}`;
   };
 
+  const handleCheckIn = () => {
+    navigate('/check-in', { 
+      state: { 
+        event: {
+          ...event,
+          status: "upcoming",
+          tagColor: "bg-purple-200 text-purple-700",
+          checkInStatus: "success"
+        } 
+      } 
+    });
+  };
+
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="text-lg font-semibold text-[#BBBF56]">{title}</h3>
+          <h3 className="text-lg font-semibold text-[#1A1F2C]">{title}</h3>
           <p className="text-gray-600">
             <span className="font-bold">{formatDate(event.date)}</span> {time}
           </p>
@@ -47,7 +61,10 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="flex justify-between items-center mt-3">
         {status === "upcoming" ? (
           <>
-            <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
+            <Button 
+              className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
+              onClick={handleCheckIn}
+            >
               Check In
             </Button>
             
