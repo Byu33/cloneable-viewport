@@ -58,7 +58,7 @@ const YourEvents = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#E5DEFF]">
+    <div className="flex flex-col h-screen bg-[#F1F0FB]">
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
@@ -87,7 +87,7 @@ const YourEvents = () => {
         ))}
       </div>
 
-      <div className="px-6 py-4 bg-[#E5DEFF]">
+      <div className="px-6 py-4 bg-[#F1F0FB]">
         <div className="relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-gray-400" />
@@ -100,14 +100,14 @@ const YourEvents = () => {
         </div>
       </div>
 
-      <div className="px-6 mb-4 bg-[#E5DEFF]">
+      <div className="px-6 mb-4 bg-[#F1F0FB]">
         <button className="bg-purple-700 text-white py-3 px-4 rounded-md w-full flex items-center justify-center">
           <span className="mr-2">+</span>
           Create New Event
         </button>
       </div>
 
-      <div className="flex-1 overflow-auto px-6 pb-20 bg-[#E5DEFF]">
+      <div className="flex-1 overflow-auto px-6 pb-20 bg-[#F1F0FB]">
         <div className="space-y-4">
           {yourEvents.map((event, index) => (
             <div key={event.id} className="bg-white rounded-lg p-4 shadow-sm relative">
