@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -37,7 +38,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         </div>
         
         {tag && (
-          <span className={`${tagColor} text-xs px-3 py-1 rounded-full`}>
+          <span className={`bg-[#BBBF56]/50 text-purple-900 text-xs px-3 py-1 rounded-full`}>
             {tag}
           </span>
         )}

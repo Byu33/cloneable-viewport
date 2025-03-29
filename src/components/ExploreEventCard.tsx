@@ -17,7 +17,6 @@ interface ExploreEventCardProps {
 const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
   const { title, time, location, tag, tagColor, attendees, date } = event;
 
-  // Format date
   const formatDate = (date: Date) => {
     const month = date.toLocaleString('default', { month: 'short' });
     const day = date.getDate();
@@ -30,7 +29,7 @@ const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-[#1A1F2C]">{title}</h3>
           {tag && (
-            <span className={`${tagColor} text-xs px-3 py-1 rounded-full`}>
+            <span className={`bg-[#BBBF56]/50 text-purple-900 text-xs px-3 py-1 rounded-full`}>
               {tag}
             </span>
           )}
