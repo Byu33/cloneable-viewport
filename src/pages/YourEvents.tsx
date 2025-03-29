@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
@@ -136,13 +135,13 @@ const YourEvents = () => {
                       <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
                         Attendance
                       </Button>
-                      <Button variant="ghost" className="text-gray-400 text-sm">
+                      <Button variant="ghost" className="text-purple-700 text-sm">
                         Edit Event
                       </Button>
                     </div>
                   ) : (
                     <div className="mt-3">
-                      <Button variant="ghost" className="text-gray-400 text-sm px-0 py-2">
+                      <Button variant="ghost" className="text-purple-700 text-sm px-0 py-2">
                         Edit Event
                       </Button>
                     </div>
