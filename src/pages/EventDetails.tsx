@@ -48,6 +48,10 @@ const EventDetails = () => {
     navigate('/');
   };
 
+  const handleSignUp = () => {
+    navigate(`/signup/${id}`);
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <header className="flex justify-between items-center px-4 py-3 bg-gray-100">
@@ -140,7 +144,10 @@ const EventDetails = () => {
             </Button>
           </div>
         ) : (
-          <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
+          <Button 
+            className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6"
+            onClick={handleSignUp}
+          >
             Sign Up
           </Button>
         )}
