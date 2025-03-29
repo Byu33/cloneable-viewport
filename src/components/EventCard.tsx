@@ -70,8 +70,11 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
         </div>
         
         {event.attendees ? (
-          <div className="flex items-center ml-auto">
-            <div className="flex -space-x-2 mr-2">
+          <div className="flex flex-col items-end ml-auto">
+            <span className="text-sm text-gray-600 mb-1">
+              {event.attendees} {event.attendees === 1 ? "person" : "people"} going
+            </span>
+            <div className="flex -space-x-2">
               {[...Array(Math.min(3, event.attendees))].map((_, i) => (
                 <Avatar key={i} className="h-7 w-7 border-2 border-white">
                   <AvatarFallback className="bg-gray-200 text-xs">
@@ -80,9 +83,6 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
                 </Avatar>
               ))}
             </div>
-            <span className="text-sm text-gray-600">
-              {event.attendees} {event.attendees === 1 ? "person" : "people"} going
-            </span>
           </div>
         ) : (
           <div />
