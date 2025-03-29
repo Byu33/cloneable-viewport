@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { User, Calendar, Search, MoreVertical } from "lucide-react";
+import { User, Calendar, Search, MoreVertical, MapPin } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -126,7 +125,10 @@ const YourEvents = () => {
                   <p className="text-gray-600">
                     <span className="font-bold">{formatDate(event.date)}</span> {event.time}
                   </p>
-                  <p className="text-gray-600">{event.location}</p>
+                  <p className="text-gray-600 flex items-center">
+                    <MapPin className="h-4 w-4 mr-1" />
+                    {event.location}
+                  </p>
                   
                   <div className="flex flex-col mt-3">
                     {index === 1 ? (
@@ -230,4 +232,3 @@ const YourEvents = () => {
 };
 
 export default YourEvents;
-
