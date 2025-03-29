@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
@@ -106,8 +107,11 @@ const YourEvents = () => {
                   <p className="text-gray-600">{event.date} {event.time}</p>
                   <p className="text-gray-600">{event.location}</p>
                   
-                  <div className="flex items-center mt-3">
-                    <div className="flex -space-x-2 mr-2">
+                  <div className="flex flex-col mt-3">
+                    <span className="text-sm text-gray-500 mb-1">
+                      {event.attendees} people have signed up
+                    </span>
+                    <div className="flex -space-x-2">
                       {[...Array(Math.min(5, event.attendees))].map((_, i) => (
                         <div 
                           key={i} 
@@ -121,14 +125,11 @@ const YourEvents = () => {
                         </div>
                       ))}
                     </div>
-                    <span className="text-sm text-gray-500 -ml-2">
-                      {event.attendees} people have signed up
-                    </span>
                   </div>
                   
                   {index === 0 ? (
                     <div className="flex gap-2 mt-3">
-                      <button className="bg-white border border-purple-700 text-purple-700 px-4 py-1 rounded text-sm">
+                      <button className="bg-purple-900 text-white px-4 py-1 rounded text-sm">
                         Attendance
                       </button>
                       <button className="text-purple-700 px-4 py-2 text-sm">

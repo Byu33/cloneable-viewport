@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface EventCardProps {
   event: {
@@ -27,9 +28,9 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
+    <div className="bg-white rounded-xl p-4 shadow-sm relative overflow-hidden">
       <div className="flex justify-between items-start mb-2">
-        <h3 className="text-lg font-medium">{title}</h3>
+        <h3 className="text-lg font-semibold">{title}</h3>
         {tag && (
           <span className={`${tagColor} text-xs px-3 py-1 rounded-full`}>
             {tag}
@@ -52,13 +53,13 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="flex justify-between items-center">
         {status === "upcoming" ? (
           <>
-            <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-2 rounded-md">
+            <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
               Check In
             </Button>
             
             {attendees ? (
               <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-500 mb-2">
+                <span className="text-xs text-gray-500 mb-1">
                   {attendees} people are attending
                 </span>
                 <div className="flex -space-x-2">
@@ -66,7 +67,15 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
                     <div
                       key={i}
                       className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white overflow-hidden"
-                    />
+                    >
+                      <Avatar className="w-full h-full">
+                        <AvatarImage 
+                          src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
+                          alt="Attendee"
+                        />
+                        <AvatarFallback>U{i+1}</AvatarFallback>
+                      </Avatar>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -82,6 +91,8 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           </Button>
         )}
       </div>
+      
+      <div className="absolute -right-20 -bottom-20 w-48 h-48 rounded-full bg-purple-100 opacity-50" />
     </div>
   );
 };
