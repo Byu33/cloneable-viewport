@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,16 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   const handleCheckIn = () => {
-    navigate('/check-in', { state: { event } });
+    navigate('/check-in', { 
+      state: { 
+        event: {
+          ...event,
+          status: "upcoming",
+          tagColor: "bg-purple-200 text-purple-700",
+          checkInStatus: "success"
+        } 
+      } 
+    });
   };
 
   return (
