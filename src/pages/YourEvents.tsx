@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
@@ -128,25 +129,51 @@ const YourEvents = () => {
                   <p className="text-gray-600">{event.location}</p>
                   
                   <div className="flex flex-col mt-3">
-                    <span className="text-sm text-[#1A1F2C] mb-1">
-                      {event.attendees} people have signed up
-                    </span>
-                    <div className="flex -space-x-2">
-                      {[...Array(Math.min(5, event.attendees))].map((_, i) => (
-                        <div 
-                          key={i} 
-                          className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
-                        >
-                          <Avatar className="w-full h-full">
-                            <AvatarImage 
-                              src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
-                              alt="Attendee"
-                            />
-                            <AvatarFallback>U{i+1}</AvatarFallback>
-                          </Avatar>
+                    {index === 1 ? (
+                      <>
+                        <div className="flex -space-x-2">
+                          {[...Array(Math.min(5, event.attendees))].map((_, i) => (
+                            <div 
+                              key={i} 
+                              className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
+                            >
+                              <Avatar className="w-full h-full">
+                                <AvatarImage 
+                                  src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
+                                  alt="Attendee"
+                                />
+                                <AvatarFallback>U{i+1}</AvatarFallback>
+                              </Avatar>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                        <span className="text-sm text-[#1A1F2C] mt-1">
+                          {event.attendees} people have signed up
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-sm text-[#1A1F2C] mb-1">
+                          {event.attendees} people have signed up
+                        </span>
+                        <div className="flex -space-x-2">
+                          {[...Array(Math.min(5, event.attendees))].map((_, i) => (
+                            <div 
+                              key={i} 
+                              className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
+                            >
+                              <Avatar className="w-full h-full">
+                                <AvatarImage 
+                                  src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
+                                  alt="Attendee"
+                                />
+                                <AvatarFallback>U{i+1}</AvatarFallback>
+                              </Avatar>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
                   
                   {index === 0 ? (
@@ -203,3 +230,4 @@ const YourEvents = () => {
 };
 
 export default YourEvents;
+
