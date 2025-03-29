@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, CalendarIcon, MapPin, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +32,10 @@ const CreateEventPage = () => {
     } else {
       setSelectedCategory(categoryName);
     }
+  };
+
+  const handleNextClick = () => {
+    navigate("/create-event/details");
   };
 
   return (
@@ -158,7 +161,7 @@ const CreateEventPage = () => {
       <div className="border-t border-gray-200 p-4 sticky bottom-0 bg-white">
         <Button 
           className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6"
-          onClick={() => navigate("/your-events")}
+          onClick={handleNextClick}
         >
           Next
         </Button>
