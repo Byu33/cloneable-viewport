@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
@@ -22,7 +21,7 @@ const YourEvents = () => {
   const yourEvents = [
     {
       id: 1,
-      title: "Daily Standup Call",
+      title: "Chapter Meeting",
       date: "Feb 16",
       time: "5:00-6:00PM",
       location: "Everitt Labratory",
@@ -31,7 +30,7 @@ const YourEvents = () => {
     },
     {
       id: 2,
-      title: "Daily Standup Call",
+      title: "Chapter Meeting",
       date: "Feb 16",
       time: "5:00-6:00PM",
       location: "Everitt Labratory",
@@ -40,7 +39,7 @@ const YourEvents = () => {
     },
     {
       id: 3,
-      title: "Daily Standup Call",
+      title: "Chapter Meeting",
       date: "Feb 16",
       time: "5:00-6:00PM",
       location: "Everitt Labratory",
@@ -105,7 +104,7 @@ const YourEvents = () => {
             <div key={event.id} className="bg-white rounded-lg p-4 shadow-sm relative">
               <div className="flex justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold">{event.title}</h3>
+                  <h3 className="text-lg font-semibold text-[#1A1F2C]">{event.title}</h3>
                   <p className="text-gray-600">{event.date} {event.time}</p>
                   <p className="text-gray-600">{event.location}</p>
                   
