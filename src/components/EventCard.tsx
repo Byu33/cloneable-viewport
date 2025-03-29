@@ -49,8 +49,19 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
       </div>
 
       <div className="flex justify-between items-center mt-4">
+        {isUpcoming && onCheckIn && (
+          <Button 
+            onClick={onCheckIn}
+            variant="outline"
+            size="icon"
+            className="border-purple-600 text-purple-600 hover:bg-purple-50"
+          >
+            Check In
+          </Button>
+        )}
+        
         {event.attendees ? (
-          <div className="flex items-center">
+          <div className="flex items-center ml-auto">
             <div className="flex -space-x-2 mr-2">
               {[...Array(Math.min(3, event.attendees))].map((_, i) => (
                 <Avatar key={i} className="h-7 w-7 border-2 border-white">
@@ -66,15 +77,6 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
           </div>
         ) : (
           <div />
-        )}
-        
-        {isUpcoming && onCheckIn && (
-          <Button 
-            onClick={onCheckIn}
-            className="bg-purple-600 hover:bg-purple-700 text-white rounded-full"
-          >
-            Check In
-          </Button>
         )}
         
         {!isUpcoming && (
