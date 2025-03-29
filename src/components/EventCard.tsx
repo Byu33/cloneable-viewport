@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -30,7 +29,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
     <div className="bg-white rounded-xl p-4 shadow-sm font-figtree">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="text-lg font-semibold text-[#BBBF56]">{title}</h3>
+          <h3 className="text-lg font-semibold text-[#1A1F2C]">{title}</h3>
           <p className="text-gray-600">
             <span className="font-bold">{formatDate(event.date)}</span> {time}
           </p>
