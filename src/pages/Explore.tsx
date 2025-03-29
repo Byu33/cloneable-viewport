@@ -37,11 +37,11 @@ const Explore = () => {
       </header>
 
       {/* Tabs */}
-      <div className="flex border-b">
+      <div className="flex border-b bg-white">
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`flex-1 py-3 text-center ${
+            className={`flex-1 py-3 text-center bg-white ${
               activeTab === tab
                 ? "text-black font-medium border-b-2 border-black"
                 : "text-gray-500"
