@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
@@ -100,7 +99,7 @@ const YourEvents = () => {
       <div className="flex-1 overflow-auto px-6 pb-20">
         <div className="space-y-4">
           {yourEvents.map((event, index) => (
-            <div key={event.id} className="bg-white rounded-lg p-4 shadow-sm relative overflow-hidden">
+            <div key={event.id} className="bg-white rounded-lg p-4 shadow-sm relative">
               <div className="flex justify-between">
                 <div>
                   <h3 className="text-lg font-semibold">{event.title}</h3>
@@ -157,8 +156,6 @@ const YourEvents = () => {
                   )}
                 </div>
               </div>
-              
-              <div className="absolute -right-20 -bottom-20 w-48 h-48 rounded-full bg-purple-100 opacity-50" />
             </div>
           ))}
         </div>

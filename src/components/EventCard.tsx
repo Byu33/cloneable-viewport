@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -20,7 +19,6 @@ interface EventCardProps {
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const { title, time, location, tag, tagColor, attendees, status } = event;
 
-  // Format date for past events
   const formatDate = (date: Date) => {
     const month = date.toLocaleString('default', { month: 'short' });
     const day = date.getDate();
@@ -28,7 +26,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm relative overflow-hidden">
+    <div className="bg-white rounded-xl p-4 shadow-sm">
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-lg font-semibold">{title}</h3>
         {tag && (
@@ -91,8 +89,6 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           </Button>
         )}
       </div>
-      
-      <div className="absolute -right-20 -bottom-20 w-48 h-48 rounded-full bg-purple-100 opacity-50" />
     </div>
   );
 };
