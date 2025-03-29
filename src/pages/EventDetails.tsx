@@ -132,7 +132,7 @@ const EventDetails = () => {
             </p>
             <Button 
               variant="outline" 
-              className="w-full border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-600 py-6"
+              className="w-full border-2 border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-600 py-6 text-base"
               onClick={handleCancelAttendance}
             >
               <X className="w-5 h-5 mr-2 text-gray-400" />
