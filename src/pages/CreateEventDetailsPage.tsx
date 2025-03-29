@@ -1,8 +1,10 @@
+
 import React, { useState } from "react";
 import { X, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
 
 const CreateEventDetailsPage = () => {
   const navigate = useNavigate();
@@ -33,11 +35,14 @@ const CreateEventDetailsPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <header className="border-b border-gray-200 p-4 flex items-center justify-between">
-        <h1 className="text-sm text-gray-600">Page 2 of 3</h1>
-        <button onClick={() => navigate("/your-events")}>
-          <X className="h-6 w-6" />
-        </button>
+      <header className="border-b border-gray-200 p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-sm text-gray-600">Page 2 of 3</h1>
+          <button onClick={() => navigate("/your-events")}>
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+        <Progress value={66.66} className="w-full" />
       </header>
 
       <div className="flex-1 px-6 py-4 overflow-auto pb-24">
