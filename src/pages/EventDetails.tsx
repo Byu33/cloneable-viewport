@@ -1,3 +1,4 @@
+
 import React from "react";
 import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -37,7 +38,7 @@ const EventDetails = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 pb-20">
+    <div className="flex flex-col h-screen bg-gray-50">
       <header className="flex justify-between items-center px-4 py-3 bg-gray-100">
         <button
           onClick={() => navigate(-1)}
@@ -55,12 +56,14 @@ const EventDetails = () => {
         <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
         
         {event.tag && (
-          <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-3">
+          <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-2">
             {event.tag}
           </span>
         )}
-        
-        <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
+      </div>
+
+      <div className="px-6 mb-4">
+        <div className="border border-gray-200 rounded-lg p-4 flex items-start">
           <div className="mr-3 mt-1">
             <MapPin className="h-6 w-6 text-gray-500" />
           </div>
@@ -71,7 +74,7 @@ const EventDetails = () => {
         </div>
       </div>
 
-      <div className="px-6 mb-6 flex-grow overflow-auto">
+      <div className="px-6 mb-6">
         <h2 className="text-xl font-semibold mb-2">Description</h2>
         <p className="text-gray-700">{event.description}</p>
       </div>
@@ -110,7 +113,7 @@ const EventDetails = () => {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white shadow-t">
+      <div className="px-6 mb-6">
         <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
           Sign Up
         </Button>
