@@ -57,8 +57,8 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             </Button>
             
             {attendees ? (
-              <div className="flex items-center">
-                <span className="text-xs text-gray-500 mr-2">
+              <div className="flex flex-col items-end">
+                <span className="text-xs text-gray-500 mb-2">
                   {attendees} people are attending
                 </span>
                 <div className="flex -space-x-2">
