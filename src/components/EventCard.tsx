@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -80,7 +79,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
                 </div>
               </div>
             ) : (
-              <Button variant="ghost" className="text-gray-400 text-sm">
+              <Button variant="ghost" className="text-purple-700 text-sm">
                 Absence Form
               </Button>
             )}
