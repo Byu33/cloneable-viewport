@@ -56,14 +56,12 @@ const EventDetails = () => {
         <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
         
         {event.tag && (
-          <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-2">
+          <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-3">
             {event.tag}
           </span>
         )}
-      </div>
-
-      <div className="px-6 mb-4">
-        <div className="border border-gray-200 rounded-lg p-4 flex items-start">
+        
+        <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
           <div className="mr-3 mt-1">
             <MapPin className="h-6 w-6 text-gray-500" />
           </div>
