@@ -103,11 +103,11 @@ const YourEvents = () => {
               <div className="flex justify-between">
                 <div>
                   <h3 className="text-lg font-semibold">{event.title}</h3>
-                  <div className="text-sm text-gray-600 mb-2">{event.date} · {event.time}</div>
-                  <div className="text-sm text-gray-600 mb-3">{event.location}</div>
+                  <p className="text-gray-600">{event.date} {event.time}</p>
+                  <p className="text-gray-600">{event.location}</p>
                   
                   <div className="flex flex-col mt-3">
-                    <span className="text-xs text-gray-500 mb-1">
+                    <span className="text-sm text-gray-500 mb-1">
                       {event.attendees} people have signed up
                     </span>
                     <div className="flex -space-x-2">
