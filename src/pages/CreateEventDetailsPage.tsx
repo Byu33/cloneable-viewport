@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -28,9 +27,8 @@ const CreateEventDetailsPage = () => {
   };
 
   const handleNext = () => {
-    // For now, just go back to your-events page
-    // In a real app, you would save the event details and go to the next step
-    navigate("/your-events");
+    // Navigate to the logistics page
+    navigate("/create-event/logistics");
   };
 
   return (
