@@ -52,39 +52,37 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       <div className="flex justify-between items-center mt-3">
         {status === "upcoming" ? (
           <>
-            <div className="flex gap-2 items-center">
-              <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
-                Check In
-              </Button>
-              
-              {attendees ? (
-                <div className="flex items-center">
-                  <div className="flex -space-x-2 mr-2">
-                    {[...Array(Math.min(5, attendees))].map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white overflow-hidden"
-                      >
-                        <Avatar className="w-full h-full">
-                          <AvatarImage 
-                            src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
-                            alt="Attendee"
-                          />
-                          <AvatarFallback>U{i+1}</AvatarFallback>
-                        </Avatar>
-                      </div>
-                    ))}
-                  </div>
-                  <span className="text-xs text-gray-500">
-                    {attendees} people are attending
-                  </span>
+            <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
+              Check In
+            </Button>
+            
+            {attendees ? (
+              <div className="flex flex-col items-end">
+                <span className="text-xs text-gray-500 mb-1">
+                  {attendees} people are attending
+                </span>
+                <div className="flex -space-x-2">
+                  {[...Array(Math.min(5, attendees))].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white overflow-hidden"
+                    >
+                      <Avatar className="w-full h-full">
+                        <AvatarImage 
+                          src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
+                          alt="Attendee"
+                        />
+                        <AvatarFallback>U{i+1}</AvatarFallback>
+                      </Avatar>
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                <Button variant="ghost" className="text-purple-700 text-sm">
-                  Absence Form
-                </Button>
-              )}
-            </div>
+              </div>
+            ) : (
+              <Button variant="ghost" className="text-purple-700 text-sm">
+                Absence Form
+              </Button>
+            )}
           </>
         ) : (
           <Button variant="secondary" className="text-sm">
