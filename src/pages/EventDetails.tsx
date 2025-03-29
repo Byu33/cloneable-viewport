@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,8 +9,6 @@ const EventDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   
-  // This would normally come from an API call using the id param
-  // For now using dummy data that matches the mockup
   const event = {
     id: 1,
     title: "Daily Standup Call",
@@ -34,7 +31,6 @@ const EventDetails = () => {
     ]
   };
 
-  // Format date
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
@@ -42,7 +38,6 @@ const EventDetails = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
       <header className="flex justify-between items-center px-4 py-3 bg-gray-100">
         <button
           onClick={() => navigate(-1)}
@@ -55,7 +50,6 @@ const EventDetails = () => {
         </button>
       </header>
 
-      {/* Event Title and Details */}
       <div className="px-6 py-8">
         <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
         <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
@@ -67,8 +61,7 @@ const EventDetails = () => {
         )}
       </div>
 
-      {/* Address */}
-      <div className="px-6 mb-6">
+      <div className="px-6 mb-4">
         <div className="border border-gray-200 rounded-lg p-4 flex items-start">
           <div className="mr-3 mt-1">
             <MapPin className="h-6 w-6 text-gray-500" />
@@ -80,13 +73,11 @@ const EventDetails = () => {
         </div>
       </div>
 
-      {/* Description */}
       <div className="px-6 mb-6">
         <h2 className="text-xl font-semibold mb-2">Description</h2>
         <p className="text-gray-700">{event.description}</p>
       </div>
 
-      {/* Event Hosts */}
       <div className="px-6 mb-6">
         <h2 className="text-xl font-semibold mb-3">Event Hosts</h2>
         <div className="space-y-3">
@@ -102,7 +93,6 @@ const EventDetails = () => {
         </div>
       </div>
 
-      {/* Attendees */}
       <div className="px-6 mb-6">
         <div className="bg-purple-50 rounded-lg p-5">
           <h2 className="text-xl font-semibold mb-3">Attendees</h2>
@@ -122,14 +112,12 @@ const EventDetails = () => {
         </div>
       </div>
 
-      {/* Sign Up Button */}
       <div className="px-6 mb-6">
         <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
           Sign Up
         </Button>
       </div>
 
-      {/* Bottom Tab Bar */}
       <TabBar />
     </div>
   );
