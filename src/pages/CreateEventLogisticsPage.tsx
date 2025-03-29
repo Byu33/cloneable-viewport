@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -22,9 +21,7 @@ const CreateEventLogisticsPage = () => {
   };
 
   const handlePreview = () => {
-    // For now, just go back to your-events page when preview is clicked
-    // In a real app, this would show a preview of the event
-    navigate("/your-events");
+    navigate("/event-preview");
   };
 
   const addQuestion = () => {
