@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +21,7 @@ interface EventCardProps {
 
 const EventCard = ({ event, onCheckIn }: EventCardProps) => {
   const isUpcoming = event.status === "upcoming";
+  const isChapterMeeting = event.title === "Chapter Meeting";
   
   const formatDate = (date: Date) => {
     const month = date.toLocaleString('default', { month: 'short' });
@@ -48,14 +50,24 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
       </div>
 
       <div className="flex justify-between items-center mt-4">
-        {isUpcoming && onCheckIn && (
-          <Button 
-            className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
-            onClick={onCheckIn}
-          >
-            Check In
-          </Button>
-        )}
+        <div className="flex items-center">
+          {isUpcoming && onCheckIn && (
+            <>
+              <Button 
+                className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
+                onClick={onCheckIn}
+              >
+                Check In
+              </Button>
+              
+              {isChapterMeeting && (
+                <Button variant="ghost" className="text-purple-700 text-sm ml-2">
+                  Absence Form
+                </Button>
+              )}
+            </>
+          )}
+        </div>
         
         {event.attendees ? (
           <div className="flex items-center ml-auto">
