@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { MapPin } from "lucide-react";
 
 interface ExploreEventCardProps {
   event: {
@@ -48,7 +49,10 @@ const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
         <div className="text-sm text-gray-800">
           {formatDate(date)} {time}
         </div>
-        <div className="text-sm text-gray-800 mb-3">{location}</div>
+        <div className="flex items-center text-sm text-gray-800 mb-3">
+          <MapPin className="h-4 w-4 mr-1" />
+          {location}
+        </div>
       </div>
       
       {attendees && (
