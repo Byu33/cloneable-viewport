@@ -1,3 +1,4 @@
+
 import React from "react";
 import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -55,7 +56,7 @@ const EventDetails = () => {
         <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
         
         {event.tag && (
-          <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-4">
+          <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-2">
             {event.tag}
           </span>
         )}
