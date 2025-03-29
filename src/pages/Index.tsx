@@ -118,6 +118,7 @@ const Index = () => {
                 key={event.id} 
                 event={event} 
                 onCheckIn={() => handleCheckIn(event)}
+                source="going"
               />
             ))}
           </div>
@@ -128,7 +129,11 @@ const Index = () => {
           <h2 className="text-xl font-semibold mb-4">Past Events</h2>
           <div className="space-y-4">
             {pastEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <EventCard 
+                key={event.id} 
+                event={event} 
+                source="past"
+              />
             ))}
           </div>
         </div>

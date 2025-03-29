@@ -3,6 +3,7 @@ import React from "react";
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface EventCardProps {
   event: {
@@ -17,9 +18,11 @@ interface EventCardProps {
     status: "upcoming" | "past";
   };
   onCheckIn?: () => void;
+  source?: "going" | "explore" | "past";
 }
 
-const EventCard = ({ event, onCheckIn }: EventCardProps) => {
+const EventCard = ({ event, onCheckIn, source = "going" }: EventCardProps) => {
+  const navigate = useNavigate();
   const isUpcoming = event.status === "upcoming";
   const isChapterMeeting = event.title === "Chapter Meeting";
   
@@ -29,8 +32,18 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
     return `${month} ${day}`;
   };
 
+  const handleCardClick = () => {
+    if (source === "going" && isUpcoming) {
+      navigate(`/event/${event.id}?source=going`);
+    }
+  };
+
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm">
+    <div 
+      className="bg-white rounded-xl p-5 shadow-sm"
+      onClick={handleCardClick}
+      style={{ cursor: source === "going" && isUpcoming ? "pointer" : "default" }}
+    >
       <div className="flex justify-between items-start mb-3">
         <div>
           <h3 className="font-semibold text-lg">{event.title}</h3>
@@ -55,13 +68,20 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
             <>
               <Button 
                 className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
-                onClick={onCheckIn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCheckIn();
+                }}
               >
                 Check In
               </Button>
               
               {isChapterMeeting && (
-                <Button variant="ghost" className="text-purple-700 text-sm ml-2">
+                <Button 
+                  variant="ghost" 
+                  className="text-purple-700 text-sm ml-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   Absence Form
                 </Button>
               )}
@@ -93,6 +113,7 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
             <Button 
               variant="outline" 
               className="text-gray-500 border-gray-300 bg-gray-100"
+              onClick={(e) => e.stopPropagation()}
             >
               Feedback Form
             </Button>
@@ -104,4 +125,3 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
 };
 
 export default EventCard;
-

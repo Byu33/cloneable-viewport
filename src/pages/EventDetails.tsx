@@ -1,14 +1,19 @@
 
 import React from "react";
 import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import TabBar from "@/components/TabBar";
+import { toast } from "@/hooks/use-toast";
 
 const EventDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
+  
+  // Check if the user came from the "going" section
+  const isAlreadyAttending = location.search.includes("source=going");
   
   const event = {
     id: 1,
@@ -35,6 +40,14 @@ const EventDetails = () => {
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
+  };
+
+  const handleCancelAttendance = () => {
+    toast({
+      title: "Attendance Cancelled",
+      description: "You are no longer attending this event",
+    });
+    navigate('/');
   };
 
   return (
@@ -114,9 +127,22 @@ const EventDetails = () => {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white shadow-lg">
-        <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
-          Sign Up
-        </Button>
+        {isAlreadyAttending ? (
+          <div className="space-y-2">
+            <p className="text-center text-green-600 font-medium">You are already attending this event</p>
+            <Button 
+              variant="outline" 
+              className="w-full border-red-300 text-red-500 hover:bg-red-50 hover:text-red-600 py-6"
+              onClick={handleCancelAttendance}
+            >
+              Cancel Attendance
+            </Button>
+          </div>
+        ) : (
+          <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
+            Sign Up
+          </Button>
+        )}
       </div>
 
       <TabBar />
