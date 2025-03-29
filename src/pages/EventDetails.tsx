@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -51,69 +50,71 @@ const EventDetails = () => {
         </button>
       </header>
 
-      <div className="px-6 py-8">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
-        <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
-        
-        {event.tag && (
-          <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-2">
-            {event.tag}
-          </span>
-        )}
-      </div>
-
-      <div className="px-6 mb-4">
-        <div className="border border-gray-200 rounded-lg p-4 flex items-start">
-          <div className="mr-3 mt-1">
-            <MapPin className="h-6 w-6 text-gray-500" />
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-800">Address</h3>
-            <p className="text-gray-600">{event.address}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-6 mb-6">
-        <h2 className="text-xl font-semibold mb-2">Description</h2>
-        <p className="text-gray-700">{event.description}</p>
-      </div>
-
-      <div className="px-6 mb-6">
-        <h2 className="text-xl font-semibold mb-3">Event Hosts</h2>
-        <div className="space-y-3">
-          {event.hosts.map(host => (
-            <div key={host.id} className="flex items-center">
-              <Avatar className="h-8 w-8 mr-3">
-                <AvatarImage src={host.avatar} alt={host.name} />
-                <AvatarFallback>{host.name.substring(0, 2)}</AvatarFallback>
-              </Avatar>
-              <span className="text-gray-800">{host.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="px-6 mb-6">
-        <div className="bg-purple-50 rounded-lg p-5">
-          <h2 className="text-xl font-semibold mb-3">Attendees</h2>
-          <p className="text-sm text-gray-600 mb-3">{event.attendees.length} people are attending</p>
+      <div className="flex-grow overflow-auto pb-24">
+        <div className="px-6 py-8">
+          <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
+          <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
           
+          {event.tag && (
+            <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-2">
+              {event.tag}
+            </span>
+          )}
+        </div>
+
+        <div className="px-6 mb-4">
+          <div className="border border-gray-200 rounded-lg p-4 flex items-start">
+            <div className="mr-3 mt-1">
+              <MapPin className="h-6 w-6 text-gray-500" />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-800">Address</h3>
+              <p className="text-gray-600">{event.address}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 mb-6">
+          <h2 className="text-xl font-semibold mb-2">Description</h2>
+          <p className="text-gray-700">{event.description}</p>
+        </div>
+
+        <div className="px-6 mb-6">
+          <h2 className="text-xl font-semibold mb-3">Event Hosts</h2>
           <div className="space-y-3">
-            {event.attendees.map(attendee => (
-              <div key={attendee.id} className="flex items-center">
+            {event.hosts.map(host => (
+              <div key={host.id} className="flex items-center">
                 <Avatar className="h-8 w-8 mr-3">
-                  <AvatarImage src={attendee.avatar} alt={attendee.name} />
-                  <AvatarFallback>{attendee.name.substring(0, 2)}</AvatarFallback>
+                  <AvatarImage src={host.avatar} alt={host.name} />
+                  <AvatarFallback>{host.name.substring(0, 2)}</AvatarFallback>
                 </Avatar>
-                <span className="text-gray-800">{attendee.name}</span>
+                <span className="text-gray-800">{host.name}</span>
               </div>
             ))}
           </div>
         </div>
+
+        <div className="px-6 mb-6">
+          <div className="bg-purple-50 rounded-lg p-5">
+            <h2 className="text-xl font-semibold mb-3">Attendees</h2>
+            <p className="text-sm text-gray-600 mb-3">{event.attendees.length} people are attending</p>
+            
+            <div className="space-y-3">
+              {event.attendees.map(attendee => (
+                <div key={attendee.id} className="flex items-center">
+                  <Avatar className="h-8 w-8 mr-3">
+                    <AvatarImage src={attendee.avatar} alt={attendee.name} />
+                    <AvatarFallback>{attendee.name.substring(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-gray-800">{attendee.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="px-6 mb-6">
+      <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white shadow-lg">
         <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
           Sign Up
         </Button>
