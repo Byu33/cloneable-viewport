@@ -61,7 +61,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50 font-figtree">
       {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>

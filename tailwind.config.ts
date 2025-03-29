@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -91,7 +92,8 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out'
       },
       fontFamily: {
-        'big-shoulders': ['Big Shoulders Display', 'sans-serif']
+        'big-shoulders': ['Big Shoulders Display', 'sans-serif'],
+        'figtree': ['Figtree', 'sans-serif']
       }
     }
   },

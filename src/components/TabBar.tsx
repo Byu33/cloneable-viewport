@@ -13,7 +13,7 @@ const TabBar = () => {
   };
 
   return (
-    <div className="flex justify-around items-center py-3 px-6 border-t bg-white">
+    <div className="flex justify-around items-center py-3 px-6 border-t bg-white font-figtree">
       <TabItem 
         icon={<Home className="w-5 h-5" />} 
         label="Home" 
