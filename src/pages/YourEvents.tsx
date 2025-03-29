@@ -1,13 +1,10 @@
-
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const YourEvents = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Your Events");
   const tabs = ["Going", "Explore", "Your Events"];
 
@@ -50,17 +47,6 @@ const YourEvents = () => {
       attendees: 7,
     }
   ];
-
-  const handleAttendance = (event: any) => {
-    navigate('/check-in', { state: { 
-      event: {
-        ...event,
-        date: new Date(),
-        status: "upcoming",
-        tagColor: "bg-purple-200 text-purple-700"
-      } 
-    }});
-  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -146,10 +132,7 @@ const YourEvents = () => {
                   
                   {index === 0 ? (
                     <div className="flex gap-2 mt-3">
-                      <Button 
-                        className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
-                        onClick={() => handleAttendance(event)}
-                      >
+                      <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
                         Attendance
                       </Button>
                       <Button variant="ghost" className="text-purple-700 text-sm">
