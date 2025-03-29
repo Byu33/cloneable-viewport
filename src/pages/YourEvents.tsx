@@ -1,6 +1,9 @@
+
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const YourEvents = () => {
   const [activeTab, setActiveTab] = useState("Your Events");
@@ -116,11 +119,13 @@ const YourEvents = () => {
                           key={i} 
                           className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
                         >
-                          <img 
-                            src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
-                            alt="User" 
-                            className="w-full h-full object-cover"
-                          />
+                          <Avatar className="w-full h-full">
+                            <AvatarImage 
+                              src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
+                              alt="Attendee"
+                            />
+                            <AvatarFallback>U{i+1}</AvatarFallback>
+                          </Avatar>
                         </div>
                       ))}
                     </div>
@@ -128,18 +133,18 @@ const YourEvents = () => {
                   
                   {index === 0 ? (
                     <div className="flex gap-2 mt-3">
-                      <button className="bg-purple-900 text-white px-4 py-1 rounded text-sm">
+                      <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
                         Attendance
-                      </button>
-                      <button className="text-purple-700 px-4 py-2 text-sm">
+                      </Button>
+                      <Button variant="ghost" className="text-gray-400 text-sm">
                         Edit Event
-                      </button>
+                      </Button>
                     </div>
                   ) : (
                     <div className="mt-3">
-                      <button className="text-purple-700 px-0 py-2 text-sm">
+                      <Button variant="ghost" className="text-gray-400 text-sm px-0 py-2">
                         Edit Event
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>
