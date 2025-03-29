@@ -22,7 +22,7 @@ const Explore = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 font-big-shoulders">
+    <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold">Events</h1>

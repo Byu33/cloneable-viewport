@@ -26,7 +26,7 @@ const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm w-80 overflow-hidden font-big-shoulders">
+    <div className="bg-white rounded-xl shadow-sm w-80 overflow-hidden">
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold">{title}</h3>
