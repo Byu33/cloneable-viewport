@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -28,26 +29,20 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm">
       <div className="flex justify-between items-start mb-2">
-        <h3 className="text-lg font-semibold">{title}</h3>
+        <div>
+          <h3 className="text-lg font-semibold">{title}</h3>
+          <p className="text-gray-600">
+            <span className="font-bold">{formatDate(event.date)}</span> {time}
+          </p>
+          <p className="text-gray-600">{location}</p>
+        </div>
+        
         {tag && (
           <span className={`${tagColor} text-xs px-3 py-1 rounded-full`}>
             {tag}
           </span>
         )}
       </div>
-      
-      {status === "past" && (
-        <div className="text-sm text-gray-600 mb-2">
-          {formatDate(event.date)} {time}
-        </div>
-      )}
-      
-      {status === "upcoming" && (
-        <>
-          <p className="text-gray-600">{formatDate(event.date)} {time}</p>
-          <p className="text-gray-600">{location}</p>
-        </>
-      )}
       
       <div className="flex justify-between items-center mt-3">
         {status === "upcoming" ? (
@@ -58,8 +53,8 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             
             {attendees ? (
               <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-500 mb-1">
-                  {attendees} people are attending
+                <span className="text-xs text-purple-700 mb-1">
+                  {attendees} people have signed up
                 </span>
                 <div className="flex -space-x-2">
                   {[...Array(Math.min(5, attendees))].map((_, i) => (
@@ -95,3 +90,4 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
 };
 
 export default EventCard;
+
