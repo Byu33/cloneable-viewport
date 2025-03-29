@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -51,10 +50,8 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
       <div className="flex justify-between items-center mt-4">
         {isUpcoming && onCheckIn && (
           <Button 
+            className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
             onClick={onCheckIn}
-            variant="outline"
-            size="icon"
-            className="border-purple-600 text-purple-600 hover:bg-purple-50"
           >
             Check In
           </Button>
