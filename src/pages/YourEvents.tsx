@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
@@ -109,7 +110,7 @@ const YourEvents = () => {
                   <p className="text-gray-600">{event.location}</p>
                   
                   <div className="flex flex-col mt-3">
-                    <span className="text-sm text-gray-500 mb-1">
+                    <span className="text-sm text-[#1A1F2C] mb-1">
                       {event.attendees} people have signed up
                     </span>
                     <div className="flex -space-x-2">

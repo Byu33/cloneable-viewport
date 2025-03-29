@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -53,7 +52,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
             
             {attendees ? (
               <div className="flex flex-col items-end">
-                <span className="text-xs text-purple-700 mb-1">
+                <span className="text-xs text-[#1A1F2C] mb-1">
                   {attendees} people have signed up
                 </span>
                 <div className="flex -space-x-2">
@@ -90,4 +89,3 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
 };
 
 export default EventCard;
-
