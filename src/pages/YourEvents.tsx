@@ -1,12 +1,16 @@
+
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import CheckInDialog from "@/components/CheckInDialog";
 
 const YourEvents = () => {
   const [activeTab, setActiveTab] = useState("Your Events");
   const tabs = ["Going", "Explore", "Your Events"];
+  const [checkInEvent, setCheckInEvent] = useState<any>(null);
+  const [isCheckInOpen, setIsCheckInOpen] = useState(false);
 
   const handleTabClick = (tab: string) => {
     if (tab === "Going") {
@@ -31,7 +35,7 @@ const YourEvents = () => {
     },
     {
       id: 2,
-      title: "Chapter Meeting",
+      title: "Daily Standup Call",
       date: new Date(2024, 1, 16),
       time: "5:00-6:00PM",
       location: "Everitt Labratory",
@@ -55,6 +59,11 @@ const YourEvents = () => {
     const month = date.toLocaleString('default', { month: 'short' });
     const day = date.getDate();
     return `${month} ${day}`;
+  };
+
+  const handleCheckIn = (event: any) => {
+    setCheckInEvent(event);
+    setIsCheckInOpen(true);
   };
 
   return (
@@ -143,8 +152,11 @@ const YourEvents = () => {
                   
                   {index === 0 ? (
                     <div className="flex gap-2 mt-3">
-                      <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
-                        Attendance
+                      <Button 
+                        className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
+                        onClick={() => handleCheckIn(event)}
+                      >
+                        Check In
                       </Button>
                       <Button variant="ghost" className="text-purple-700 text-sm">
                         Edit Event
@@ -177,6 +189,14 @@ const YourEvents = () => {
           ))}
         </div>
       </div>
+
+      {checkInEvent && (
+        <CheckInDialog 
+          open={isCheckInOpen} 
+          onOpenChange={setIsCheckInOpen} 
+          event={checkInEvent} 
+        />
+      )}
 
       <TabBar />
     </div>
