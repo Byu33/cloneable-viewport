@@ -38,7 +38,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         </div>
         
         {tag && (
-          <span className={`bg-[#BBBF56]/50 text-purple-900 text-xs px-3 py-1 rounded-full`}>
+          <span className={`bg-[#BBBF56]/25 text-[#8B5CF6] text-xs px-3 py-1 rounded-full`}>
             {tag}
           </span>
         )}
