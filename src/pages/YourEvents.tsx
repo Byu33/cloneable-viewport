@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
@@ -156,7 +155,7 @@ const YourEvents = () => {
                         className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
                         onClick={() => handleCheckIn(event)}
                       >
-                        Check In
+                        Attendance
                       </Button>
                       <Button variant="ghost" className="text-purple-700 text-sm">
                         Edit Event
