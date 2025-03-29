@@ -1,12 +1,121 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from "react";
+import { Calendar, User, Home, CheckSquare, Menu, ChevronDown } from "lucide-react";
+import EventCard from "@/components/EventCard";
+import TabBar from "@/components/TabBar";
+import CalendarView from "@/components/CalendarView";
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("Going");
+  const tabs = ["Going", "Explore", "Your Events"];
+
+  // Mock data for events
+  const upcomingEvents = [
+    {
+      id: 1,
+      title: "Chapter Meeting",
+      time: "5:00-6:00PM",
+      location: "Everitt Labratory",
+      tag: "Required",
+      tagColor: "bg-purple-200 text-purple-700",
+      date: new Date(),
+      status: "upcoming"
+    },
+    {
+      id: 2,
+      title: "Daily Standup Call",
+      time: "5:00-6:00PM",
+      location: "Everitt Labratory",
+      tag: "Sisterhood",
+      tagColor: "bg-purple-200 text-purple-700",
+      attendees: 7,
+      date: new Date(),
+      status: "upcoming"
+    }
+  ];
+
+  const pastEvents = [
+    {
+      id: 3,
+      title: "Decorating Cakes",
+      time: "5:00-6:00PM",
+      location: "Everitt Labratory",
+      date: new Date("2024-02-16"),
+      tag: "Risk",
+      tagColor: "bg-purple-200 text-purple-700",
+      status: "past"
+    }
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="flex flex-col h-screen bg-gray-50">
+      {/* Header */}
+      <header className="flex justify-between items-center px-6 py-4">
+        <h1 className="text-2xl font-semibold">Events</h1>
+        <div className="flex gap-4">
+          <button className="p-1">
+            <Calendar className="w-6 h-6" />
+          </button>
+          <button className="p-1">
+            <User className="w-6 h-6" />
+          </button>
+        </div>
+      </header>
+
+      {/* Tabs */}
+      <div className="px-6">
+        <div className="flex border-b">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`py-3 px-4 relative ${
+                activeTab === tab
+                  ? "text-black font-medium border-b-2 border-black"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto px-6 py-4">
+        {/* Upcoming Events Section */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-semibold">Upcoming Events</h2>
+            <button className="flex items-center">
+              <ChevronDown className="w-5 h-5" />
+            </button>
+          </div>
+          
+          {/* Calendar */}
+          <CalendarView />
+
+          {/* Event Cards */}
+          <div className="space-y-4 mt-4">
+            {upcomingEvents.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        </div>
+
+        {/* Past Events Section */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Past Events</h2>
+          <div className="space-y-4">
+            {pastEvents.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Tab Bar */}
+      <TabBar />
     </div>
   );
 };
