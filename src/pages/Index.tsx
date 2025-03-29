@@ -15,6 +15,8 @@ const Index = () => {
   const handleTabClick = (tab: string) => {
     if (tab === "Explore") {
       navigate("/explore");
+    } else if (tab === "Your Events") {
+      navigate("/your-events");
     } else {
       setActiveTab(tab);
     }
@@ -127,4 +129,3 @@ const Index = () => {
 };
 
 export default Index;
-

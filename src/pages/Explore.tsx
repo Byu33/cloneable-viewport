@@ -1,12 +1,23 @@
-
 import React, { useState } from "react";
 import { User, Calendar, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import TabBar from "@/components/TabBar";
 import ExploreEventCard from "@/components/ExploreEventCard";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Explore");
   const tabs = ["Going", "Explore", "Your Events"];
+  const navigate = useNavigate();
+
+  const handleTabClick = (tab: string) => {
+    if (tab === "Going") {
+      navigate("/");
+    } else if (tab === "Your Events") {
+      navigate("/your-events");
+    } else {
+      setActiveTab(tab);
+    }
+  };
 
   // Sample event data for different categories
   const sampleEvent = {
@@ -46,7 +57,7 @@ const Explore = () => {
                 ? "text-black font-medium border-b-2 border-black"
                 : "text-gray-500"
             }`}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => handleTabClick(tab)}
           >
             {tab}
           </button>
@@ -165,4 +176,3 @@ const Explore = () => {
 };
 
 export default Explore;
-
