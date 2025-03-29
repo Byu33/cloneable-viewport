@@ -71,7 +71,7 @@ const CheckInDialog = ({ open, onOpenChange, event }: CheckInDialogProps) => {
 
           <div className="w-full h-60 rounded-xl overflow-hidden mt-4">
             <img 
-              src="/lovable-uploads/540e6217-c9f2-4155-8886-ec7f5d3545df.png" 
+              src="/lovable-uploads/d20c356f-dd9f-4875-948a-59e12462ea56.png" 
               alt="Map showing location"
               className="w-full h-full object-cover"
             />
