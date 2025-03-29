@@ -27,7 +27,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
+    <div className="bg-white rounded-xl p-4 shadow-sm font-big-shoulders">
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-lg font-medium">{title}</h3>
         {tag && (
