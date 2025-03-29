@@ -33,8 +33,9 @@ const EventDetails = () => {
   };
 
   const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
   };
 
   return (
@@ -53,22 +54,33 @@ const EventDetails = () => {
 
       <div className="flex-grow overflow-auto pb-24">
         <div className="px-6 py-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
-          <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
-          
-          {event.tag && (
-            <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-4">
-              {event.tag}
-            </span>
-          )}
-          
-          <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
-            <div className="mr-3 mt-1">
-              <MapPin className="h-6 w-6 text-gray-500" />
+          {/* Card-like format for event title, date, time, and location matching the Going section */}
+          <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h1 className="text-xl font-semibold text-gray-800 mb-1">{event.title}</h1>
+                <p className="text-gray-600 text-sm">
+                  <span className="font-bold">{formatDate(event.date)}</span> {event.time}
+                </p>
+                <div className="flex items-center text-gray-600 text-sm mt-1">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  <span>{event.location}</span>
+                </div>
+              </div>
+              {event.tag && (
+                <span className={`${event.tagColor} text-xs px-3 py-1 rounded-full font-bold`}>
+                  {event.tag}
+                </span>
+              )}
             </div>
-            <div>
-              <h3 className="font-medium text-gray-800">Address</h3>
-              <p className="text-gray-600">{event.address}</p>
+            <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
+              <div className="mr-3 mt-1">
+                <MapPin className="h-6 w-6 text-gray-500" />
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-800">Address</h3>
+                <p className="text-gray-600">{event.address}</p>
+              </div>
             </div>
           </div>
         </div>
