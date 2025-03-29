@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { User, Calendar, Search, MoreVertical, MapPin } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import CheckInDialog from "@/components/CheckInDialog";
 
 const YourEvents = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Your Events");
   const tabs = ["Going", "Explore", "Your Events"];
   const [checkInEvent, setCheckInEvent] = useState<any>(null);
@@ -65,6 +67,10 @@ const YourEvents = () => {
     setIsCheckInOpen(true);
   };
 
+  const handleCreateEvent = () => {
+    navigate("/create-event");
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <header className="flex justify-between items-center px-6 py-4 bg-white">
@@ -109,7 +115,10 @@ const YourEvents = () => {
       </div>
 
       <div className="px-6 mb-4">
-        <button className="bg-purple-700 text-white py-3 px-4 rounded-md w-full flex items-center justify-center">
+        <button 
+          className="bg-purple-700 text-white py-3 px-4 rounded-md w-full flex items-center justify-center"
+          onClick={handleCreateEvent}
+        >
           <span className="mr-2">+</span>
           Create New Event
         </button>
