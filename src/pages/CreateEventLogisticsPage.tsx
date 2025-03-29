@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const CreateEventLogisticsPage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const CreateEventLogisticsPage = () => {
   const [customQuestions, setCustomQuestions] = useState<string[]>([]);
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
+  const [limitAttendees, setLimitAttendees] = useState(false);
+  const [attendeeLimit, setAttendeeLimit] = useState("");
 
   const handlePrevious = () => {
     navigate("/create-event/details");
@@ -63,14 +66,37 @@ const CreateEventLogisticsPage = () => {
           <div>
             <h2 className="text-xl font-semibold mb-3">Logistics</h2>
             <div className="space-y-3">
-              <div className="flex items-start space-x-2 rounded-md bg-gray-50 p-4">
-                <Checkbox id="limit-attendees" className="mt-1" />
-                <label
-                  htmlFor="limit-attendees"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Would you like to limit the number of attendees?
-                </label>
+              <div className="flex flex-col space-y-3 rounded-md bg-gray-50 p-4">
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id="limit-attendees" 
+                    className="mt-1" 
+                    checked={limitAttendees}
+                    onCheckedChange={(checked) => setLimitAttendees(checked === true)}
+                  />
+                  <label
+                    htmlFor="limit-attendees"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Would you like to limit the number of attendees?
+                  </label>
+                </div>
+                
+                {limitAttendees && (
+                  <div className="ml-6 mt-2">
+                    <Label htmlFor="attendee-limit" className="text-sm mb-1 block">
+                      Maximum number of attendees:
+                    </Label>
+                    <Input
+                      id="attendee-limit"
+                      type="number"
+                      className="bg-white w-full md:w-1/3"
+                      placeholder="Enter a number"
+                      value={attendeeLimit}
+                      onChange={(e) => setAttendeeLimit(e.target.value)}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="flex items-start space-x-2 rounded-md bg-gray-50 p-4">
