@@ -4,7 +4,7 @@ import { X, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const EventPreviewPage = () => {
   const navigate = useNavigate();
@@ -36,6 +36,13 @@ const EventPreviewPage = () => {
     return date.toLocaleDateString('en-US', options);
   };
 
+  const handlePublish = () => {
+    toast.success("Your event has been created successfully!", {
+      description: "Now others can view and register for your event."
+    });
+    navigate("/your-events");
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <header className="border-b border-gray-200 p-4 bg-gray-50 flex justify-end">
@@ -45,22 +52,24 @@ const EventPreviewPage = () => {
       </header>
 
       <div className="flex-1 px-6 py-8 overflow-auto pb-24">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
-        <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
-        
-        {event.tag && (
-          <span className={`${event.tagColor} text-xs px-4 py-2 rounded-full font-medium inline-block mb-4`}>
-            {event.tag}
-          </span>
-        )}
-        
-        <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
-          <div className="mr-3 mt-1">
-            <MapPin className="h-6 w-6 text-gray-500" />
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-800">Address</h3>
-            <p className="text-gray-600">{event.address}</p>
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
+          <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
+          
+          {event.tag && (
+            <span className={`${event.tagColor} text-xs px-4 py-2 rounded-full font-medium inline-block mb-4`}>
+              {event.tag}
+            </span>
+          )}
+          
+          <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
+            <div className="mr-3 mt-1">
+              <MapPin className="h-6 w-6 text-gray-500" />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-800">Address</h3>
+              <p className="text-gray-600">{event.address}</p>
+            </div>
           </div>
         </div>
 
@@ -114,7 +123,7 @@ const EventPreviewPage = () => {
         </Button>
         <Button 
           className="bg-purple-700 hover:bg-purple-800 text-white px-6"
-          onClick={() => navigate("/your-events")}
+          onClick={handlePublish}
         >
           Publish
         </Button>
