@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { User, Calendar, Search, MoreVertical } from "lucide-react";
 import TabBar from "@/components/TabBar";
@@ -17,7 +16,6 @@ const YourEvents = () => {
     }
   };
 
-  // Sample event data
   const yourEvents = [
     {
       id: 1,
@@ -50,7 +48,6 @@ const YourEvents = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
@@ -63,7 +60,6 @@ const YourEvents = () => {
         </div>
       </header>
 
-      {/* Tabs */}
       <div className="flex border-b bg-white">
         {tabs.map((tab) => (
           <button
@@ -80,7 +76,6 @@ const YourEvents = () => {
         ))}
       </div>
 
-      {/* Search Bar */}
       <div className="px-6 py-4">
         <div className="relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -94,7 +89,6 @@ const YourEvents = () => {
         </div>
       </div>
 
-      {/* Create New Event Button */}
       <div className="px-6 mb-4">
         <button className="bg-purple-700 text-white py-3 px-4 rounded-md w-full flex items-center justify-center">
           <span className="mr-2">+</span>
@@ -102,7 +96,6 @@ const YourEvents = () => {
         </button>
       </div>
 
-      {/* Event Cards */}
       <div className="flex-1 overflow-auto px-6 pb-20">
         <div className="space-y-4">
           {yourEvents.map((event, index) => (
@@ -113,7 +106,6 @@ const YourEvents = () => {
                   <p className="text-gray-600">{event.date} {event.time}</p>
                   <p className="text-gray-600">{event.location}</p>
                   
-                  {/* Attendees */}
                   <div className="flex items-center mt-3">
                     <div className="flex -space-x-2 mr-2">
                       {[...Array(Math.min(5, event.attendees))].map((_, i) => (
@@ -121,7 +113,6 @@ const YourEvents = () => {
                           key={i} 
                           className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
                         >
-                          {/* User avatar placeholder */}
                           <img 
                             src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
                             alt="User" 
@@ -130,15 +121,14 @@ const YourEvents = () => {
                         </div>
                       ))}
                     </div>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-500 -ml-2">
                       {event.attendees} people have signed up
                     </span>
                   </div>
                   
-                  {/* Action Buttons - First card only has both buttons */}
                   {index === 0 ? (
                     <div className="flex gap-2 mt-3">
-                      <button className="bg-purple-700 text-white px-4 py-2 rounded text-sm">
+                      <button className="bg-white border border-purple-700 text-purple-700 px-4 py-1 rounded text-sm">
                         Attendance
                       </button>
                       <button className="text-purple-700 px-4 py-2 text-sm">
@@ -159,7 +149,6 @@ const YourEvents = () => {
                     {event.tag}
                   </span>
                   
-                  {/* Three dots menu - for all cards except the first one */}
                   {index !== 0 && (
                     <button className="mt-2">
                       <MoreVertical className="w-5 h-5 text-gray-500" />
@@ -168,14 +157,12 @@ const YourEvents = () => {
                 </div>
               </div>
               
-              {/* Decorative circle */}
               <div className="absolute -right-20 -bottom-20 w-48 h-48 rounded-full bg-purple-100 opacity-50" />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Bottom Tab Bar */}
       <TabBar />
     </div>
   );
