@@ -1,10 +1,9 @@
-
 import React from "react";
-import { X, MapPin } from "lucide-react";
+import { X, MapPin, Calendar, Tag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 const EventPreviewPage = () => {
   const navigate = useNavigate();
@@ -45,24 +44,34 @@ const EventPreviewPage = () => {
       </header>
 
       <div className="flex-1 px-6 py-8 overflow-auto pb-24">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
-        <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
-        
-        {event.tag && (
-          <span className={`${event.tagColor} text-xs px-4 py-2 rounded-full font-medium inline-block mb-4`}>
-            {event.tag}
-          </span>
-        )}
-        
-        <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
-          <div className="mr-3 mt-1">
-            <MapPin className="h-6 w-6 text-gray-500" />
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-800">Address</h3>
-            <p className="text-gray-600">{event.address}</p>
-          </div>
-        </div>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold text-gray-800">{event.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <Calendar className="h-5 w-5 text-gray-500" />
+              <span className="text-gray-700">{formatDate(event.date)} {event.time}</span>
+            </div>
+
+            {event.tag && (
+              <div className="flex items-center space-x-3">
+                <Tag className="h-5 w-5 text-gray-500" />
+                <span className={`${event.tagColor} text-xs px-4 py-2 rounded-full font-medium`}>
+                  {event.tag}
+                </span>
+              </div>
+            )}
+            
+            <div className="flex items-center space-x-3">
+              <MapPin className="h-5 w-5 text-gray-500" />
+              <div>
+                <p className="text-gray-800 font-medium">{event.location}</p>
+                <p className="text-gray-600 text-sm">{event.address}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-2">Description</h2>
