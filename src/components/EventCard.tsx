@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -59,11 +58,8 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
               </Button>
               
               {attendees ? (
-                <div className="flex flex-col items-end">
-                  <span className="text-xs text-gray-500 mb-1">
-                    {attendees} people are attending
-                  </span>
-                  <div className="flex -space-x-2">
+                <div className="flex items-center">
+                  <div className="flex -space-x-2 mr-2">
                     {[...Array(Math.min(5, attendees))].map((_, i) => (
                       <div
                         key={i}
@@ -79,6 +75,9 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
                       </div>
                     ))}
                   </div>
+                  <span className="text-xs text-gray-500">
+                    {attendees} people are attending
+                  </span>
                 </div>
               ) : (
                 <Button variant="ghost" className="text-purple-700 text-sm">
@@ -98,4 +97,3 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
 };
 
 export default EventCard;
-
