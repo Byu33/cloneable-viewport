@@ -1,9 +1,9 @@
+
 import React from "react";
 import { X, MapPin, Calendar, Tag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 const EventPreviewPage = () => {
   const navigate = useNavigate();
@@ -44,11 +44,10 @@ const EventPreviewPage = () => {
       </header>
 
       <div className="flex-1 px-6 py-8 overflow-auto pb-24">
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-2xl font-semibold text-gray-800">{event.title}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
+          <h1 className="text-2xl font-semibold text-gray-800 mb-4">{event.title}</h1>
+          
+          <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <Calendar className="h-5 w-5 text-gray-500" />
               <span className="text-gray-700">{formatDate(event.date)} {event.time}</span>
@@ -70,8 +69,8 @@ const EventPreviewPage = () => {
                 <p className="text-gray-600 text-sm">{event.address}</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-2">Description</h2>
