@@ -104,3 +104,4 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
 };
 
 export default EventCard;
+
