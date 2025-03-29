@@ -30,7 +30,7 @@ const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-[#1A1F2C]">{title}</h3>
           {tag && (
-            <span className={`${tagColor} text-xs px-3 py-1 rounded-full`}>
+            <span className={`${tagColor} text-xs px-3 py-1 rounded-full font-bold text-[13px]`}>
               {tag}
             </span>
           )}
