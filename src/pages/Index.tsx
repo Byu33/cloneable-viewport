@@ -5,10 +5,13 @@ import { useNavigate } from "react-router-dom";
 import EventCard from "@/components/EventCard";
 import TabBar from "@/components/TabBar";
 import CalendarView from "@/components/CalendarView";
+import CheckInDialog from "@/components/CheckInDialog";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("Going");
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [isCheckInOpen, setIsCheckInOpen] = useState(false);
   const tabs = ["Going", "Explore", "Your Events"];
   const navigate = useNavigate();
 
@@ -20,6 +23,11 @@ const Index = () => {
     } else {
       setActiveTab(tab);
     }
+  };
+
+  const handleCheckIn = (event: any) => {
+    setSelectedEvent(event);
+    setIsCheckInOpen(true);
   };
 
   // Mock data for events
@@ -106,7 +114,11 @@ const Index = () => {
           {/* Event Cards */}
           <div className="space-y-4 mt-4">
             {upcomingEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <EventCard 
+                key={event.id} 
+                event={event} 
+                onCheckIn={() => handleCheckIn(event)}
+              />
             ))}
           </div>
         </div>
@@ -121,6 +133,22 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Check In Dialog */}
+      {selectedEvent && (
+        <CheckInDialog
+          open={isCheckInOpen}
+          onOpenChange={setIsCheckInOpen}
+          event={{
+            title: selectedEvent.title,
+            date: selectedEvent.date,
+            time: selectedEvent.time,
+            location: selectedEvent.location,
+            tag: selectedEvent.tag,
+            tagColor: selectedEvent.tagColor,
+          }}
+        />
+      )}
 
       {/* Bottom Tab Bar */}
       <TabBar />

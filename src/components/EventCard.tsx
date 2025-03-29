@@ -1,7 +1,8 @@
 
 import React from "react";
+import { MapPin } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface EventCardProps {
   event: {
@@ -9,17 +10,18 @@ interface EventCardProps {
     title: string;
     time: string;
     location: string;
+    attendees?: number;
     tag?: string;
     tagColor?: string;
-    attendees?: number;
     date: Date;
     status: "upcoming" | "past";
   };
+  onCheckIn?: () => void;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const { title, time, location, tag, tagColor, attendees, status } = event;
-
+const EventCard = ({ event, onCheckIn }: EventCardProps) => {
+  const isUpcoming = event.status === "upcoming";
+  
   const formatDate = (date: Date) => {
     const month = date.toLocaleString('default', { month: 'short' });
     const day = date.getDate();
@@ -27,61 +29,60 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm font-figtree">
-      <div className="flex justify-between items-start mb-2">
+    <div className="bg-white rounded-xl p-5 shadow-sm">
+      <div className="flex justify-between items-start mb-3">
         <div>
-          <h3 className="text-lg font-semibold text-[#1A1F2C]">{title}</h3>
-          <p className="text-gray-600">
-            <span className="font-bold">{formatDate(event.date)}</span> {time}
+          <h3 className="font-semibold text-lg">{event.title}</h3>
+          <p className="text-gray-600 text-sm">
+            {`${formatDate(event.date)} ${event.time}`}
           </p>
-          <p className="text-gray-600">{location}</p>
+          <div className="flex items-center text-gray-600 text-sm mt-1">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span>{event.location}</span>
+          </div>
         </div>
-        
-        {tag && (
-          <span className={`${tagColor} text-xs px-3 py-1 rounded-full font-bold text-[13px]`}>
-            {tag}
+        {event.tag && (
+          <span className={`${event.tagColor || "bg-purple-200 text-purple-700"} text-xs px-3 py-1 rounded-full font-bold`}>
+            {event.tag}
           </span>
         )}
       </div>
-      
-      <div className="flex justify-between items-center mt-3">
-        {status === "upcoming" ? (
-          <>
-            <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
-              Check In
-            </Button>
-            
-            {attendees ? (
-              <div className="flex flex-col items-end">
-                <span className="text-xs text-[#1A1F2C] mb-1">
-                  {attendees} people have signed up
-                </span>
-                <div className="flex -space-x-2">
-                  {[...Array(Math.min(5, attendees))].map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white overflow-hidden"
-                    >
-                      <Avatar className="w-full h-full">
-                        <AvatarImage 
-                          src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
-                          alt="Attendee"
-                        />
-                        <AvatarFallback>U{i+1}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <Button variant="ghost" className="text-purple-700 text-sm">
-                Absence Form
-              </Button>
-            )}
-          </>
+
+      <div className="flex justify-between items-center mt-4">
+        {event.attendees ? (
+          <div className="flex items-center">
+            <div className="flex -space-x-2 mr-2">
+              {[...Array(Math.min(3, event.attendees))].map((_, i) => (
+                <Avatar key={i} className="h-7 w-7 border-2 border-white">
+                  <AvatarFallback className="bg-gray-200 text-xs">
+                    {String.fromCharCode(65 + i)}
+                  </AvatarFallback>
+                </Avatar>
+              ))}
+            </div>
+            <span className="text-sm text-gray-600">
+              {event.attendees} {event.attendees === 1 ? "person" : "people"} going
+            </span>
+          </div>
         ) : (
-          <Button variant="secondary" className="text-sm">
-            Feedback Form
+          <div />
+        )}
+        
+        {isUpcoming && onCheckIn && (
+          <Button 
+            onClick={onCheckIn}
+            className="bg-purple-600 hover:bg-purple-700 text-white rounded-full"
+          >
+            Check In
+          </Button>
+        )}
+        
+        {!isUpcoming && (
+          <Button 
+            variant="outline" 
+            className="text-gray-500 border-gray-300"
+          >
+            Past
           </Button>
         )}
       </div>
