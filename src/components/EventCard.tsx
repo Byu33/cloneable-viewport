@@ -89,7 +89,7 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
         )}
         
         {!isUpcoming && (
-          <div className="ml-auto">
+          <div className="mr-auto">
             <Button 
               variant="outline" 
               className="text-gray-500 border-gray-300 bg-gray-100"
@@ -104,3 +104,4 @@ const EventCard = ({ event, onCheckIn }: EventCardProps) => {
 };
 
 export default EventCard;
+
