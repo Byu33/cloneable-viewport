@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
+import { ArrowLeft, Share2, User, MapPin, X } from "lucide-react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -129,7 +129,10 @@ const EventDetails = () => {
       <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white shadow-lg">
         {isAlreadyAttending ? (
           <div className="space-y-2">
-            <p className="text-center text-purple-600 font-medium">You are attending this event</p>
+            <p className="text-center text-purple-600 font-medium text-base flex items-center justify-center">
+              <X className="w-5 h-5 mr-2 text-gray-400" />
+              <span className="font-bold">You are attending this event</span>
+            </p>
             <Button 
               variant="outline" 
               className="w-full border-purple-300 text-purple-500 hover:bg-purple-50 hover:text-purple-600 py-6"
@@ -151,3 +154,4 @@ const EventDetails = () => {
 };
 
 export default EventDetails;
+
