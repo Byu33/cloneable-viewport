@@ -22,31 +22,40 @@ const YourEvents = () => {
     {
       id: 1,
       title: "Chapter Meeting",
-      date: "Feb 16",
+      date: new Date(2024, 1, 16),
       time: "5:00-6:00PM",
       location: "Everitt Labratory",
       tag: "Sisterhood",
+      tagColor: "bg-purple-200 text-purple-700",
       attendees: 7,
     },
     {
       id: 2,
       title: "Chapter Meeting",
-      date: "Feb 16",
+      date: new Date(2024, 1, 16),
       time: "5:00-6:00PM",
       location: "Everitt Labratory",
       tag: "Sisterhood",
+      tagColor: "bg-purple-200 text-purple-700",
       attendees: 7,
     },
     {
       id: 3,
       title: "Chapter Meeting",
-      date: "Feb 16",
+      date: new Date(2024, 1, 16),
       time: "5:00-6:00PM",
       location: "Everitt Labratory",
       tag: "Sisterhood",
+      tagColor: "bg-purple-200 text-purple-700",
       attendees: 7,
     }
   ];
+
+  const formatDate = (date: Date) => {
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -105,7 +114,9 @@ const YourEvents = () => {
               <div className="flex justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-[#1A1F2C]">{event.title}</h3>
-                  <p className="text-gray-600">{event.date} {event.time}</p>
+                  <p className="text-gray-600">
+                    <span className="font-bold">{formatDate(event.date)}</span> {event.time}
+                  </p>
                   <p className="text-gray-600">{event.location}</p>
                   
                   <div className="flex flex-col mt-3">
@@ -149,9 +160,11 @@ const YourEvents = () => {
                 </div>
                 
                 <div className="flex flex-col items-end">
-                  <span className="bg-purple-200 text-purple-700 px-3 py-1 rounded-full text-xs">
-                    {event.tag}
-                  </span>
+                  {event.tag && (
+                    <span className={`${event.tagColor} text-xs px-3 py-1 rounded-full font-bold text-[13px]`}>
+                      {event.tag}
+                    </span>
+                  )}
                   
                   {index !== 0 && (
                     <button className="mt-2">
