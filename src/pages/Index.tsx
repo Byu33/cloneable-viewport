@@ -1,12 +1,13 @@
 
 import React, { useState } from "react";
-import { Calendar, User, Home, CheckSquare, Menu, ChevronDown } from "lucide-react";
+import { Calendar, User, ChevronDown, ChevronUp } from "lucide-react";
 import EventCard from "@/components/EventCard";
 import TabBar from "@/components/TabBar";
 import CalendarView from "@/components/CalendarView";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("Going");
+  const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
   const tabs = ["Going", "Explore", "Your Events"];
 
   // Mock data for events
@@ -19,7 +20,7 @@ const Index = () => {
       tag: "Required",
       tagColor: "bg-purple-200 text-purple-700",
       date: new Date(),
-      status: "upcoming"
+      status: "upcoming" as const
     },
     {
       id: 2,
@@ -30,7 +31,7 @@ const Index = () => {
       tagColor: "bg-purple-200 text-purple-700",
       attendees: 7,
       date: new Date(),
-      status: "upcoming"
+      status: "upcoming" as const
     }
   ];
 
@@ -43,7 +44,7 @@ const Index = () => {
       date: new Date("2024-02-16"),
       tag: "Risk",
       tagColor: "bg-purple-200 text-purple-700",
-      status: "past"
+      status: "past" as const
     }
   ];
 
@@ -63,37 +64,36 @@ const Index = () => {
       </header>
 
       {/* Tabs */}
-      <div className="px-6">
-        <div className="flex border-b">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              className={`py-3 px-4 relative ${
-                activeTab === tab
-                  ? "text-black font-medium border-b-2 border-black"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+      <div className="flex border-b">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={`flex-1 py-3 text-center ${
+              activeTab === tab
+                ? "text-black font-medium border-b-2 border-black"
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto px-6 py-4">
         {/* Upcoming Events Section */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
+          <button
+            className="flex items-center justify-between w-full mb-2"
+            onClick={() => setIsCalendarExpanded(!isCalendarExpanded)}
+          >
             <h2 className="text-xl font-semibold">Upcoming Events</h2>
-            <button className="flex items-center">
-              <ChevronDown className="w-5 h-5" />
-            </button>
-          </div>
+            {isCalendarExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          </button>
           
           {/* Calendar */}
-          <CalendarView />
+          <CalendarView isExpanded={isCalendarExpanded} />
 
           {/* Event Cards */}
           <div className="space-y-4 mt-4">

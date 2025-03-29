@@ -1,75 +1,194 @@
 
-import React from "react";
+import React, { useState } from "react";
 
-const CalendarView = () => {
-  const days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
-  const currentDate = new Date();
-  const currentDay = currentDate.getDate();
-  
-  // Generate dates for the calendar (simplified version)
-  const calendarDates = [
-    { day: 26, isCurrentMonth: false },
-    { day: 27, isCurrentMonth: false },
-    { day: 28, isCurrentMonth: false },
-    { day: 29, isCurrentMonth: false },
-    { day: 30, isCurrentMonth: true, isToday: true },
-    { day: 31, isCurrentMonth: true },
-    { day: 1, isCurrentMonth: true },
-    { day: 2, isCurrentMonth: true },
-    { day: 3, isCurrentMonth: true },
-    { day: 4, isCurrentMonth: true },
-    { day: 5, isCurrentMonth: true },
-    { day: 6, isCurrentMonth: true },
-    { day: 7, isCurrentMonth: true },
-    { day: 8, isCurrentMonth: true },
+interface CalendarViewProps {
+  isExpanded: boolean;
+}
+
+const CalendarView: React.FC<CalendarViewProps> = ({ isExpanded }) => {
+  // Current month data for the calendar
+  const currentMonth = new Date();
+  const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+  const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+  // Get days from previous month to fill the first week
+  const daysFromPrevMonth = firstDay.getDay();
+  const prevMonthLastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 0).getDate();
+
+  // Generate calendar days
+  const calendarDays = [];
+
+  // Previous month days
+  for (let i = daysFromPrevMonth - 1; i >= 0; i--) {
+    calendarDays.push({
+      day: prevMonthLastDay - i,
+      isCurrentMonth: false,
+      isToday: false,
+    });
+  }
+
+  // Current month days
+  const today = new Date();
+  for (let i = 1; i <= lastDay.getDate(); i++) {
+    calendarDays.push({
+      day: i,
+      isCurrentMonth: true,
+      isToday:
+        i === today.getDate() &&
+        currentMonth.getMonth() === today.getMonth() &&
+        currentMonth.getFullYear() === today.getFullYear(),
+    });
+  }
+
+  // Next month days to complete the grid
+  const remainingDays = 42 - calendarDays.length; // 6 rows of 7 days
+  for (let i = 1; i <= remainingDays; i++) {
+    calendarDays.push({
+      day: i,
+      isCurrentMonth: false,
+      isToday: false,
+    });
+  }
+
+  // Group days into weeks for the expanded calendar
+  const weeks = [];
+  for (let i = 0; i < calendarDays.length; i += 7) {
+    weeks.push(calendarDays.slice(i, i + 7));
+  }
+
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
   ];
 
-  // Divide dates into weeks
-  const firstWeek = calendarDates.slice(0, 7);
-  const secondWeek = calendarDates.slice(7, 14);
+  // For compact view, just show 2 weeks
+  const compactFirstWeek = calendarDays.slice(0, 7);
+  const compactSecondWeek = calendarDays.slice(7, 14);
+  
+  const days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
 
   return (
-    <div className="bg-white rounded-xl p-4">
-      {/* Days of the week */}
-      <div className="grid grid-cols-7 text-center mb-2">
-        {days.map((day) => (
-          <div key={day} className="text-xs font-medium">
-            {day}
+    <div className="bg-white rounded-xl p-4 shadow-sm">
+      {isExpanded ? (
+        // Expanded Calendar View
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-medium">
+              {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+            </h3>
+            <div className="flex gap-2">
+              <button className="p-1 rounded-full hover:bg-gray-100">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button className="p-1 rounded-full hover:bg-gray-100">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* Calendar dates - first week */}
-      <div className="grid grid-cols-7 text-center mb-2">
-        {firstWeek.map((date) => (
-          <div
-            key={`first-${date.day}`}
-            className={`text-sm py-1 ${
-              date.isToday
-                ? "bg-black text-white rounded-full w-7 h-7 flex items-center justify-center mx-auto"
-                : date.isCurrentMonth
-                ? "text-black"
-                : "text-gray-300"
-            }`}
-          >
-            {date.day}
-          </div>
-        ))}
-      </div>
+          <div className="grid grid-cols-7 text-center gap-y-2">
+            {days.map((day) => (
+              <div key={day} className="text-sm font-medium">{day}</div>
+            ))}
 
-      {/* Calendar dates - second week */}
-      <div className="grid grid-cols-7 text-center">
-        {secondWeek.map((date) => (
-          <div
-            key={`second-${date.day}`}
-            className={`text-sm py-1 ${
-              date.isCurrentMonth ? "text-black" : "text-gray-300"
-            }`}
-          >
-            {date.day}
+            {weeks.map((week, weekIndex) =>
+              week.map((day, dayIndex) => (
+                <div
+                  key={`${weekIndex}-${dayIndex}`}
+                  className={`py-2 relative ${
+                    day.isToday
+                      ? "bg-purple-100 rounded-full font-bold text-purple-900"
+                      : day.isCurrentMonth
+                        ? "font-medium"
+                        : "text-gray-300"
+                  }`}
+                >
+                  {day.day}
+                  {/* Example event indicators */}
+                  {day.isCurrentMonth && day.day === 30 && (
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-500 rounded-full"></div>
+                  )}
+                  {day.isCurrentMonth && day.day === 2 && (
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-500 rounded-full"></div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
-        ))}
-      </div>
+
+          {/* Events for selected day */}
+          <div className="mt-4 border-t pt-4">
+            <h4 className="font-medium mb-2">Events on Selected Day</h4>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div>
+                  <p className="text-sm font-medium">Chapter Meeting</p>
+                  <p className="text-xs text-gray-500">5:00-6:00PM</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 p-2 rounded hover:bg-gray-50">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div>
+                  <p className="text-sm font-medium">Daily Standup Call</p>
+                  <p className="text-xs text-gray-500">5:00-6:00PM</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // Compact Calendar View
+        <div className="grid grid-cols-7 text-center gap-y-2">
+          {days.map((day) => (
+            <div key={day} className="text-sm font-medium">{day}</div>
+          ))}
+
+          {/* First Week */}
+          {compactFirstWeek.map((date, index) => (
+            <div
+              key={`first-${index}`}
+              className={`text-sm py-1 ${
+                date.isToday
+                  ? "bg-purple-100 text-purple-900 rounded-full font-bold w-7 h-7 flex items-center justify-center mx-auto"
+                  : date.isCurrentMonth
+                  ? "font-medium"
+                  : "text-gray-300"
+              }`}
+            >
+              {date.day}
+            </div>
+          ))}
+
+          {/* Second Week */}
+          {compactSecondWeek.map((date, index) => (
+            <div
+              key={`second-${index}`}
+              className={`text-sm py-1 ${
+                date.isCurrentMonth ? "font-medium" : "text-gray-300"
+              }`}
+            >
+              {date.day}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
