@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Calendar, User, ChevronDown, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -61,7 +62,7 @@ const Index = () => {
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 bg-white">
-        <h1 className="text-2xl font-semibold">Events</h1>
+        <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
           <button className="p-1 bg-white rounded-full">
             <Calendar className="w-6 h-6" />
@@ -126,3 +127,4 @@ const Index = () => {
 };
 
 export default Index;
+
