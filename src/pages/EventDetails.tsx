@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { ArrowLeft, Share2, User, MapPin } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,23 +9,7 @@ import TabBar from "@/components/TabBar";
 const EventDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  // This would typically come from your authentication/state management
-  const [isAttending, setIsAttending] = useState(false);
   
-  // Simulate checking if the user is attending based on the route
-  useEffect(() => {
-    // Check if we came from the "Going" tab - in a real app, you'd check against user data
-    const referrer = document.referrer;
-    if (referrer.includes('/') && !referrer.includes('/explore')) {
-      setIsAttending(true);
-    }
-  }, []);
-  
-  const handleCancelAttendance = () => {
-    setIsAttending(false);
-    // In a real app, you would call an API to update the user's attendance status
-  };
-
   const event = {
     id: 1,
     title: "Daily Standup Call",
@@ -130,24 +114,9 @@ const EventDetails = () => {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white shadow-lg">
-        {isAttending ? (
-          <div className="space-y-2">
-            <div className="text-center text-green-700 font-medium mb-2">
-              You're attending this event
-            </div>
-            <Button 
-              variant="outline" 
-              className="w-full border-red-300 text-red-600 hover:bg-red-50"
-              onClick={handleCancelAttendance}
-            >
-              Cancel Attendance
-            </Button>
-          </div>
-        ) : (
-          <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
-            Sign Up
-          </Button>
-        )}
+        <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6">
+          Sign Up
+        </Button>
       </div>
 
       <TabBar />
