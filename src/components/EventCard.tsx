@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -38,17 +39,18 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       
       {status === "past" && (
         <div className="text-sm text-gray-600 mb-2">
-          {formatDate(event.date)} · {time}
+          {formatDate(event.date)} {time}
         </div>
       )}
       
       {status === "upcoming" && (
-        <div className="text-sm text-gray-600 mb-2">{time}</div>
+        <>
+          <p className="text-gray-600">{formatDate(event.date)} {time}</p>
+          <p className="text-gray-600">{location}</p>
+        </>
       )}
       
-      <div className="text-sm text-gray-600 mb-3">{location}</div>
-      
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-3">
         {status === "upcoming" ? (
           <>
             <Button className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md">
