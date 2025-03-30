@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, CalendarIcon, MapPin, Plus, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +24,6 @@ import {
 } from "@/components/ui/command";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Define categories with unique identifiers and color variations
 const categories = [
   { id: "social", name: "Social", color: "bg-purple-600 text-white" },
   { id: "professional", name: "Professional", color: "bg-purple-600 text-white" },
@@ -55,7 +53,6 @@ const CreateEventPage = () => {
   const [requiredForMembers, setRequiredForMembers] = useState<string[]>([]);
   const [requiredSearchQuery, setRequiredSearchQuery] = useState("");
   
-  // Update the individual members list with avatar URLs
   const individualMembers = [
     { id: "1", name: "Emma Johnson", avatarUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" },
     { id: "2", name: "Olivia Davis", avatarUrl: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b" },
@@ -64,14 +61,12 @@ const CreateEventPage = () => {
     { id: "5", name: "Isabella Thompson", avatarUrl: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b" },
   ];
   
-  // Define group options for search
   const groups = [
     { id: "members", name: "All Members", key: "allMembers" },
     { id: "candidates", name: "All Candidates", key: "allCandidates" },
     { id: "officers", name: "All Officers", key: "allOfficers" },
   ];
   
-  // Filter members and groups based on search query
   const filteredMembers = individualMembers.filter(member =>
     member.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -80,7 +75,6 @@ const CreateEventPage = () => {
     group.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
-  // Filter for required members search
   const filteredRequiredMembers = individualMembers.filter(member =>
     member.name.toLowerCase().includes(requiredSearchQuery.toLowerCase())
   );
@@ -100,7 +94,23 @@ const CreateEventPage = () => {
   };
 
   const handleNextClick = () => {
-    navigate("/create-event/details");
+    const newEvent = {
+      title: document.getElementById('title')?.value as string || "New Event",
+      date: date || new Date(),
+      time: `${
+        (document.querySelector('input[type="time"]') as HTMLInputElement)?.value || "12:00"
+      }-${
+        (document.querySelectorAll('input[type="time"]')[1] as HTMLInputElement)?.value || "13:00"
+      }`,
+      location: (document.getElementById('location') as HTMLInputElement)?.value || "No location specified",
+      address: (document.getElementById('location') as HTMLInputElement)?.value || "",
+      tag: selectedCategories.length > 0 ? selectedCategories[0] : undefined,
+      tagColor: selectedCategories.length > 0 ? "bg-purple-200 text-purple-700" : undefined,
+      description: "Event details will be added in the next step.",
+      hosts: []
+    };
+    
+    navigate("/create-event/details", { state: { event: newEvent } });
   };
 
   const toggleMemberSelection = (id: string) => {
@@ -118,7 +128,6 @@ const CreateEventPage = () => {
     }));
   };
 
-  // Handle group selection from search results
   const handleGroupSelect = (groupId: string) => {
     const group = groups.find(g => g.id === groupId);
     if (group && group.key) {
@@ -126,7 +135,6 @@ const CreateEventPage = () => {
     }
   };
   
-  // Functions for required attendees
   const toggleRequiredMemberSelection = (id: string) => {
     setRequiredForMembers(prev => 
       prev.includes(id) 
@@ -149,7 +157,6 @@ const CreateEventPage = () => {
     }
   };
 
-  // Modify the rendering of members to include Avatar
   const renderMemberItem = (
     member: typeof individualMembers[0], 
     toggleMemberSelection: (id: string) => void, 
@@ -192,7 +199,6 @@ const CreateEventPage = () => {
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">Create a New Event</h1>
         
         <div className="space-y-6">
-          {/* Title */}
           <div className="space-y-2">
             <label htmlFor="title" className="block text-gray-700 font-medium">
               Title of Event
@@ -204,7 +210,6 @@ const CreateEventPage = () => {
             />
           </div>
 
-          {/* Date and Time */}
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="block text-gray-700 font-medium">Date</label>
@@ -254,7 +259,6 @@ const CreateEventPage = () => {
             </div>
           </div>
 
-          {/* Location */}
           <div className="space-y-2">
             <label htmlFor="location" className="block text-gray-700 font-medium">
               Location
@@ -269,7 +273,6 @@ const CreateEventPage = () => {
             </div>
           </div>
 
-          {/* Category */}
           <div className="space-y-3">
             <label className="block text-gray-700 font-medium">
               Category
@@ -291,7 +294,6 @@ const CreateEventPage = () => {
             </div>
           </div>
 
-          {/* Is this event required? */}
           <div className="flex items-center justify-between">
             <label className="text-gray-700 font-medium">
               Is this Event Required?
@@ -310,12 +312,10 @@ const CreateEventPage = () => {
                 onValueChange={setRequiredSearchQuery}
               />
               <CommandList>
-                {/* No results message */}
                 {filteredRequiredGroups.length === 0 && filteredRequiredMembers.length === 0 && (
                   <CommandEmpty>No results found.</CommandEmpty>
                 )}
                 
-                {/* Groups section */}
                 {filteredRequiredGroups.length > 0 && (
                   <CommandGroup heading="Required for Groups">
                     {filteredRequiredGroups.map(group => (
@@ -338,7 +338,6 @@ const CreateEventPage = () => {
                   </CommandGroup>
                 )}
                 
-                {/* Members section */}
                 {filteredRequiredMembers.length > 0 && (
                   <CommandGroup heading="Required for Members">
                     {filteredRequiredMembers.map(member => 
@@ -348,7 +347,6 @@ const CreateEventPage = () => {
                 )}
               </CommandList>
               
-              {/* Selected members counter */}
               {requiredForMembers.length > 0 && (
                 <div className="px-4 py-2 text-sm text-gray-500 border-t">
                   {requiredForMembers.length} individual member{requiredForMembers.length !== 1 ? 's' : ''} required to attend
@@ -357,7 +355,6 @@ const CreateEventPage = () => {
             </Command>
           )}
 
-          {/* Who Can Attend - Toggle and Direct Search Interface */}
           <div className="flex items-center justify-between">
             <label className="text-gray-700 font-medium">
               Restrict who can attend?
@@ -376,12 +373,10 @@ const CreateEventPage = () => {
                 onValueChange={setSearchQuery}
               />
               <CommandList>
-                {/* No results message */}
                 {filteredGroups.length === 0 && filteredMembers.length === 0 && (
                   <CommandEmpty>No results found.</CommandEmpty>
                 )}
                 
-                {/* Groups section */}
                 {filteredGroups.length > 0 && (
                   <CommandGroup heading="Groups">
                     {filteredGroups.map(group => (
@@ -404,7 +399,6 @@ const CreateEventPage = () => {
                   </CommandGroup>
                 )}
                 
-                {/* Members section */}
                 {filteredMembers.length > 0 && (
                   <CommandGroup heading="Members">
                     {filteredMembers.map(member => 
@@ -414,7 +408,6 @@ const CreateEventPage = () => {
                 )}
               </CommandList>
               
-              {/* Selected members counter */}
               {selectedMembers.length > 0 && (
                 <div className="px-4 py-2 text-sm text-gray-500 border-t">
                   {selectedMembers.length} individual member{selectedMembers.length !== 1 ? 's' : ''} selected
@@ -423,7 +416,6 @@ const CreateEventPage = () => {
             </Command>
           )}
 
-          {/* Add Event Hosts */}
           <button className="flex items-center text-purple-700 font-medium mt-4">
             <Plus className="h-5 w-5 mr-2" />
             Add Event Hosts

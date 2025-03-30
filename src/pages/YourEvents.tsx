@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Calendar, Search, MapPin } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import CheckInDialog from "@/components/CheckInDialog";
+import { getEvents, Event } from "@/utils/eventStorage";
 
 const YourEvents = () => {
   const navigate = useNavigate();
@@ -12,6 +13,57 @@ const YourEvents = () => {
   const tabs = ["Going", "Explore", "Your Events"];
   const [checkInEvent, setCheckInEvent] = useState<any>(null);
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    const hardcodedEvents = [
+      {
+        id: 1,
+        title: "Chapter Meeting",
+        date: new Date(2024, 1, 16),
+        time: "5:00-6:00PM",
+        location: "Everitt Labratory",
+        tag: "Sisterhood",
+        tagColor: "bg-purple-200 text-purple-700",
+        attendees: 7,
+        status: "upcoming" as const,
+      },
+      {
+        id: 2,
+        title: "Daily Standup Call",
+        date: new Date(2024, 1, 16),
+        time: "5:00-6:00PM",
+        location: "Everitt Labratory",
+        tag: "Sisterhood",
+        tagColor: "bg-purple-200 text-purple-700",
+        attendees: 7,
+        status: "upcoming" as const,
+      },
+      {
+        id: 3,
+        title: "Chapter Meeting",
+        date: new Date(2024, 1, 16),
+        time: "5:00-6:00PM",
+        location: "Everitt Labratory",
+        tag: "Sisterhood",
+        tagColor: "bg-purple-200 text-purple-700",
+        attendees: 7,
+        status: "upcoming" as const,
+      }
+    ];
+    
+    const savedEvents = getEvents();
+    
+    const uniqueEvents = [...hardcodedEvents];
+    
+    savedEvents.forEach(savedEvent => {
+      if (!uniqueEvents.some(event => event.id === savedEvent.id)) {
+        uniqueEvents.push(savedEvent);
+      }
+    });
+    
+    setEvents(uniqueEvents);
+  }, []);
 
   const handleTabClick = (tab: string) => {
     if (tab === "Going") {
@@ -22,39 +74,6 @@ const YourEvents = () => {
       setActiveTab(tab);
     }
   };
-
-  const yourEvents = [
-    {
-      id: 1,
-      title: "Chapter Meeting",
-      date: new Date(2024, 1, 16),
-      time: "5:00-6:00PM",
-      location: "Everitt Labratory",
-      tag: "Sisterhood",
-      tagColor: "bg-purple-200 text-purple-700",
-      attendees: 7,
-    },
-    {
-      id: 2,
-      title: "Daily Standup Call",
-      date: new Date(2024, 1, 16),
-      time: "5:00-6:00PM",
-      location: "Everitt Labratory",
-      tag: "Sisterhood",
-      tagColor: "bg-purple-200 text-purple-700",
-      attendees: 7,
-    },
-    {
-      id: 3,
-      title: "Chapter Meeting",
-      date: new Date(2024, 1, 16),
-      time: "5:00-6:00PM",
-      location: "Everitt Labratory",
-      tag: "Sisterhood",
-      tagColor: "bg-purple-200 text-purple-700",
-      attendees: 7,
-    }
-  ];
 
   const formatDate = (date: Date) => {
     const month = date.toLocaleString('default', { month: 'short' });
@@ -129,7 +148,7 @@ const YourEvents = () => {
 
       <div className="flex-1 overflow-auto px-6 pb-20">
         <div className="space-y-4">
-          {yourEvents.map((event, index) => (
+          {events.map((event, index) => (
             <div key={event.id} className="bg-white rounded-lg p-4 shadow-sm relative">
               <div className="flex justify-between">
                 <div>
@@ -146,7 +165,7 @@ const YourEvents = () => {
                     {index === 1 ? (
                       <>
                         <div className="flex -space-x-2">
-                          {[...Array(Math.min(5, event.attendees))].map((_, i) => (
+                          {[...Array(Math.min(5, event.attendees || 0))].map((_, i) => (
                             <div 
                               key={i} 
                               className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
@@ -162,16 +181,16 @@ const YourEvents = () => {
                           ))}
                         </div>
                         <span className="text-sm text-[#1A1F2C] mt-1">
-                          {event.attendees} people have signed up
+                          {event.attendees || 0} people have signed up
                         </span>
                       </>
                     ) : (
                       <>
                         <span className="text-sm text-[#1A1F2C] mb-1">
-                          {event.attendees} people have signed up
+                          {event.attendees || 0} people have signed up
                         </span>
                         <div className="flex -space-x-2">
-                          {[...Array(Math.min(5, event.attendees))].map((_, i) => (
+                          {[...Array(Math.min(5, event.attendees || 0))].map((_, i) => (
                             <div 
                               key={i} 
                               className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"

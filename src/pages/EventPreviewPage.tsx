@@ -1,16 +1,18 @@
 
 import React from "react";
 import { X, MapPin } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { saveEvent } from "@/utils/eventStorage";
 
 const EventPreviewPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   
-  const event = {
-    id: 1,
+  // Use hardcoded event data when no state is provided
+  const event = location.state?.event || {
     title: "Daily Standup Call",
     date: new Date("2024-02-16"),
     time: "5:00-6:00PM",
@@ -31,6 +33,9 @@ const EventPreviewPage = () => {
   };
 
   const handlePublish = () => {
+    // Save the event to localStorage
+    saveEvent(event);
+    
     toast.success("Your event has been created successfully!", {
       description: "Now others can view and register for your event."
     });
