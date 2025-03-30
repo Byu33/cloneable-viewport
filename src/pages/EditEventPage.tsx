@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, Save } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,6 +27,7 @@ const EditEventPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [notifyAttendees, setNotifyAttendees] = useState(false);
+  const [activeTab, setActiveTab] = useState("details");
 
   // Mock event data - in a real app, you would fetch this based on the ID
   const eventData = {
@@ -66,6 +67,16 @@ const EditEventPage = () => {
     navigate("/your-events");
   };
 
+  const handleNextTab = () => {
+    if (activeTab === "details") {
+      setActiveTab("content");
+    } else if (activeTab === "content") {
+      setActiveTab("logistics");
+    } else if (activeTab === "logistics") {
+      handleSubmit();
+    }
+  };
+
   const categories = [
     { id: 1, name: "Sisterhood", selected: true, color: "bg-purple-700 text-white" },
     { id: 2, name: "Professional", selected: false, color: "bg-gray-200 text-gray-800" },
@@ -86,42 +97,42 @@ const EditEventPage = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <header className="p-4 flex items-center bg-white border-b">
+    <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
+      <header className="p-4 flex items-center bg-white border-b sticky top-0 z-10">
         <button className="mr-4" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="text-xl font-semibold">Edit Event</h1>
       </header>
 
-      <div className="flex-1 pb-20">
-        <div className="p-4">
-          <div className="flex items-center mb-6">
-            <Checkbox 
-              id="notify-attendees"
-              checked={notifyAttendees}
-              onCheckedChange={(checked) => setNotifyAttendees(!!checked)}
-              className="border-purple-300 data-[state=checked]:bg-purple-700"
-            />
-            <label htmlFor="notify-attendees" className="ml-2 text-sm font-medium text-purple-700">
-              Notify Attendees about Changes
-            </label>
-          </div>
+      <div className="flex-1">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 sticky top-[60px] bg-white z-10 border-b">
+            <TabsTrigger value="details" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
+              Details
+            </TabsTrigger>
+            <TabsTrigger value="content" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
+              Content
+            </TabsTrigger>
+            <TabsTrigger value="logistics" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
+              Logistics
+            </TabsTrigger>
+          </TabsList>
 
-          <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-4">
-              <TabsTrigger value="details" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
-                Details
-              </TabsTrigger>
-              <TabsTrigger value="content" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
-                Content
-              </TabsTrigger>
-              <TabsTrigger value="logistics" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
-                Logistics
-              </TabsTrigger>
-            </TabsList>
+          <div className="p-4">
+            <div className="flex items-center mb-6">
+              <Checkbox 
+                id="notify-attendees"
+                checked={notifyAttendees}
+                onCheckedChange={(checked) => setNotifyAttendees(!!checked)}
+                className="border-purple-300 data-[state=checked]:bg-purple-700"
+              />
+              <label htmlFor="notify-attendees" className="ml-2 text-sm font-medium text-purple-700">
+                Notify Attendees about Changes
+              </label>
+            </div>
 
-            <TabsContent value="details" className="space-y-4">
+            <TabsContent value="details" className="space-y-4 mt-0">
               <div className="space-y-2">
                 <label htmlFor="title" className="text-sm font-medium">
                   Title of Event
@@ -213,7 +224,7 @@ const EditEventPage = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="content">
+            <TabsContent value="content" className="mt-0">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="description" className="text-sm font-medium">
@@ -229,7 +240,7 @@ const EditEventPage = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="logistics">
+            <TabsContent value="logistics" className="mt-0">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="additionalInfo" className="text-sm font-medium">
@@ -244,54 +255,64 @@ const EditEventPage = () => {
                 </div>
               </div>
             </TabsContent>
-          </Tabs>
 
-          <div className="flex justify-between mt-8">
-            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline" className="text-red-600 border-red-200">
-                  Cancel Event
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <div className="py-2">
-                  <label htmlFor="cancel-reason" className="text-sm font-medium">
-                    Reason (optional)
-                  </label>
-                  <Textarea
-                    id="cancel-reason"
-                    placeholder="Let attendees know why this event is being cancelled..."
-                    value={cancelReason}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Nevermind</AlertDialogCancel>
-                  <AlertDialogAction 
-                    className="bg-red-600 hover:bg-red-700"
-                    onClick={handleCancel}
-                  >
-                    Yes, Cancel Event
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <div className="flex justify-between mt-8">
+              <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="text-red-600 border-red-200">
+                    Cancel Event
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="py-2">
+                    <label htmlFor="cancel-reason" className="text-sm font-medium">
+                      Reason (optional)
+                    </label>
+                    <Textarea
+                      id="cancel-reason"
+                      placeholder="Let attendees know why this event is being cancelled..."
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Nevermind</AlertDialogCancel>
+                    <AlertDialogAction 
+                      className="bg-red-600 hover:bg-red-700"
+                      onClick={handleCancel}
+                    >
+                      Yes, Cancel Event
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
-            <Button 
-              className="bg-purple-700 hover:bg-purple-800 text-white"
-              onClick={handleSubmit}
-            >
-              Next
-            </Button>
+              <Button 
+                className="bg-purple-700 hover:bg-purple-800 text-white"
+                onClick={handleNextTab}
+              >
+                {activeTab === "logistics" ? "Save" : "Next"}
+              </Button>
+            </div>
           </div>
-        </div>
+        </Tabs>
+      </div>
+
+      {/* Fixed Save button at the bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t flex justify-end z-20">
+        <Button 
+          className="bg-purple-700 hover:bg-purple-800 text-white"
+          onClick={handleSubmit}
+        >
+          <Save className="mr-1" /> Save
+        </Button>
       </div>
     </div>
   );
