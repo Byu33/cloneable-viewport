@@ -25,6 +25,15 @@ import {
   CommandList
 } from "@/components/ui/command";
 
+// Define categories with unique identifiers and color variations
+const categories = [
+  { id: "social", name: "Social", color: "bg-blue-500 text-white" },
+  { id: "professional", name: "Professional", color: "bg-green-500 text-white" },
+  { id: "networking", name: "Networking", color: "bg-purple-500 text-white" },
+  { id: "workshop", name: "Workshop", color: "bg-orange-500 text-white" },
+  { id: "conference", name: "Conference", color: "bg-red-500 text-white" },
+];
+
 const CreateEventPage = () => {
   const navigate = useNavigate();
   const [date, setDate] = useState<Date | undefined>(undefined);
