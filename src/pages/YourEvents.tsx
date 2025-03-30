@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Calendar, Search, MoreVertical, MapPin } from "lucide-react";
@@ -65,10 +64,6 @@ const YourEvents = () => {
 
   const handleAttendance = (eventId: number) => {
     navigate(`/event-attendance/${eventId}`);
-  };
-
-  const handleEditEvent = (eventId: number) => {
-    navigate(`/edit-event/${eventId}`);
   };
 
   const handleCreateEvent = () => {
@@ -199,21 +194,13 @@ const YourEvents = () => {
                       >
                         Attendance
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        className="text-purple-700 text-sm"
-                        onClick={() => handleEditEvent(event.id)}
-                      >
+                      <Button variant="ghost" className="text-purple-700 text-sm">
                         Edit Event
                       </Button>
                     </div>
                   ) : (
                     <div className="mt-3">
-                      <Button 
-                        variant="ghost" 
-                        className="text-purple-700 text-sm px-0 py-2"
-                        onClick={() => handleEditEvent(event.id)}
-                      >
+                      <Button variant="ghost" className="text-purple-700 text-sm px-0 py-2">
                         Edit Event
                       </Button>
                     </div>
