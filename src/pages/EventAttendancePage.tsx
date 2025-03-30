@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ArrowLeft, ChevronDown, ChevronUp, Plus, ChevronRight, Edit } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -93,6 +92,16 @@ const EventAttendancePage = () => {
             </div>
             {isCheckedInOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
           </button>
+          
+          {/* Always show circle avatars, expand to full list when open */}
+          <div className="px-4 pb-4 flex -space-x-2 overflow-x-auto">
+            {checkedInUsers.map(user => (
+              <Avatar key={user.id} className="h-10 w-10 border-2 border-white">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
+              </Avatar>
+            ))}
+          </div>
           
           {isCheckedInOpen && (
             <div className="px-4 pb-4">
