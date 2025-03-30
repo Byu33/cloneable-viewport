@@ -1,9 +1,9 @@
 
 import React, { useState } from "react";
-import { Calendar, User, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import YourEventCard from "@/components/YourEventCard";
 import TabBar from "@/components/TabBar";
-import CalendarView from "@/components/CalendarView";
 
 interface Event {
   id: number;
@@ -18,7 +18,19 @@ interface Event {
 }
 
 const YourEvents = () => {
-  const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState("Your Events");
+  const navigate = useNavigate();
+  const tabs = ["Going", "Explore", "Your Events"];
+
+  const handleTabClick = (tab: string) => {
+    if (tab === "Going") {
+      navigate("/");
+    } else if (tab === "Explore") {
+      navigate("/explore");
+    } else {
+      setActiveTab(tab);
+    }
+  };
 
   // Mock data for events
   const upcomingEvents: Event[] = [
@@ -63,7 +75,7 @@ const YourEvents = () => {
     <div className="flex flex-col h-screen bg-gray-50 font-figtree">
       {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 bg-white">
-        <h1 className="text-2xl font-semibold font-big-shoulders">Your Events</h1>
+        <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
           <button className="p-1 bg-white rounded-full">
             <Calendar className="w-6 h-6" />
@@ -74,30 +86,46 @@ const YourEvents = () => {
         </div>
       </header>
 
+      {/* Tabs */}
+      <div className="flex border-b bg-white">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={`flex-1 py-3 text-center bg-white ${
+              activeTab === tab
+                ? "text-black font-medium border-b-2 border-black"
+                : "text-gray-500"
+            }`}
+            onClick={() => handleTabClick(tab)}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
       {/* Main Content */}
       <div className="flex-1 overflow-auto px-6 py-4">
-        {/* Calendar Section */}
-        <div className="mb-6">
-          {/* Calendar */}
-          <CalendarView 
-            isExpanded={isCalendarExpanded} 
-            title="Your Events"
-            onToggleExpand={() => setIsCalendarExpanded(!isCalendarExpanded)}
-          />
-
-          {/* Event Cards */}
-          <div className="space-y-4 mt-4">
-            {upcomingEvents.map((event) => (
-              <YourEventCard 
-                key={event.id} 
-                event={event}
-              />
-            ))}
-          </div>
+        {/* Create Event Button */}
+        <button 
+          onClick={() => navigate("/create-event")}
+          className="w-full bg-purple-700 text-white py-3 rounded-lg mb-6 font-medium"
+        >
+          Create an Event
+        </button>
+        
+        {/* Event Cards */}
+        <div className="space-y-4 mt-4">
+          <h2 className="text-xl font-semibold mb-4">Upcoming Events</h2>
+          {upcomingEvents.map((event) => (
+            <YourEventCard 
+              key={event.id} 
+              event={event}
+            />
+          ))}
         </div>
 
         {/* Past Events Section */}
-        <div>
+        <div className="mt-6">
           <h2 className="text-xl font-semibold mb-4">Past Events</h2>
           <div className="space-y-4">
             {pastEvents.map((event) => (
