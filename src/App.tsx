@@ -25,7 +25,6 @@ import TaskDetailPage from "./pages/TaskDetailPage";
 import TaskFilterPage from "./pages/TaskFilterPage";
 import CreateTaskPage from "./pages/CreateTaskPage";
 import DuesPage from "./pages/DuesPage";
-import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -55,7 +54,6 @@ const App = () => (
           <Route path="/todo/filter" element={<TaskFilterPage />} />
           <Route path="/task/:id" element={<TaskDetailPage />} />
           <Route path="/create-task" element={<CreateTaskPage />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
           
           {/* Other Menu Pages */}
           <Route path="/sister-points" element={<SisterPointsPage />} />

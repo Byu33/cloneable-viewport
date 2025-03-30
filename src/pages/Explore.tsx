@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { User, Calendar, Search, Bell } from "lucide-react";
+import { User, Calendar, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TabBar from "@/components/TabBar";
 import ExploreEventCard from "@/components/ExploreEventCard";
@@ -18,14 +17,6 @@ const Explore = () => {
     } else {
       setActiveTab(tab);
     }
-  };
-
-  const handleNotifications = () => {
-    navigate("/notifications");
-  };
-
-  const handleProfile = () => {
-    navigate("/profile");
   };
 
   // Sample event data for different categories
@@ -50,10 +41,7 @@ const Explore = () => {
           <button className="p-1 bg-white rounded-full">
             <Calendar className="w-6 h-6" />
           </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
-            <Bell className="w-6 h-6" />
-          </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleProfile}>
+          <button className="p-1 bg-white rounded-full">
             <User className="w-6 h-6" />
           </button>
         </div>
