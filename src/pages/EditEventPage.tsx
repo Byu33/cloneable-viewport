@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { X, CalendarIcon, MapPin, Plus, Upload, AlertCircle } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -27,6 +28,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 
+// Define categories with unique identifiers and color variations
 const categories = [
   { id: "social", name: "Social", color: "bg-purple-600 text-white" },
   { id: "professional", name: "Professional", color: "bg-purple-600 text-white" },
@@ -40,6 +42,7 @@ const EditEventPage = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("details");
   
+  // Details Tab State
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [startTime, setStartTime] = useState("");
@@ -56,10 +59,12 @@ const EditEventPage = () => {
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   
+  // Content Tab State
   const [description, setDescription] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
+  // Logistics Tab State
   const [budget, setBudget] = useState("");
   const [customQuestions, setCustomQuestions] = useState<string[]>([]);
   const [showAddQuestion, setShowAddQuestion] = useState(false);
@@ -67,8 +72,10 @@ const EditEventPage = () => {
   const [limitAttendees, setLimitAttendees] = useState(false);
   const [attendeeLimit, setAttendeeLimit] = useState("");
   
+  // Edit-specific state
   const [notifyAttendees, setNotifyAttendees] = useState(false);
   
+  // Mock data for this example
   const individualMembers = [
     { id: "1", name: "Emma Johnson", avatarUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" },
     { id: "2", name: "Olivia Davis", avatarUrl: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b" },
@@ -77,12 +84,14 @@ const EditEventPage = () => {
     { id: "5", name: "Isabella Thompson", avatarUrl: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b" },
   ];
   
+  // Define group options for search
   const groups = [
     { id: "members", name: "All Members", key: "allMembers" },
     { id: "candidates", name: "All Candidates", key: "allCandidates" },
     { id: "officers", name: "All Officers", key: "allOfficers" },
   ];
   
+  // Filtered data for searches
   const filteredMembers = individualMembers.filter(member =>
     member.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -91,8 +100,11 @@ const EditEventPage = () => {
     group.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
+  // Mock event data - would be fetched from API in real implementation
   useEffect(() => {
+    // Simulate fetching event data
     const fetchEvent = () => {
+      // Mock data for example
       setTimeout(() => {
         setTitle("Chapter Meeting");
         setDate(new Date(2024, 1, 16));
@@ -102,12 +114,14 @@ const EditEventPage = () => {
         setSelectedCategories(["Sisterhood"]);
         setDescription("Monthly chapter meeting to discuss upcoming events and chapter business.");
         setBudget("200");
+        // Set other fields as needed
       }, 500);
     };
     
     fetchEvent();
   }, [id]);
   
+  // Event handlers
   const handleCategorySelect = (categoryName: string) => {
     setSelectedCategories(prev => {
       if (prev.includes(categoryName)) {
@@ -141,6 +155,7 @@ const EditEventPage = () => {
     }));
   };
 
+  // Handle group selection from search results
   const handleGroupSelect = (groupId: string) => {
     const group = groups.find(g => g.id === groupId);
     if (group && group.key) {
@@ -149,17 +164,25 @@ const EditEventPage = () => {
   };
   
   const handleSave = () => {
+    // In a real app, you would save the data to your backend here
+    
+    // Show success message
     toast.success("Event updated successfully");
+    
+    // Navigate back to your events page
     navigate("/your-events");
   };
   
   const handleCancel = () => {
+    // Show confirmation dialog in real implementation
+    // For now, just navigate back
     if (confirm("Are you sure you want to cancel this event? This cannot be undone.")) {
       toast.error("Event cancelled");
       navigate("/your-events");
     }
   };
   
+  // Render member item with Avatar
   const renderMemberItem = (
     member: typeof individualMembers[0], 
     toggleMemberSelection: (id: string) => void, 
@@ -216,6 +239,7 @@ const EditEventPage = () => {
           </button>
         </div>
         
+        {/* Notification checkbox */}
         <div className="flex items-center mb-4">
           <Checkbox 
             id="notify-attendees" 
@@ -251,9 +275,11 @@ const EditEventPage = () => {
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="details" className="flex-1 overflow-auto relative">
+        {/* Details Tab */}
+        <TabsContent value="details" className="flex-1 overflow-auto">
           <div className="px-6 py-4 pb-24">
             <div className="space-y-6">
+              {/* Title */}
               <div className="space-y-2">
                 <label htmlFor="title" className="block text-gray-700 font-medium">
                   Title of Event
@@ -267,6 +293,7 @@ const EditEventPage = () => {
                 />
               </div>
 
+              {/* Date and Time */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label className="block text-gray-700 font-medium">Date</label>
@@ -320,6 +347,7 @@ const EditEventPage = () => {
                 </div>
               </div>
 
+              {/* Location */}
               <div className="space-y-2">
                 <label htmlFor="location" className="block text-gray-700 font-medium">
                   Location
@@ -336,6 +364,7 @@ const EditEventPage = () => {
                 </div>
               </div>
 
+              {/* Category */}
               <div className="space-y-3">
                 <label className="block text-gray-700 font-medium">
                   Category
@@ -357,6 +386,7 @@ const EditEventPage = () => {
                 </div>
               </div>
 
+              {/* Is this event required? */}
               <div className="flex items-center justify-between">
                 <label className="text-gray-700 font-medium">
                   Is this Event Required?
@@ -367,6 +397,7 @@ const EditEventPage = () => {
                 />
               </div>
               
+              {/* Restrict who can attend */}
               <div className="flex items-center justify-between">
                 <label className="text-gray-700 font-medium">
                   Restrict who can attend?
@@ -385,10 +416,12 @@ const EditEventPage = () => {
                     onValueChange={setSearchQuery}
                   />
                   <CommandList>
+                    {/* No results message */}
                     {filteredGroups.length === 0 && filteredMembers.length === 0 && (
                       <CommandEmpty>No results found.</CommandEmpty>
                     )}
                     
+                    {/* Groups section */}
                     {filteredGroups.length > 0 && (
                       <CommandGroup heading="Groups">
                         {filteredGroups.map(group => (
@@ -411,6 +444,7 @@ const EditEventPage = () => {
                       </CommandGroup>
                     )}
                     
+                    {/* Members section */}
                     {filteredMembers.length > 0 && (
                       <CommandGroup heading="Members">
                         {filteredMembers.map(member => 
@@ -420,6 +454,7 @@ const EditEventPage = () => {
                     )}
                   </CommandList>
                   
+                  {/* Selected members counter */}
                   {selectedMembers.length > 0 && (
                     <div className="px-4 py-2 text-sm text-gray-500 border-t">
                       {selectedMembers.length} individual member{selectedMembers.length !== 1 ? 's' : ''} selected
@@ -429,20 +464,13 @@ const EditEventPage = () => {
               )}
             </div>
           </div>
-          
-          <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 p-4 bg-white">
-            <Button 
-              className="w-full bg-purple-700 hover:bg-purple-800 text-white"
-              onClick={handleNext}
-            >
-              Next
-            </Button>
-          </div>
         </TabsContent>
         
-        <TabsContent value="content" className="flex-1 overflow-auto relative">
+        {/* Content Tab */}
+        <TabsContent value="content" className="flex-1 overflow-auto">
           <div className="px-6 py-4 pb-24">
             <div className="space-y-6">
+              {/* Image Upload */}
               <div className="space-y-2">
                 <label className="block text-gray-700 font-medium">
                   Image (optional)
@@ -477,6 +505,7 @@ const EditEventPage = () => {
                 </div>
               </div>
 
+              {/* Description */}
               <div className="space-y-2">
                 <label htmlFor="description" className="block text-gray-700 font-medium">
                   Description (optional)
@@ -491,25 +520,13 @@ const EditEventPage = () => {
               </div>
             </div>
           </div>
-          
-          <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 p-4 bg-white">
-            <div className="flex justify-between">
-              <Button variant="outline" className="px-4" onClick={handlePrevious}>
-                Previous
-              </Button>
-              <Button 
-                className="bg-purple-700 hover:bg-purple-800 text-white px-6"
-                onClick={handleNext}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
         </TabsContent>
         
-        <TabsContent value="logistics" className="flex-1 overflow-auto relative">
+        {/* Logistics Tab */}
+        <TabsContent value="logistics" className="flex-1 overflow-auto">
           <div className="px-6 py-4 pb-24">
             <div className="space-y-6">
+              {/* Budget */}
               <div>
                 <h2 className="text-xl font-semibold mb-3">Budget</h2>
                 <div className="relative">
@@ -526,6 +543,7 @@ const EditEventPage = () => {
                 </div>
               </div>
 
+              {/* Logistics */}
               <div>
                 <h2 className="text-xl font-semibold mb-3">Logistics</h2>
                 <div className="space-y-3">
@@ -602,6 +620,7 @@ const EditEventPage = () => {
                     </label>
                   </div>
 
+                  {/* Custom Questions */}
                   {customQuestions.map((question, index) => (
                     <div key={index} className="flex items-start space-x-2 rounded-md bg-gray-50 p-4">
                       <Checkbox id={`custom-question-${index}`} className="mt-1" />
@@ -614,6 +633,7 @@ const EditEventPage = () => {
                     </div>
                   ))}
 
+                  {/* Add a Question */}
                   {showAddQuestion ? (
                     <div className="mt-2 space-y-2">
                       <Input
@@ -651,30 +671,47 @@ const EditEventPage = () => {
               </div>
             </div>
           </div>
-          
-          <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 p-4 bg-white">
-            <div className="flex flex-col space-y-4">
-              <Button variant="outline" className="px-4" onClick={handlePrevious}>
-                Previous
-              </Button>
-              <Button 
-                variant="outline" 
-                className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
-                onClick={handleCancel}
-              >
-                <AlertCircle className="w-4 h-4 mr-2" />
-                Cancel Event
-              </Button>
-              <Button 
-                className="w-full bg-purple-700 hover:bg-purple-800 text-white"
-                onClick={handleSave}
-              >
-                Save
-              </Button>
-            </div>
-          </div>
         </TabsContent>
       </Tabs>
+      
+      <div className="border-t border-gray-200 p-4 sticky bottom-0 bg-white flex justify-between items-center">
+        {activeTab !== "details" && (
+          <Button variant="outline" className="px-4" onClick={handlePrevious}>
+            Previous
+          </Button>
+        )}
+        
+        {activeTab === "details" && (
+          <div></div> // Empty div to maintain flex spacing
+        )}
+        
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+            onClick={handleCancel}
+          >
+            <AlertCircle className="w-4 h-4 mr-2" />
+            Cancel Event
+          </Button>
+          
+          {activeTab !== "logistics" ? (
+            <Button 
+              className="bg-purple-700 hover:bg-purple-800 text-white px-6"
+              onClick={handleNext}
+            >
+              Next
+            </Button>
+          ) : (
+            <Button 
+              className="bg-purple-700 hover:bg-purple-800 text-white px-6"
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
