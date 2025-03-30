@@ -44,8 +44,8 @@ const HomePage = () => {
     completed: 1,
     total: 7,
     upcoming: [
-      { id: 1, title: "1 Sisterhood Event" },
-      { id: 2, title: "1 Professional Event" }
+      { id: 1, title: "1 Sisterhood Event", tag: "Sisterhood" },
+      { id: 2, title: "1 Professional Event", tag: "Professional" }
     ]
   };
 
@@ -61,12 +61,13 @@ const HomePage = () => {
     navigate("/todo");
   };
 
-  const handleRequirementClick = (id: number) => {
-    navigate(`/requirements`);
+  const handleRequirementClick = (tag: string) => {
+    // Navigate to Explore with filter for the specific tag
+    navigate("/explore", { state: { filterTag: tag } });
   };
 
   const handlePayNow = () => {
-    navigate("/payment");
+    navigate("/dues");
   };
 
   const handlePaymentPlan = () => {
@@ -78,18 +79,26 @@ const HomePage = () => {
     console.log(`Checking in to event ${eventId}`);
   };
 
+  const handleCalendarClick = () => {
+    navigate("/calendar");
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold">Home</h1>
         <div className="flex gap-4">
-          <button className="p-1 bg-white rounded-full">
+          <button className="p-1 bg-white rounded-full" onClick={handleCalendarClick}>
             <Calendar className="w-6 h-6" />
           </button>
           <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
             <Bell className="w-6 h-6" />
           </button>
-          <button className="p-1 bg-white rounded-full">
+          <button className="p-1 bg-white rounded-full" onClick={handleProfileClick}>
             <User className="w-6 h-6" />
           </button>
         </div>
@@ -216,7 +225,7 @@ const HomePage = () => {
             <div 
               key={index}
               className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
-              onClick={() => handleRequirementClick(req.id)}
+              onClick={() => handleRequirementClick(req.tag)}
             >
               <span>{req.title}</span>
               <ChevronRight className="h-5 w-5 text-gray-400" />

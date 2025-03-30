@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -23,6 +22,9 @@ import RequirementsPage from "./pages/RequirementsPage";
 import OtherPage from "./pages/OtherPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
+import TaskDetailPage from "./pages/TaskDetailPage";
+import CreateTaskPage from "./pages/CreateTaskPage";
+import DuesPage from "./pages/DuesPage";
 
 const queryClient = new QueryClient();
 
@@ -45,15 +47,17 @@ const App = () => (
           <Route path="/event-attendance/:id" element={<EventAttendancePage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
           
-          {/* New pages */}
           <Route path="/home" element={<HomePage />} />
           <Route path="/todo" element={<ToDoPage />} />
+          <Route path="/task/:id" element={<TaskDetailPage />} />
+          <Route path="/create-task" element={<CreateTaskPage />} />
+          
           <Route path="/sister-points" element={<SisterPointsPage />} />
           <Route path="/requirements" element={<RequirementsPage />} />
           <Route path="/other" element={<OtherPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/dues" element={<DuesPage />} />
           
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

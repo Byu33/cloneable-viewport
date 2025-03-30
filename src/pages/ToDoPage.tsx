@@ -1,12 +1,12 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Filter, MoreVertical, PlusCircle, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Filter, PlusCircle, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useToast } from "@/hooks/use-toast";
 
 interface Task {
   id: number;
@@ -24,6 +24,7 @@ interface Task {
 
 const ToDoPage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("Assigned Tasks");
   const [isToDoExpanded, setIsToDoExpanded] = useState(true);
   const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
@@ -113,7 +114,7 @@ const ToDoPage = () => {
   };
 
   const toggleTaskComplete = (taskId: number) => {
-    setTasks(tasks.map(task => 
+    const updatedTasks = tasks.map(task => 
       task.id === taskId 
         ? { 
             ...task, 
@@ -121,7 +122,43 @@ const ToDoPage = () => {
             status: task.completed ? "todo" : "completed"
           } 
         : task
-    ));
+    );
+    
+    setTasks(updatedTasks);
+    
+    const task = tasks.find(t => t.id === taskId);
+    
+    if (task && !task.completed) {
+      // Task is being marked as completed
+      toast({
+        title: "Task marked as done",
+        description: "The task has been moved to Completed.",
+        action: (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => {
+              setTasks(updatedTasks.map(t => 
+                t.id === taskId 
+                  ? { ...t, completed: false, status: "todo" } 
+                  : t
+              ));
+              toast({
+                title: "Task restored",
+                description: "The task has been moved back to To Do."
+              });
+            }}
+          >
+            Undo
+          </Button>
+        ),
+      });
+    }
+  };
+
+  const handleFilter = () => {
+    // Filter functionality would be implemented here
+    console.log("Opening filter options");
   };
 
   return (
@@ -157,7 +194,10 @@ const ToDoPage = () => {
               Create New Task
             </Button>
             
-            <button className="p-2 bg-gray-100 rounded-full">
+            <button 
+              className="p-2 bg-gray-100 rounded-full"
+              onClick={handleFilter}
+            >
               <Filter className="h-5 w-5 text-gray-600" />
             </button>
           </div>
@@ -174,7 +214,18 @@ const ToDoPage = () => {
                   {todoTasks.length}
                 </div>
               </div>
-              {isToDoExpanded ? <ChevronUp /> : <ChevronDown />}
+              <div className="flex items-center">
+                <button 
+                  className="p-2 bg-gray-100 rounded-full mr-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFilter();
+                  }}
+                >
+                  <Filter className="h-5 w-5 text-gray-600" />
+                </button>
+                {isToDoExpanded ? <ChevronUp /> : <ChevronDown />}
+              </div>
             </CollapsibleTrigger>
             
             <CollapsibleContent>
@@ -182,7 +233,7 @@ const ToDoPage = () => {
                 {todoTasks.map(task => (
                   <div 
                     key={task.id}
-                    className="bg-purple-50 p-4 rounded-lg"
+                    className="bg-white p-4 rounded-lg shadow-sm"
                     onClick={() => handleTaskClick(task.id)}
                   >
                     <div className="flex justify-between items-start mb-1">
@@ -257,7 +308,7 @@ const ToDoPage = () => {
                 {completedTasks.map(task => (
                   <div 
                     key={task.id}
-                    className="bg-purple-50 p-4 rounded-lg opacity-70"
+                    className="bg-white p-4 rounded-lg shadow-sm opacity-70"
                     onClick={() => handleTaskClick(task.id)}
                   >
                     <div className="flex justify-between items-start">
@@ -297,31 +348,22 @@ const ToDoPage = () => {
           </Collapsible>
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-gray-500">
-          <p>No tasks created yet</p>
+        <div className="px-6 py-4 flex-1 overflow-auto pb-20">
+          <div className="flex justify-end mb-4">
+            <Button 
+              className="bg-purple-900 hover:bg-purple-800 flex items-center gap-2"
+              onClick={handleCreateTask}
+            >
+              <PlusCircle className="h-4 w-4" />
+              Create New Task
+            </Button>
+          </div>
+          
+          <div className="flex-1 flex items-center justify-center text-gray-500">
+            <p>No tasks created yet</p>
+          </div>
         </div>
       )}
-
-      {/* Create Task Sheet */}
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button 
-            className="fixed bottom-20 right-6 rounded-full h-14 w-14 shadow-lg bg-purple-900 hover:bg-purple-800 p-0"
-            onClick={(e) => {
-              e.preventDefault(); // Prevent the sheet from opening immediately
-              navigate("/create-task");
-            }}
-          >
-            <PlusCircle className="h-7 w-7" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="bottom" className="h-3/4 rounded-t-xl">
-          <SheetHeader>
-            <SheetTitle>Create a New Task</SheetTitle>
-          </SheetHeader>
-          {/* Task creation form would go here */}
-        </SheetContent>
-      </Sheet>
 
       <TabBar />
     </div>

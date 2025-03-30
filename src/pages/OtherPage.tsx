@@ -83,7 +83,7 @@ const OtherPage = () => {
           {menuItems.map((item, index) => (
             <div 
               key={index}
-              className="bg-purple-50 rounded-lg p-4 flex items-center justify-between shadow-sm"
+              className="bg-white rounded-lg p-4 flex items-center justify-between shadow-sm"
               onClick={() => handleMenuItemClick(item.path)}
             >
               <div className="flex items-center">

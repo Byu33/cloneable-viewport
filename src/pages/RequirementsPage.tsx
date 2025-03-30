@@ -10,6 +10,7 @@ interface Requirement {
   title: string;
   category: string;
   isComplete: boolean;
+  tag?: string;
 }
 
 const RequirementsPage = () => {
@@ -18,13 +19,13 @@ const RequirementsPage = () => {
   const [isUnmetExpanded, setIsUnmetExpanded] = useState(true);
 
   const requirements: Requirement[] = [
-    { id: 1, title: "Attend 1 Sisterhood Event", category: "Sisterhood", isComplete: false },
-    { id: 2, title: "Attend 1 Professional Event", category: "Professional", isComplete: false },
-    { id: 3, title: "Attend 1 Risk Event", category: "Risk", isComplete: false },
-    { id: 4, title: "Attend 1 Risk Event", category: "Risk", isComplete: false },
-    { id: 5, title: "Attend 1 Risk Event", category: "Risk", isComplete: false },
-    { id: 6, title: "Attend 1 Risk Event", category: "Risk", isComplete: false },
-    { id: 7, title: "Fulfill 1 sister hour", category: "Sisterhood", isComplete: false },
+    { id: 1, title: "Attend 1 Sisterhood Event", category: "Sisterhood", isComplete: false, tag: "Sisterhood" },
+    { id: 2, title: "Attend 1 Professional Event", category: "Professional", isComplete: false, tag: "Professional" },
+    { id: 3, title: "Attend 1 Risk Event", category: "Risk", isComplete: false, tag: "Risk" },
+    { id: 4, title: "Attend 1 Risk Event", category: "Risk", isComplete: false, tag: "Risk" },
+    { id: 5, title: "Attend 1 Risk Event", category: "Risk", isComplete: false, tag: "Risk" },
+    { id: 6, title: "Attend 1 Risk Event", category: "Risk", isComplete: false, tag: "Risk" },
+    { id: 7, title: "Fulfill 1 sister hour", category: "Sisterhood", isComplete: false, tag: "Sisterhood" },
     { id: 8, title: "Attend Chapter Meeting", category: "Required", isComplete: true },
     { id: 9, title: "Pay Dues", category: "Finance", isComplete: true },
     { id: 10, title: "Complete Risk Form", category: "Risk", isComplete: true },
@@ -41,8 +42,13 @@ const RequirementsPage = () => {
     navigate(-1);
   };
 
-  const handleRequirementClick = (id: number) => {
-    navigate(`/requirement/${id}`);
+  const handleRequirementClick = (requirement: Requirement) => {
+    if (requirement.tag) {
+      // Navigate to Explore with the specific tag filter
+      navigate("/explore", { state: { filterTag: requirement.tag } });
+    } else {
+      navigate(`/requirement/${requirement.id}`);
+    }
   };
 
   return (
@@ -75,8 +81,8 @@ const RequirementsPage = () => {
               {metRequirements.map(requirement => (
                 <div 
                   key={requirement.id}
-                  className="bg-purple-50 p-4 rounded-lg flex justify-between items-center"
-                  onClick={() => handleRequirementClick(requirement.id)}
+                  className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"
+                  onClick={() => handleRequirementClick(requirement)}
                 >
                   <span className="text-purple-900 font-medium">{requirement.title}</span>
                   <ChevronRight className="h-5 w-5 text-purple-500" />
@@ -105,8 +111,8 @@ const RequirementsPage = () => {
               {unmetRequirements.map(requirement => (
                 <div 
                   key={requirement.id}
-                  className="bg-purple-50 p-4 rounded-lg flex justify-between items-center"
-                  onClick={() => handleRequirementClick(requirement.id)}
+                  className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"
+                  onClick={() => handleRequirementClick(requirement)}
                 >
                   <span className="text-purple-900 font-medium">{requirement.title}</span>
                   <ChevronRight className="h-5 w-5 text-purple-500" />
