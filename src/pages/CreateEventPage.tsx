@@ -27,17 +27,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Define categories with unique identifiers and color variations
 const categories = [
-  { id: "social", name: "Social", color: "bg-blue-500 text-white" },
-  { id: "professional", name: "Professional", color: "bg-green-500 text-white" },
-  { id: "networking", name: "Networking", color: "bg-purple-500 text-white" },
-  { id: "workshop", name: "Workshop", color: "bg-orange-500 text-white" },
-  { id: "conference", name: "Conference", color: "bg-red-500 text-white" },
+  { id: "social", name: "Social", color: "bg-purple-600 text-white" },
+  { id: "professional", name: "Professional", color: "bg-purple-600 text-white" },
+  { id: "fundraising", name: "Fundraising", color: "bg-purple-600 text-white" },
+  { id: "risk", name: "Risk", color: "bg-purple-600 text-white" },
+  { id: "sisterhood", name: "Sisterhood", color: "bg-purple-600 text-white" },
 ];
 
 const CreateEventPage = () => {
   const navigate = useNavigate();
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [restrictAttendance, setRestrictAttendance] = useState(false);
   const [isRequired, setIsRequired] = useState(false);
   const [attendeeGroups, setAttendeeGroups] = useState({
@@ -90,11 +90,13 @@ const CreateEventPage = () => {
   );
   
   const handleCategorySelect = (categoryName: string) => {
-    if (selectedCategory === categoryName) {
-      setSelectedCategory(null);
-    } else {
-      setSelectedCategory(categoryName);
-    }
+    setSelectedCategories(prev => {
+      if (prev.includes(categoryName)) {
+        return prev.filter(cat => cat !== categoryName);
+      } else {
+        return [...prev, categoryName];
+      }
+    });
   };
 
   const handleNextClick = () => {
@@ -278,7 +280,7 @@ const CreateEventPage = () => {
                   key={category.id}
                   onClick={() => handleCategorySelect(category.name)}
                   className={`px-4 py-2 rounded-full text-sm font-medium ${
-                    selectedCategory === category.name
+                    selectedCategories.includes(category.name)
                       ? category.color
                       : "bg-gray-100 text-gray-700"
                   }`}
