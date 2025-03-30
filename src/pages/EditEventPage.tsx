@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ArrowLeft, Calendar, Save } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -29,7 +28,6 @@ const EditEventPage = () => {
   const [notifyAttendees, setNotifyAttendees] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
 
-  // Mock event data - in a real app, you would fetch this based on the ID
   const eventData = {
     id: id || "1",
     title: "Chapter Meeting",
@@ -48,7 +46,6 @@ const EditEventPage = () => {
   };
 
   const handleSubmit = () => {
-    // In a real app, you would update the event in your backend
     toast({
       title: "Event Updated",
       description: "Your event changes have been saved.",
@@ -57,7 +54,6 @@ const EditEventPage = () => {
   };
 
   const handleCancel = () => {
-    // In a real app, you would delete or update the event status in your backend
     toast({
       title: "Event Cancelled",
       description: notifyAttendees 
@@ -84,7 +80,6 @@ const EditEventPage = () => {
     { id: 4, name: "EOH", selected: false, color: "bg-gray-200 text-gray-800" },
     { id: 5, name: "Risk", selected: false, color: "bg-gray-200 text-gray-800" },
     { id: 6, name: "Historian", selected: false, color: "bg-gray-200 text-gray-800" },
-    // Added some duplicates to match the design
     { id: 7, name: "Risk", selected: false, color: "bg-gray-200 text-gray-800" },
     { id: 8, name: "Risk", selected: false, color: "bg-gray-200 text-gray-800" },
     { id: 9, name: "Professional", selected: false, color: "bg-gray-200 text-gray-800" },
@@ -106,59 +101,17 @@ const EditEventPage = () => {
       </header>
 
       <div className="flex-1">
-        {/* Top actions section with notify attendees and cancel event */}
         <div className="bg-white p-4 border-b">
-          <div className="flex flex-col space-y-4">
-            <div className="flex items-center">
-              <Checkbox 
-                id="notify-attendees"
-                checked={notifyAttendees}
-                onCheckedChange={(checked) => setNotifyAttendees(!!checked)}
-                className="border-purple-300 data-[state=checked]:bg-purple-700"
-              />
-              <label htmlFor="notify-attendees" className="ml-2 text-sm font-medium text-purple-700">
-                Notify Attendees about Changes
-              </label>
-            </div>
-            
-            <div>
-              <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="text-red-600 border-red-200">
-                    Cancel Event
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="py-2">
-                    <label htmlFor="cancel-reason" className="text-sm font-medium">
-                      Reason (optional)
-                    </label>
-                    <Textarea
-                      id="cancel-reason"
-                      placeholder="Let attendees know why this event is being cancelled..."
-                      value={cancelReason}
-                      onChange={(e) => setCancelReason(e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Nevermind</AlertDialogCancel>
-                    <AlertDialogAction 
-                      className="bg-red-600 hover:bg-red-700"
-                      onClick={handleCancel}
-                    >
-                      Yes, Cancel Event
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+          <div className="flex items-center">
+            <Checkbox 
+              id="notify-attendees"
+              checked={notifyAttendees}
+              onCheckedChange={(checked) => setNotifyAttendees(!!checked)}
+              className="border-purple-300 data-[state=checked]:bg-purple-700"
+            />
+            <label htmlFor="notify-attendees" className="ml-2 text-sm font-medium text-purple-700">
+              Notify Attendees about Changes
+            </label>
           </div>
         </div>
 
@@ -312,10 +265,46 @@ const EditEventPage = () => {
         </Tabs>
       </div>
 
-      {/* Fixed Save button at the bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t flex justify-end z-20">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t flex justify-between z-20">
+        <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" className="text-red-600 border-red-200">
+              Cancel Event
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="py-2">
+              <label htmlFor="cancel-reason" className="text-sm font-medium">
+                Reason (optional)
+              </label>
+              <Textarea
+                id="cancel-reason"
+                placeholder="Let attendees know why this event is being cancelled..."
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Nevermind</AlertDialogCancel>
+              <AlertDialogAction 
+                className="bg-red-600 hover:bg-red-700"
+                onClick={handleCancel}
+              >
+                Yes, Cancel Event
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        
         <Button 
-          className="bg-purple-700 hover:bg-purple-800 text-white"
+          className="bg-purple-700 hover:bg-purple-800 text-white ml-auto"
           onClick={handleSubmit}
         >
           <Save className="mr-1" /> Save
