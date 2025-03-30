@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Calendar, Search, MoreVertical, MapPin } from "lucide-react";
+import { User, Calendar, Search, MapPin } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -225,12 +224,6 @@ const YourEvents = () => {
                     <span className={`${event.tagColor} text-xs px-3 py-1 rounded-full font-bold text-[13px]`}>
                       {event.tag}
                     </span>
-                  )}
-                  
-                  {index !== 0 && (
-                    <button className="mt-2">
-                      <MoreVertical className="w-5 h-5 text-gray-500" />
-                    </button>
                   )}
                 </div>
               </div>
