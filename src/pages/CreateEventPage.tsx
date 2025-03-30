@@ -15,7 +15,6 @@ import {
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Command,
   CommandInput,
@@ -222,7 +221,7 @@ const CreateEventPage = () => {
             </div>
           </div>
 
-          {/* Who Can Attend - Toggle and Card with Search */}
+          {/* Who Can Attend - Toggle and Direct Search Interface */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
               <label className="text-gray-700 font-medium">
@@ -235,103 +234,72 @@ const CreateEventPage = () => {
             </div>
             
             {restrictAttendance && (
-              <Card className="w-full bg-white border border-gray-200">
-                <CardContent className="pt-6">
-                  <div className="space-y-4">
-                    {/* Search at the top */}
-                    <Command className="rounded-lg border shadow-sm">
-                      <CommandInput 
-                        placeholder="Search groups or members..." 
-                        value={searchQuery}
-                        onValueChange={setSearchQuery}
-                      />
-                      <CommandList>
-                        {/* No results message */}
-                        {filteredGroups.length === 0 && filteredMembers.length === 0 && (
-                          <CommandEmpty>No results found.</CommandEmpty>
-                        )}
-                        
-                        {/* Groups section - always shown with checkboxes */}
-                        {filteredGroups.length > 0 && (
-                          <CommandGroup heading="Groups">
-                            {filteredGroups.map(group => (
-                              <CommandItem 
-                                key={group.id} 
-                                onSelect={() => handleGroupSelect(group.id)}
-                                className="flex items-center gap-2"
-                              >
-                                <Checkbox 
-                                  id={`group-${group.id}`}
-                                  checked={attendeeGroups[group.key as keyof typeof attendeeGroups]}
-                                  onCheckedChange={() => handleGroupSelect(group.id)}
-                                  className="mr-2"
-                                />
-                                <label htmlFor={`group-${group.id}`} className="flex-1 cursor-pointer">
-                                  {group.name}
-                                </label>
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        )}
-                        
-                        {/* Members section */}
-                        {filteredMembers.length > 0 && (
-                          <CommandGroup heading="Members">
-                            {filteredMembers.map(member => (
-                              <CommandItem 
-                                key={member.id} 
-                                onSelect={() => toggleMemberSelection(member.id)}
-                                className="flex items-center gap-2"
-                              >
-                                <Checkbox 
-                                  id={`member-${member.id}`}
-                                  checked={selectedMembers.includes(member.id)}
-                                  onCheckedChange={() => toggleMemberSelection(member.id)}
-                                  className="mr-2"
-                                />
-                                <label htmlFor={`member-${member.id}`} className="flex-1 cursor-pointer">
-                                  {member.name}
-                                </label>
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        )}
-                      </CommandList>
-                    </Command>
-                    
-                    {/* Group options section when not searching */}
-                    {!searchQuery && (
-                      <div className="space-y-3 pt-2">
-                        <h3 className="text-sm font-medium text-gray-700">Quick Select Groups</h3>
-                        <div className="space-y-2">
-                          {groups.map(group => (
-                            <div key={group.id} className="flex items-center space-x-2">
-                              <Checkbox 
-                                id={`quick-${group.id}`} 
-                                checked={attendeeGroups[group.key as keyof typeof attendeeGroups]}
-                                onCheckedChange={() => handleGroupChange(group.key as keyof typeof attendeeGroups)}
-                              />
-                              <label
-                                htmlFor={`quick-${group.id}`}
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                              >
-                                {group.name}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Reminder about selected members - only show if there are selections */}
-                    {selectedMembers.length > 0 && (
-                      <div className="pt-2 text-sm text-gray-500">
-                        {selectedMembers.length} individual member{selectedMembers.length !== 1 ? 's' : ''} selected
-                      </div>
-                    )}
+              <Command className="rounded-lg border shadow-sm bg-white">
+                <CommandInput 
+                  placeholder="Search groups or members..." 
+                  value={searchQuery}
+                  onValueChange={setSearchQuery}
+                />
+                <CommandList>
+                  {/* No results message */}
+                  {filteredGroups.length === 0 && filteredMembers.length === 0 && (
+                    <CommandEmpty>No results found.</CommandEmpty>
+                  )}
+                  
+                  {/* Groups section */}
+                  {filteredGroups.length > 0 && (
+                    <CommandGroup heading="Groups">
+                      {filteredGroups.map(group => (
+                        <CommandItem 
+                          key={group.id} 
+                          onSelect={() => handleGroupSelect(group.id)}
+                          className="flex items-center gap-2"
+                        >
+                          <Checkbox 
+                            id={`group-${group.id}`}
+                            checked={attendeeGroups[group.key as keyof typeof attendeeGroups]}
+                            onCheckedChange={() => handleGroupSelect(group.id)}
+                            className="mr-2"
+                          />
+                          <label htmlFor={`group-${group.id}`} className="flex-1 cursor-pointer">
+                            {group.name}
+                          </label>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                  
+                  {/* Members section */}
+                  {filteredMembers.length > 0 && (
+                    <CommandGroup heading="Members">
+                      {filteredMembers.map(member => (
+                        <CommandItem 
+                          key={member.id} 
+                          onSelect={() => toggleMemberSelection(member.id)}
+                          className="flex items-center gap-2"
+                        >
+                          <Checkbox 
+                            id={`member-${member.id}`}
+                            checked={selectedMembers.includes(member.id)}
+                            onCheckedChange={() => toggleMemberSelection(member.id)}
+                            className="mr-2"
+                          />
+                          <label htmlFor={`member-${member.id}`} className="flex-1 cursor-pointer">
+                            {member.name}
+                          </label>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+                
+                {/* Selected members counter */}
+                {selectedMembers.length > 0 && (
+                  <div className="px-4 py-2 text-sm text-gray-500 border-t">
+                    {selectedMembers.length} individual member{selectedMembers.length !== 1 ? 's' : ''} selected
                   </div>
-                </CardContent>
-              </Card>
+                )}
+              </Command>
             )}
           </div>
 
