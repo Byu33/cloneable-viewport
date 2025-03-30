@@ -1,24 +1,14 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, CalendarDays, AlertTriangle, Tag, Users, FileText, ChevronDown, ChevronUp, Plus, Search } from "lucide-react";
+import { ArrowLeft, CalendarDays, AlertTriangle, Tag, Users, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
-
-interface Member {
-  id: number;
-  name: string;
-  image: string;
-  selected: boolean;
-}
 
 const CreateTaskPage = () => {
   const navigate = useNavigate();
@@ -29,28 +19,9 @@ const CreateTaskPage = () => {
   const [description, setDescription] = useState("");
   const [isRequired, setIsRequired] = useState(false);
   const [category, setCategory] = useState("");
-  const [isAssigneesOpen, setIsAssigneesOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  
-  // Mock data for members
-  const [members, setMembers] = useState<Member[]>([
-    { id: 1, name: "Emily Johnson", image: "https://randomuser.me/api/portraits/women/1.jpg", selected: false },
-    { id: 2, name: "Sophia Williams", image: "https://randomuser.me/api/portraits/women/2.jpg", selected: false },
-    { id: 3, name: "Olivia Brown", image: "https://randomuser.me/api/portraits/women/3.jpg", selected: false },
-    { id: 4, name: "Isabella Jones", image: "https://randomuser.me/api/portraits/women/4.jpg", selected: false },
-    { id: 5, name: "Mia Garcia", image: "https://randomuser.me/api/portraits/women/5.jpg", selected: false },
-  ]);
 
   const handleBack = () => {
     navigate(-1);
-  };
-
-  const toggleMemberSelection = (id: number) => {
-    setMembers(members.map(member => 
-      member.id === id 
-        ? { ...member, selected: !member.selected } 
-        : member
-    ));
   };
 
   const handleCreate = (e: React.FormEvent) => {
@@ -83,25 +54,18 @@ const CreateTaskPage = () => {
       priority,
       description,
       isRequired,
-      category,
-      assignees: members.filter(member => member.selected)
+      category
     };
     
     console.log("Created task:", task);
     
     toast({
-      title: "Task created successfully",
+      title: "Task created",
+      description: "Your task has been created successfully"
     });
     
     navigate("/todo");
   };
-
-  // Filter members based on search term
-  const filteredMembers = members.filter(member => 
-    member.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const selectedMembers = members.filter(member => member.selected);
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -175,84 +139,13 @@ const CreateTaskPage = () => {
                 </Select>
               </div>
               
-              <Collapsible 
-                open={isAssigneesOpen} 
-                onOpenChange={setIsAssigneesOpen}
-                className="border-t border-b py-3 -mx-6 px-6 my-4"
-              >
-                <CollapsibleTrigger className="flex items-center justify-between w-full text-left">
-                  <div className="flex items-center text-purple-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    <span>Add Assignees to the Task</span>
-                  </div>
-                  {isAssigneesOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-                </CollapsibleTrigger>
-                <CollapsibleContent className="pt-4 space-y-4">
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                      <Search className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <Input
-                      placeholder="Search members..."
-                      className="pl-10"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  
-                  {selectedMembers.length > 0 && (
-                    <div className="mb-4">
-                      <p className="text-sm font-medium mb-2">Selected ({selectedMembers.length})</p>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedMembers.map(member => (
-                          <div 
-                            key={member.id}
-                            className="flex items-center bg-purple-100 text-purple-700 px-3 py-1 rounded-full"
-                          >
-                            <Avatar className="h-6 w-6 mr-2">
-                              <AvatarImage src={member.image} />
-                              <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm">{member.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
-                    {filteredMembers.map(member => (
-                      <div 
-                        key={member.id}
-                        className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
-                        onClick={() => toggleMemberSelection(member.id)}
-                      >
-                        <div className="flex items-center">
-                          <Avatar className="h-10 w-10 mr-3">
-                            <AvatarImage src={member.image} />
-                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <span>{member.name}</span>
-                        </div>
-                        <Checkbox checked={member.selected} />
-                      </div>
-                    ))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-              
-              <div className="border-t border-b py-3 -mx-6 px-6 my-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-purple-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    <Label htmlFor="required">Required Task</Label>
-                  </div>
-                  <Switch 
-                    id="required" 
-                    checked={isRequired} 
-                    onCheckedChange={setIsRequired} 
-                  />
-                </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="required">Required Task</Label>
+                <Switch 
+                  id="required" 
+                  checked={isRequired} 
+                  onCheckedChange={setIsRequired} 
+                />
               </div>
               
               <div>

@@ -1,7 +1,6 @@
 
 import React, { useState } from "react";
-import { Calendar, User, Bell, ChevronDown, ChevronUp } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Calendar, User, ChevronDown, ChevronUp } from "lucide-react";
 import YourEventCard from "@/components/YourEventCard";
 import TabBar from "@/components/TabBar";
 import CalendarView from "@/components/CalendarView";
@@ -20,7 +19,6 @@ interface Event {
 
 const YourEvents = () => {
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
-  const navigate = useNavigate();
 
   // Mock data for events
   const upcomingEvents: Event[] = [
@@ -61,14 +59,6 @@ const YourEvents = () => {
     }
   ];
 
-  const handleNotifications = () => {
-    navigate("/notifications");
-  };
-
-  const handleProfile = () => {
-    navigate("/profile");
-  };
-
   return (
     <div className="flex flex-col h-screen bg-gray-50 font-figtree">
       {/* Header */}
@@ -78,10 +68,7 @@ const YourEvents = () => {
           <button className="p-1 bg-white rounded-full">
             <Calendar className="w-6 h-6" />
           </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
-            <Bell className="w-6 h-6" />
-          </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleProfile}>
+          <button className="p-1 bg-white rounded-full">
             <User className="w-6 h-6" />
           </button>
         </div>
@@ -100,11 +87,10 @@ const YourEvents = () => {
 
           {/* Event Cards */}
           <div className="space-y-4 mt-4">
-            {upcomingEvents.map((event, index) => (
+            {upcomingEvents.map((event) => (
               <YourEventCard 
                 key={event.id} 
                 event={event}
-                index={index}
               />
             ))}
           </div>
@@ -114,11 +100,10 @@ const YourEvents = () => {
         <div>
           <h2 className="text-xl font-semibold mb-4">Past Events</h2>
           <div className="space-y-4">
-            {pastEvents.map((event, index) => (
+            {pastEvents.map((event) => (
               <YourEventCard 
                 key={event.id} 
                 event={event}
-                index={index}
               />
             ))}
           </div>
