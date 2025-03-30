@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Filter, MoreVertical, PlusCircle, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Filter, Bell, Calendar, User, PlusCircle, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -145,10 +145,29 @@ const ToDoPage = () => {
     navigate("/todo/filter");
   };
 
+  const handleNotifications = () => {
+    navigate("/notifications");
+  };
+
+  const handleProfile = () => {
+    navigate("/profile");
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      <header className="px-6 py-6 bg-white">
+      <header className="flex justify-between items-center px-6 py-6 bg-white">
         <h1 className="text-2xl font-semibold">To Do</h1>
+        <div className="flex gap-4">
+          <button className="p-1 bg-white rounded-full">
+            <Calendar className="w-6 h-6" />
+          </button>
+          <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
+            <Bell className="w-6 h-6" />
+          </button>
+          <button className="p-1 bg-white rounded-full" onClick={handleProfile}>
+            <User className="w-6 h-6" />
+          </button>
+        </div>
       </header>
 
       <div className="flex border-b bg-white">
@@ -169,7 +188,8 @@ const ToDoPage = () => {
       
       {activeTab === "Assigned Tasks" ? (
         <div className="px-6 py-4 flex-1 overflow-auto pb-20">
-          <div className="flex justify-end items-center mb-4">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex-1"></div>
             <button 
               className="p-2 bg-gray-100 rounded-full"
               onClick={handleFilter}
