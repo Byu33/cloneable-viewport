@@ -222,6 +222,42 @@ const EditEventPage = () => {
                   ))}
                 </div>
               </div>
+
+              <div className="space-y-2 mt-6">
+                <label className="text-sm font-medium">
+                  Restrict who can attend
+                </label>
+                <div className="flex space-x-4">
+                  <div className="flex items-center">
+                    <Checkbox 
+                      id="restrict-members"
+                      className="border-purple-300 data-[state=checked]:bg-purple-700"
+                    />
+                    <label htmlFor="restrict-members" className="ml-2 text-sm">
+                      Members only
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <Checkbox 
+                      id="restrict-pledges"
+                      className="border-purple-300 data-[state=checked]:bg-purple-700"
+                    />
+                    <label htmlFor="restrict-pledges" className="ml-2 text-sm">
+                      Pledges only
+                    </label>
+                  </div>
+                </div>
+
+                {/* Next button placed below restriction controls */}
+                <div className="mt-6">
+                  <Button 
+                    className="bg-purple-700 hover:bg-purple-800 text-white"
+                    onClick={handleNextTab}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="content" className="mt-0">
@@ -236,6 +272,16 @@ const EditEventPage = () => {
                     placeholder="Add a description of your event..."
                     className="bg-gray-100 min-h-[100px]"
                   />
+                </div>
+
+                {/* Next button placed below description */}
+                <div className="mt-6">
+                  <Button 
+                    className="bg-purple-700 hover:bg-purple-800 text-white"
+                    onClick={handleNextTab}
+                  >
+                    Next
+                  </Button>
                 </div>
               </div>
             </TabsContent>
@@ -252,6 +298,28 @@ const EditEventPage = () => {
                     placeholder="Add any logistics information..."
                     className="bg-gray-100 min-h-[100px]"
                   />
+                </div>
+
+                <div className="space-y-2 mt-6">
+                  <label className="text-sm font-medium">
+                    Add a question for participants
+                  </label>
+                  <Textarea 
+                    id="participantQuestion"
+                    name="participantQuestion"
+                    placeholder="e.g., Do you have any dietary restrictions?"
+                    className="bg-gray-100"
+                  />
+                </div>
+
+                {/* Next button placed below participant question */}
+                <div className="mt-6">
+                  <Button 
+                    className="bg-purple-700 hover:bg-purple-800 text-white"
+                    onClick={handleSubmit}
+                  >
+                    Next
+                  </Button>
                 </div>
               </div>
             </TabsContent>
@@ -293,13 +361,6 @@ const EditEventPage = () => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-
-              <Button 
-                className="bg-purple-700 hover:bg-purple-800 text-white"
-                onClick={handleNextTab}
-              >
-                {activeTab === "logistics" ? "Save" : "Next"}
-              </Button>
             </div>
           </div>
         </Tabs>
