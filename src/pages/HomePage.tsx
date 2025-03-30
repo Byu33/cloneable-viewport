@@ -44,8 +44,8 @@ const HomePage = () => {
     completed: 1,
     total: 7,
     upcoming: [
-      { id: 1, title: "1 Sisterhood Event", category: "Sisterhood" },
-      { id: 2, title: "1 Professional Event", category: "Professional" }
+      { id: 1, title: "1 Sisterhood Event" },
+      { id: 2, title: "1 Professional Event" }
     ]
   };
 
@@ -61,16 +61,12 @@ const HomePage = () => {
     navigate("/todo");
   };
 
-  const handleRequirementClick = (id: number, category?: string) => {
-    if (category) {
-      navigate(`/explore?category=${category.toLowerCase()}`);
-    } else {
-      navigate(`/requirements`);
-    }
+  const handleRequirementClick = (id: number) => {
+    navigate(`/requirements`);
   };
 
   const handlePayNow = () => {
-    navigate("/dues");
+    navigate("/payment");
   };
 
   const handlePaymentPlan = () => {
@@ -220,7 +216,7 @@ const HomePage = () => {
             <div 
               key={index}
               className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
-              onClick={() => handleRequirementClick(req.id, req.category)}
+              onClick={() => handleRequirementClick(req.id)}
             >
               <span>{req.title}</span>
               <ChevronRight className="h-5 w-5 text-gray-400" />

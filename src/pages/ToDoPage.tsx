@@ -5,9 +5,8 @@ import { Filter, MoreVertical, PlusCircle, CheckCircle, ChevronDown, ChevronUp }
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { toast } from "@/hooks/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface Task {
   id: number;
@@ -114,9 +113,6 @@ const ToDoPage = () => {
   };
 
   const toggleTaskComplete = (taskId: number) => {
-    const taskToToggle = tasks.find(task => task.id === taskId);
-    
-    // Update the task status
     setTasks(tasks.map(task => 
       task.id === taskId 
         ? { 
@@ -126,23 +122,6 @@ const ToDoPage = () => {
           } 
         : task
     ));
-    
-    // Show toast notification when marking as done
-    if (taskToToggle && !taskToToggle.completed) {
-      toast({
-        title: "Task marked as done.",
-        action: (
-          <Button variant="outline" size="sm" onClick={() => toggleTaskComplete(taskId)}>
-            Undo
-          </Button>
-        ),
-      });
-    }
-  };
-
-  const handleFilter = () => {
-    // Show filter modal/sheet
-    navigate("/todo/filter");
   };
 
   return (
@@ -169,11 +148,16 @@ const ToDoPage = () => {
       
       {activeTab === "Assigned Tasks" ? (
         <div className="px-6 py-4 flex-1 overflow-auto pb-20">
-          <div className="flex justify-end items-center mb-4">
-            <button 
-              className="p-2 bg-gray-100 rounded-full"
-              onClick={handleFilter}
+          <div className="flex justify-between items-center mb-4">
+            <Button 
+              className="bg-purple-900 hover:bg-purple-800 flex items-center gap-2"
+              onClick={handleCreateTask}
             >
+              <PlusCircle className="h-4 w-4" />
+              Create New Task
+            </Button>
+            
+            <button className="p-2 bg-gray-100 rounded-full">
               <Filter className="h-5 w-5 text-gray-600" />
             </button>
           </div>
@@ -198,7 +182,7 @@ const ToDoPage = () => {
                 {todoTasks.map(task => (
                   <div 
                     key={task.id}
-                    className="bg-white p-4 rounded-lg shadow-sm"
+                    className="bg-purple-50 p-4 rounded-lg"
                     onClick={() => handleTaskClick(task.id)}
                   >
                     <div className="flex justify-between items-start mb-1">
@@ -239,13 +223,13 @@ const ToDoPage = () => {
                     
                     {task.id !== 2 && (
                       <div className="flex justify-end mt-2">
-                        <Checkbox 
-                          className="h-5 w-5"
+                        <div 
+                          className="h-5 w-5 border border-purple-300 rounded"
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleTaskComplete(task.id);
                           }}
-                        />
+                        ></div>
                       </div>
                     )}
                   </div>
@@ -273,7 +257,7 @@ const ToDoPage = () => {
                 {completedTasks.map(task => (
                   <div 
                     key={task.id}
-                    className="bg-white p-4 rounded-lg shadow-sm opacity-70"
+                    className="bg-purple-50 p-4 rounded-lg opacity-70"
                     onClick={() => handleTaskClick(task.id)}
                   >
                     <div className="flex justify-between items-start">
@@ -313,20 +297,31 @@ const ToDoPage = () => {
           </Collapsible>
         </div>
       ) : (
-        <div className="px-6 py-4 flex-1 flex flex-col">
-          <Button 
-            className="bg-purple-900 hover:bg-purple-800 flex items-center gap-2 self-start mb-4"
-            onClick={handleCreateTask}
-          >
-            <PlusCircle className="h-4 w-4" />
-            Create New Task
-          </Button>
-          
-          <div className="flex items-center justify-center flex-1 text-gray-500">
-            <p>No tasks created yet</p>
-          </div>
+        <div className="flex-1 flex items-center justify-center text-gray-500">
+          <p>No tasks created yet</p>
         </div>
       )}
+
+      {/* Create Task Sheet */}
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button 
+            className="fixed bottom-20 right-6 rounded-full h-14 w-14 shadow-lg bg-purple-900 hover:bg-purple-800 p-0"
+            onClick={(e) => {
+              e.preventDefault(); // Prevent the sheet from opening immediately
+              navigate("/create-task");
+            }}
+          >
+            <PlusCircle className="h-7 w-7" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="h-3/4 rounded-t-xl">
+          <SheetHeader>
+            <SheetTitle>Create a New Task</SheetTitle>
+          </SheetHeader>
+          {/* Task creation form would go here */}
+        </SheetContent>
+      </Sheet>
 
       <TabBar />
     </div>
