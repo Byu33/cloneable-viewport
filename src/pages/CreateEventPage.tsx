@@ -46,6 +46,13 @@ const CreateEventPage = () => {
   });
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [requiredForGroups, setRequiredForGroups] = useState({
+    allMembers: false,
+    allCandidates: false,
+    allOfficers: false,
+  });
+  const [requiredForMembers, setRequiredForMembers] = useState<string[]>([]);
+  const [requiredSearchQuery, setRequiredSearchQuery] = useState("");
   
   // Sample individual members list
   const individualMembers = [
@@ -70,6 +77,15 @@ const CreateEventPage = () => {
   
   const filteredGroups = groups.filter(group =>
     group.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  // Filter for required members search
+  const filteredRequiredMembers = individualMembers.filter(member =>
+    member.name.toLowerCase().includes(requiredSearchQuery.toLowerCase())
+  );
+  
+  const filteredRequiredGroups = groups.filter(group =>
+    group.name.toLowerCase().includes(requiredSearchQuery.toLowerCase())
   );
   
   const handleCategorySelect = (categoryName: string) => {
@@ -104,6 +120,29 @@ const CreateEventPage = () => {
     const group = groups.find(g => g.id === groupId);
     if (group && group.key) {
       handleGroupChange(group.key as keyof typeof attendeeGroups);
+    }
+  };
+  
+  // Functions for required attendees
+  const toggleRequiredMemberSelection = (id: string) => {
+    setRequiredForMembers(prev => 
+      prev.includes(id) 
+        ? prev.filter(memberId => memberId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const handleRequiredGroupChange = (group: keyof typeof requiredForGroups) => {
+    setRequiredForGroups(prev => ({
+      ...prev,
+      [group]: !prev[group]
+    }));
+  };
+
+  const handleRequiredGroupSelect = (groupId: string) => {
+    const group = groups.find(g => g.id === groupId);
+    if (group && group.key) {
+      handleRequiredGroupChange(group.key as keyof typeof requiredForGroups);
     }
   };
 
@@ -232,6 +271,75 @@ const CreateEventPage = () => {
               onCheckedChange={setIsRequired} 
             />
           </div>
+          
+          {isRequired && (
+            <Command className="rounded-lg border shadow-sm bg-white">
+              <CommandInput 
+                placeholder="Search groups or members who must attend..." 
+                value={requiredSearchQuery}
+                onValueChange={setRequiredSearchQuery}
+              />
+              <CommandList>
+                {/* No results message */}
+                {filteredRequiredGroups.length === 0 && filteredRequiredMembers.length === 0 && (
+                  <CommandEmpty>No results found.</CommandEmpty>
+                )}
+                
+                {/* Groups section */}
+                {filteredRequiredGroups.length > 0 && (
+                  <CommandGroup heading="Required for Groups">
+                    {filteredRequiredGroups.map(group => (
+                      <CommandItem 
+                        key={group.id} 
+                        onSelect={() => handleRequiredGroupSelect(group.id)}
+                        className="flex items-center gap-2"
+                      >
+                        <Checkbox 
+                          id={`required-group-${group.id}`}
+                          checked={requiredForGroups[group.key as keyof typeof requiredForGroups]}
+                          onCheckedChange={() => handleRequiredGroupSelect(group.id)}
+                          className="mr-2"
+                        />
+                        <label htmlFor={`required-group-${group.id}`} className="flex-1 cursor-pointer">
+                          {group.name}
+                        </label>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+                
+                {/* Members section */}
+                {filteredRequiredMembers.length > 0 && (
+                  <CommandGroup heading="Required for Members">
+                    {filteredRequiredMembers.map(member => (
+                      <CommandItem 
+                        key={member.id} 
+                        onSelect={() => toggleRequiredMemberSelection(member.id)}
+                        className="flex items-center gap-2"
+                      >
+                        <Checkbox 
+                          id={`required-member-${member.id}`}
+                          checked={requiredForMembers.includes(member.id)}
+                          onCheckedChange={() => toggleRequiredMemberSelection(member.id)}
+                          className="mr-2"
+                        />
+                        <label htmlFor={`required-member-${member.id}`} className="flex-1 cursor-pointer">
+                          {member.name}
+                        </label>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+              </CommandList>
+              
+              {/* Selected members counter */}
+              {requiredForMembers.length > 0 && (
+                <div className="px-4 py-2 text-sm text-gray-500 border-t">
+                  {requiredForMembers.length} individual member{requiredForMembers.length !== 1 ? 's' : ''} required to attend
+                </div>
+              )}
+            </Command>
+          )}
 
           {/* Who Can Attend - Toggle and Direct Search Interface */}
           <div className="flex items-center justify-between">
