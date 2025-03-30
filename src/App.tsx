@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -25,6 +26,7 @@ import NotFound from "./pages/NotFound";
 import TaskDetailPage from "./pages/TaskDetailPage";
 import CreateTaskPage from "./pages/CreateTaskPage";
 import DuesPage from "./pages/DuesPage";
+import CalendarPage from "./pages/CalendarPage";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +53,7 @@ const App = () => (
           <Route path="/todo" element={<ToDoPage />} />
           <Route path="/task/:id" element={<TaskDetailPage />} />
           <Route path="/create-task" element={<CreateTaskPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
           
           <Route path="/sister-points" element={<SisterPointsPage />} />
           <Route path="/requirements" element={<RequirementsPage />} />

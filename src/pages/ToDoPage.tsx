@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Filter, PlusCircle, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Filter, PlusCircle, CheckCircle, ChevronDown, ChevronUp, Calendar, User } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -138,7 +138,7 @@ const ToDoPage = () => {
             variant="outline" 
             size="sm" 
             onClick={() => {
-              setTasks(updatedTasks.map(t => 
+              setTasks(prevTasks => prevTasks.map(t => 
                 t.id === taskId 
                   ? { ...t, completed: false, status: "todo" } 
                   : t
@@ -161,10 +161,32 @@ const ToDoPage = () => {
     console.log("Opening filter options");
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
+  const handleCalendarClick = () => {
+    navigate("/calendar");
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      <header className="px-6 py-6 bg-white">
+      <header className="px-6 py-6 bg-white flex justify-between items-center">
         <h1 className="text-2xl font-semibold">To Do</h1>
+        <div className="flex gap-4">
+          <button 
+            className="p-1 bg-white rounded-full"
+            onClick={handleCalendarClick}
+          >
+            <Calendar className="w-6 h-6" />
+          </button>
+          <button 
+            className="p-1 bg-white rounded-full"
+            onClick={handleProfileClick}
+          >
+            <User className="w-6 h-6" />
+          </button>
+        </div>
       </header>
 
       <div className="flex border-b bg-white">

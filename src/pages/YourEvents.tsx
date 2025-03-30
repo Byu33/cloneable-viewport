@@ -1,21 +1,21 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Calendar, Search, MapPin } from "lucide-react";
+import { User, Calendar, Search, Bell } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import CheckInDialog from "@/components/CheckInDialog";
-import { getEvents, Event } from "@/utils/eventStorage";
+import { getEvents } from "@/utils/eventStorage";
 import YourEventCard from "@/components/YourEventCard";
 
 const YourEvents = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Your Events");
   const tabs = ["Going", "Explore", "Your Events"];
-  const [checkInEvent, setCheckInEvent] = useState<Event | null>(null);
+  const [checkInEvent, setCheckInEvent] = useState<any>(null);
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
     const hardcodedEvents = [
@@ -80,6 +80,14 @@ const YourEvents = () => {
   const handleCreateEvent = () => {
     navigate("/create-event");
   };
+  
+  const handleCalendarClick = () => {
+    navigate("/calendar");
+  };
+  
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -87,9 +95,12 @@ const YourEvents = () => {
         <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
           <button className="p-1 bg-white rounded-full">
+            <Bell className="w-6 h-6" />
+          </button>
+          <button className="p-1 bg-white rounded-full" onClick={handleCalendarClick}>
             <Calendar className="w-6 h-6" />
           </button>
-          <button className="p-1 bg-white rounded-full">
+          <button className="p-1 bg-white rounded-full" onClick={handleProfileClick}>
             <User className="w-6 h-6" />
           </button>
         </div>

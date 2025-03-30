@@ -30,6 +30,7 @@ const CreateTaskPage = () => {
   const [selectedPriority, setSelectedPriority] = useState<typeof priorityOptions[0] | null>(null);
   const [isRequired, setIsRequired] = useState(false);
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Mock members data
   const members = [
@@ -39,6 +40,10 @@ const CreateTaskPage = () => {
     { id: "4", name: "David Brown", image: "https://randomuser.me/api/portraits/men/76.jpg" },
     { id: "5", name: "Emma Davis", image: "https://randomuser.me/api/portraits/women/23.jpg" }
   ];
+
+  const filteredMembers = members.filter(member =>
+    member.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleBack = () => {
     navigate(-1);
@@ -184,11 +189,13 @@ const CreateTaskPage = () => {
                   type="text"
                   placeholder="Search members..."
                   className="pl-10 pr-4 py-2 w-full rounded-full border border-gray-300 bg-white"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               
               <div className="space-y-2">
-                {members.map((member) => (
+                {filteredMembers.map((member) => (
                   <div 
                     key={member.id}
                     className={`p-3 rounded-lg flex items-center justify-between cursor-pointer ${
