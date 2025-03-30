@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { X, CalendarIcon, MapPin, Plus } from "lucide-react";
+import { X, CalendarIcon, MapPin, Plus, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,13 +14,9 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent } from "@/components/ui/card";
+import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 
 const CreateEventPage = () => {
   const navigate = useNavigate();
@@ -33,6 +29,7 @@ const CreateEventPage = () => {
     allOfficers: false,
   });
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   
   // Sample individual members list
   const individualMembers = [
@@ -42,6 +39,11 @@ const CreateEventPage = () => {
     { id: "4", name: "Ava Wilson" },
     { id: "5", name: "Isabella Thompson" },
   ];
+  
+  // Filter members based on search query
+  const filteredMembers = individualMembers.filter(member =>
+    member.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   
   const categories = [
     { id: 1, name: "Sisterhood", color: "bg-purple-600 text-white" },
@@ -194,7 +196,7 @@ const CreateEventPage = () => {
             </div>
           </div>
 
-          {/* Who Can Attend - Toggle and Accordion */}
+          {/* Who Can Attend - Toggle and Card with Search */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between">
               <label className="text-gray-700 font-medium">
@@ -207,14 +209,12 @@ const CreateEventPage = () => {
             </div>
             
             {restrictAttendance && (
-              <Accordion type="single" collapsible className="w-full bg-gray-50 rounded-md p-2">
-                <AccordionItem value="attendees" className="border-b-0">
-                  <AccordionTrigger className="py-3 px-3 hover:no-underline">
-                    <span className="text-gray-700">Who can attend?</span>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-3">
-                    <div className="space-y-3 py-2">
-                      {/* Group options */}
+              <Card className="w-full bg-white border border-gray-200">
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    {/* Group options */}
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-medium text-gray-700">Select Groups</h3>
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <Checkbox 
@@ -258,32 +258,45 @@ const CreateEventPage = () => {
                           </label>
                         </div>
                       </div>
-                      
-                      {/* Individual members */}
-                      <div className="pt-2 border-t border-gray-200">
-                        <p className="text-sm font-medium mb-2">Individual Members</p>
-                        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
-                          {individualMembers.map(member => (
-                            <div key={member.id} className="flex items-center space-x-2">
-                              <Checkbox 
-                                id={`member-${member.id}`} 
-                                checked={selectedMembers.includes(member.id)}
-                                onCheckedChange={() => toggleMemberSelection(member.id)}
-                              />
-                              <label
-                                htmlFor={`member-${member.id}`}
-                                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                              >
-                                {member.name}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
                     </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+                    
+                    {/* Search and select individual members */}
+                    <div className="pt-2">
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">Individual Members</h3>
+                      <Command className="rounded-lg border shadow-sm">
+                        <div className="flex items-center border-b px-3">
+                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                          <CommandInput 
+                            placeholder="Search members..." 
+                            className="flex h-9 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50" 
+                            value={searchQuery}
+                            onValueChange={setSearchQuery}
+                          />
+                        </div>
+                        {filteredMembers.length === 0 ? (
+                          <CommandEmpty>No members found.</CommandEmpty>
+                        ) : (
+                          <CommandGroup className="max-h-64 overflow-auto">
+                            {filteredMembers.map(member => (
+                              <CommandItem 
+                                key={member.id} 
+                                onSelect={() => toggleMemberSelection(member.id)}
+                                className="flex items-center gap-2 px-2 py-1.5 cursor-pointer"
+                              >
+                                <Checkbox 
+                                  checked={selectedMembers.includes(member.id)}
+                                  className="mr-1"
+                                />
+                                <span>{member.name}</span>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        )}
+                      </Command>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             )}
           </div>
 
