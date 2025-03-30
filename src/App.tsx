@@ -16,6 +16,12 @@ import CreateEventLogisticsPage from "./pages/CreateEventLogisticsPage";
 import EventPreviewPage from "./pages/EventPreviewPage";
 import EventAttendancePage from "./pages/EventAttendancePage";
 import EditEventPage from "./pages/EditEventPage";
+import HomePage from "./pages/HomePage";
+import ToDoPage from "./pages/ToDoPage";
+import SisterPointsPage from "./pages/SisterPointsPage"; 
+import RequirementsPage from "./pages/RequirementsPage";
+import OtherPage from "./pages/OtherPage";
+import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +44,15 @@ const App = () => (
           <Route path="/event-preview" element={<EventPreviewPage />} />
           <Route path="/event-attendance/:id" element={<EventAttendancePage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
+          
+          {/* New pages */}
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/todo" element={<ToDoPage />} />
+          <Route path="/sister-points" element={<SisterPointsPage />} />
+          <Route path="/requirements" element={<RequirementsPage />} />
+          <Route path="/other" element={<OtherPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

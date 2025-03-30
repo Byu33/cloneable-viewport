@@ -13,7 +13,7 @@ const YourEvents = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Your Events");
   const tabs = ["Going", "Explore", "Your Events"];
-  const [checkInEvent, setCheckInEvent] = useState<any>(null);
+  const [checkInEvent, setCheckInEvent] = useState<Event | null>(null);
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -69,9 +69,9 @@ const YourEvents = () => {
 
   const handleTabClick = (tab: string) => {
     if (tab === "Going") {
-      window.location.href = "/";
+      navigate("/");
     } else if (tab === "Explore") {
-      window.location.href = "/explore";
+      navigate("/explore");
     } else {
       setActiveTab(tab);
     }
