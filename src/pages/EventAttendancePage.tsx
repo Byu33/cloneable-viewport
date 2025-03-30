@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 const EventAttendancePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [isCheckedInOpen, setIsCheckedInOpen] = useState(true);
+  const [isCheckedInOpen, setIsCheckedInOpen] = useState(false);
 
   // Mock data for the event
   const event = {
@@ -95,12 +95,16 @@ const EventAttendancePage = () => {
           </button>
           
           {isCheckedInOpen && (
-            <div className="px-4 pb-4 flex -space-x-2 overflow-x-auto">
+            <div className="px-4 pb-4">
               {checkedInUsers.map(user => (
-                <Avatar key={user.id} className="h-10 w-10 border-2 border-white">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
-                </Avatar>
+                <div key={user.id} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-gray-800">{user.name}</span>
+                  <ChevronRight className="w-4 h-4 text-gray-400 ml-auto" />
+                </div>
               ))}
             </div>
           )}
