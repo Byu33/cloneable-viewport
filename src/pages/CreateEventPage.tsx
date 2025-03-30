@@ -38,6 +38,7 @@ const CreateEventPage = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [restrictAttendance, setRestrictAttendance] = useState(false);
+  const [isRequired, setIsRequired] = useState(false);
   const [attendeeGroups, setAttendeeGroups] = useState({
     allMembers: false,
     allCandidates: false,
@@ -218,6 +219,19 @@ const CreateEventPage = () => {
                   {category.name}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Is this event required? */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <label className="text-gray-700 font-medium">
+                Is this Event Required?
+              </label>
+              <Switch 
+                checked={isRequired} 
+                onCheckedChange={setIsRequired} 
+              />
             </div>
           </div>
 
