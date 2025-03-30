@@ -251,7 +251,7 @@ const EditEventPage = () => {
           </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="details" className="flex-1 overflow-auto relative">
+        <TabsContent value="details" className="flex-1 overflow-auto">
           <div className="px-6 py-4 pb-24">
             <div className="space-y-6">
               <div className="space-y-2">
@@ -430,9 +430,9 @@ const EditEventPage = () => {
             </div>
           </div>
           
-          <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 p-4 bg-white">
+          <div className="border-t border-gray-200 p-4 sticky bottom-0 bg-white flex justify-end">
             <Button 
-              className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+              className="bg-purple-700 hover:bg-purple-800 text-white px-6"
               onClick={handleNext}
             >
               Next
@@ -440,7 +440,7 @@ const EditEventPage = () => {
           </div>
         </TabsContent>
         
-        <TabsContent value="content" className="flex-1 overflow-auto relative">
+        <TabsContent value="content" className="flex-1 overflow-auto">
           <div className="px-6 py-4 pb-24">
             <div className="space-y-6">
               <div className="space-y-2">
@@ -492,22 +492,20 @@ const EditEventPage = () => {
             </div>
           </div>
           
-          <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 p-4 bg-white">
-            <div className="flex justify-between">
-              <Button variant="outline" className="px-4" onClick={handlePrevious}>
-                Previous
-              </Button>
-              <Button 
-                className="bg-purple-700 hover:bg-purple-800 text-white px-6"
-                onClick={handleNext}
-              >
-                Next
-              </Button>
-            </div>
+          <div className="border-t border-gray-200 p-4 sticky bottom-0 bg-white flex justify-between">
+            <Button variant="outline" className="px-4" onClick={handlePrevious}>
+              Previous
+            </Button>
+            <Button 
+              className="bg-purple-700 hover:bg-purple-800 text-white px-6"
+              onClick={handleNext}
+            >
+              Next
+            </Button>
           </div>
         </TabsContent>
         
-        <TabsContent value="logistics" className="flex-1 overflow-auto relative">
+        <TabsContent value="logistics" className="flex-1 overflow-auto">
           <div className="px-6 py-4 pb-24">
             <div className="space-y-6">
               <div>
@@ -652,11 +650,11 @@ const EditEventPage = () => {
             </div>
           </div>
           
-          <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 p-4 bg-white">
-            <div className="flex flex-col space-y-4">
-              <Button variant="outline" className="px-4" onClick={handlePrevious}>
-                Previous
-              </Button>
+          <div className="border-t border-gray-200 p-4 sticky bottom-0 bg-white flex justify-between">
+            <Button variant="outline" className="px-4" onClick={handlePrevious}>
+              Previous
+            </Button>
+            <div className="flex gap-2">
               <Button 
                 variant="outline" 
                 className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
@@ -666,7 +664,7 @@ const EditEventPage = () => {
                 Cancel Event
               </Button>
               <Button 
-                className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                className="bg-purple-700 hover:bg-purple-800 text-white px-6"
                 onClick={handleSave}
               >
                 Save
