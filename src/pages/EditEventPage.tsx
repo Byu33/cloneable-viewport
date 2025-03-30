@@ -106,6 +106,62 @@ const EditEventPage = () => {
       </header>
 
       <div className="flex-1">
+        {/* Top actions section with notify attendees and cancel event */}
+        <div className="bg-white p-4 border-b">
+          <div className="flex flex-col space-y-4">
+            <div className="flex items-center">
+              <Checkbox 
+                id="notify-attendees"
+                checked={notifyAttendees}
+                onCheckedChange={(checked) => setNotifyAttendees(!!checked)}
+                className="border-purple-300 data-[state=checked]:bg-purple-700"
+              />
+              <label htmlFor="notify-attendees" className="ml-2 text-sm font-medium text-purple-700">
+                Notify Attendees about Changes
+              </label>
+            </div>
+            
+            <div>
+              <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="text-red-600 border-red-200">
+                    Cancel Event
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="py-2">
+                    <label htmlFor="cancel-reason" className="text-sm font-medium">
+                      Reason (optional)
+                    </label>
+                    <Textarea
+                      id="cancel-reason"
+                      placeholder="Let attendees know why this event is being cancelled..."
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Nevermind</AlertDialogCancel>
+                    <AlertDialogAction 
+                      className="bg-red-600 hover:bg-red-700"
+                      onClick={handleCancel}
+                    >
+                      Yes, Cancel Event
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 sticky top-[60px] bg-white z-10 border-b">
             <TabsTrigger value="details" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
@@ -120,18 +176,6 @@ const EditEventPage = () => {
           </TabsList>
 
           <div className="p-4">
-            <div className="flex items-center mb-6">
-              <Checkbox 
-                id="notify-attendees"
-                checked={notifyAttendees}
-                onCheckedChange={(checked) => setNotifyAttendees(!!checked)}
-                className="border-purple-300 data-[state=checked]:bg-purple-700"
-              />
-              <label htmlFor="notify-attendees" className="ml-2 text-sm font-medium text-purple-700">
-                Notify Attendees about Changes
-              </label>
-            </div>
-
             <TabsContent value="details" className="space-y-4 mt-0">
               <div className="space-y-2">
                 <label htmlFor="title" className="text-sm font-medium">
@@ -256,44 +300,7 @@ const EditEventPage = () => {
               </div>
             </TabsContent>
 
-            <div className="flex justify-between mt-8">
-              <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="text-red-600 border-red-200">
-                    Cancel Event
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="py-2">
-                    <label htmlFor="cancel-reason" className="text-sm font-medium">
-                      Reason (optional)
-                    </label>
-                    <Textarea
-                      id="cancel-reason"
-                      placeholder="Let attendees know why this event is being cancelled..."
-                      value={cancelReason}
-                      onChange={(e) => setCancelReason(e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Nevermind</AlertDialogCancel>
-                    <AlertDialogAction 
-                      className="bg-red-600 hover:bg-red-700"
-                      onClick={handleCancel}
-                    >
-                      Yes, Cancel Event
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-
+            <div className="flex justify-end mt-8">
               <Button 
                 className="bg-purple-700 hover:bg-purple-800 text-white"
                 onClick={handleNextTab}
