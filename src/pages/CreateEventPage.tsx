@@ -47,10 +47,24 @@ const CreateEventPage = () => {
     { id: "5", name: "Isabella Thompson" },
   ];
   
-  // Filter members based on search query
+  // Define group options for search
+  const groups = [
+    { id: "members", name: "All Members" },
+    { id: "candidates", name: "All Candidates" },
+    { id: "officers", name: "All Officers" },
+  ];
+  
+  // Filter members and groups based on search query
   const filteredMembers = individualMembers.filter(member =>
     member.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
+  const filteredGroups = groups.filter(group =>
+    group.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  // Show filtered groups only if there's a search query
+  const showFilteredGroups = searchQuery.length > 0 && filteredGroups.length > 0;
   
   const categories = [
     { id: 1, name: "Sisterhood", color: "bg-purple-600 text-white" },
@@ -86,6 +100,20 @@ const CreateEventPage = () => {
       ...prev,
       [group]: !prev[group]
     }));
+  };
+
+  // Handle group selection from search results
+  const handleGroupSelect = (groupId: string) => {
+    const groupMap: {[key: string]: keyof typeof attendeeGroups} = {
+      "members": "allMembers",
+      "candidates": "allCandidates",
+      "officers": "allOfficers"
+    };
+    
+    const groupKey = groupMap[groupId];
+    if (groupKey) {
+      handleGroupChange(groupKey);
+    }
   };
 
   return (
@@ -219,68 +247,43 @@ const CreateEventPage = () => {
               <Card className="w-full bg-white border border-gray-200">
                 <CardContent className="pt-6">
                   <div className="space-y-4">
-                    {/* Group options */}
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-medium text-gray-700">Select Groups</h3>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="all-members" 
-                            checked={attendeeGroups.allMembers}
-                            onCheckedChange={() => handleGroupChange('allMembers')}
-                          />
-                          <label
-                            htmlFor="all-members"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            All Members
-                          </label>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="all-candidates" 
-                            checked={attendeeGroups.allCandidates}
-                            onCheckedChange={() => handleGroupChange('allCandidates')}
-                          />
-                          <label
-                            htmlFor="all-candidates"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            All Candidates
-                          </label>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="all-officers" 
-                            checked={attendeeGroups.allOfficers}
-                            onCheckedChange={() => handleGroupChange('allOfficers')}
-                          />
-                          <label
-                            htmlFor="all-officers"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            All Officers
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Search and select individual members */}
-                    <div className="pt-2">
-                      <h3 className="text-sm font-medium text-gray-700 mb-2">Individual Members</h3>
+                    {/* Search bar at the top */}
+                    <div className="mb-4">
                       <Command className="rounded-lg border shadow-sm">
                         <CommandInput 
-                          placeholder="Search members..." 
+                          placeholder="Search groups or members..." 
                           value={searchQuery}
                           onValueChange={setSearchQuery}
                         />
                         <CommandList>
-                          {filteredMembers.length === 0 ? (
-                            <CommandEmpty>No members found.</CommandEmpty>
-                          ) : (
-                            <CommandGroup>
+                          {/* No results message */}
+                          {filteredGroups.length === 0 && filteredMembers.length === 0 && (
+                            <CommandEmpty>No results found.</CommandEmpty>
+                          )}
+                          
+                          {/* Show filtered groups if search has results */}
+                          {showFilteredGroups && (
+                            <CommandGroup heading="Groups">
+                              {filteredGroups.map(group => (
+                                <CommandItem 
+                                  key={group.id} 
+                                  onSelect={() => handleGroupSelect(group.id)}
+                                  className="flex items-center gap-2"
+                                >
+                                  <Checkbox 
+                                    checked={attendeeGroups[group.id === "members" ? "allMembers" : 
+                                      group.id === "candidates" ? "allCandidates" : "allOfficers"]}
+                                    className="mr-2"
+                                  />
+                                  <span>{group.name}</span>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          )}
+                          
+                          {/* Members section */}
+                          {filteredMembers.length > 0 && (
+                            <CommandGroup heading="Members">
                               {filteredMembers.map(member => (
                                 <CommandItem 
                                   key={member.id} 
@@ -299,6 +302,63 @@ const CreateEventPage = () => {
                         </CommandList>
                       </Command>
                     </div>
+                    
+                    {/* Group options - shown below search when not searching */}
+                    {!searchQuery && (
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-medium text-gray-700">Select Groups</h3>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="all-members" 
+                              checked={attendeeGroups.allMembers}
+                              onCheckedChange={() => handleGroupChange('allMembers')}
+                            />
+                            <label
+                              htmlFor="all-members"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              All Members
+                            </label>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="all-candidates" 
+                              checked={attendeeGroups.allCandidates}
+                              onCheckedChange={() => handleGroupChange('allCandidates')}
+                            />
+                            <label
+                              htmlFor="all-candidates"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              All Candidates
+                            </label>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="all-officers" 
+                              checked={attendeeGroups.allOfficers}
+                              onCheckedChange={() => handleGroupChange('allOfficers')}
+                            />
+                            <label
+                              htmlFor="all-officers"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              All Officers
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Reminder about selected members - only show if there are selections */}
+                    {selectedMembers.length > 0 && (
+                      <div className="pt-2 text-sm text-gray-500">
+                        {selectedMembers.length} individual member{selectedMembers.length !== 1 ? 's' : ''} selected
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
