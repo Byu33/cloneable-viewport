@@ -94,16 +94,17 @@ const CreateEventPage = () => {
   };
 
   const handleNextClick = () => {
+    const titleElement = document.getElementById('title') as HTMLInputElement;
+    const startTimeElement = document.querySelector('input[type="time"]') as HTMLInputElement;
+    const endTimeElement = document.querySelectorAll('input[type="time"]')[1] as HTMLInputElement;
+    const locationElement = document.getElementById('location') as HTMLInputElement;
+    
     const newEvent = {
-      title: document.getElementById('title')?.value as string || "New Event",
+      title: titleElement?.value || "New Event",
       date: date || new Date(),
-      time: `${
-        (document.querySelector('input[type="time"]') as HTMLInputElement)?.value || "12:00"
-      }-${
-        (document.querySelectorAll('input[type="time"]')[1] as HTMLInputElement)?.value || "13:00"
-      }`,
-      location: (document.getElementById('location') as HTMLInputElement)?.value || "No location specified",
-      address: (document.getElementById('location') as HTMLInputElement)?.value || "",
+      time: `${startTimeElement?.value || "12:00"}-${endTimeElement?.value || "13:00"}`,
+      location: locationElement?.value || "No location specified",
+      address: locationElement?.value || "",
       tag: selectedCategories.length > 0 ? selectedCategories[0] : undefined,
       tagColor: selectedCategories.length > 0 ? "bg-purple-200 text-purple-700" : undefined,
       description: "Event details will be added in the next step.",

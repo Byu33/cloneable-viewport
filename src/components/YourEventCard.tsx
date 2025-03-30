@@ -120,7 +120,7 @@ const YourEventCard = ({ event, index }: YourEventCardProps) => {
         
         <div className="flex flex-col items-end">
           {event.tag && (
-            <span className={`${event.tagColor} text-xs px-3 py-1 rounded-full font-bold text-[13px]`}>
+            <span className={`${event.tagColor || "bg-purple-200 text-purple-700"} text-xs px-3 py-1 rounded-full font-bold text-[13px]`}>
               {event.tag}
             </span>
           )}
