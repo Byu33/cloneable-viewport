@@ -22,12 +22,6 @@ const EventPreviewPage = () => {
     hosts: [
       { id: 1, name: "Aparna Patel", avatar: "https://randomuser.me/api/portraits/women/32.jpg" },
       { id: 2, name: "Mooshoo Craddock", avatar: "https://randomuser.me/api/portraits/women/44.jpg" }
-    ],
-    attendees: [
-      { id: 1, name: "Esther Smith", avatar: "https://randomuser.me/api/portraits/women/65.jpg" },
-      { id: 2, name: "Aparna Patel", avatar: "https://randomuser.me/api/portraits/women/32.jpg" },
-      { id: 3, name: "Hannah B", avatar: "https://randomuser.me/api/portraits/women/28.jpg" },
-      { id: 4, name: "Mooshoo Craddock", avatar: "https://randomuser.me/api/portraits/women/44.jpg" }
     ]
   };
 
@@ -78,7 +72,7 @@ const EventPreviewPage = () => {
           <p className="text-gray-700">{event.description}</p>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 mb-8">
           <h2 className="text-xl font-semibold mb-3">Event Hosts</h2>
           <div className="space-y-3">
             {event.hosts.map(host => (
@@ -90,25 +84,6 @@ const EventPreviewPage = () => {
                 <span className="text-gray-800">{host.name}</span>
               </div>
             ))}
-          </div>
-        </div>
-
-        <div className="mt-6 mb-8">
-          <div className="bg-purple-50 rounded-lg p-5">
-            <h2 className="text-xl font-semibold mb-3">Attendees</h2>
-            <p className="text-sm text-gray-600 mb-3">{event.attendees.length} people are attending</p>
-            
-            <div className="space-y-3">
-              {event.attendees.map(attendee => (
-                <div key={attendee.id} className="flex items-center">
-                  <Avatar className="h-8 w-8 mr-3">
-                    <AvatarImage src={attendee.avatar} alt={attendee.name} />
-                    <AvatarFallback>{attendee.name.substring(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-gray-800">{attendee.name}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
