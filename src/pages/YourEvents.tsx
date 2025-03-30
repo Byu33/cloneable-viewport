@@ -62,9 +62,8 @@ const YourEvents = () => {
     return `${month} ${day}`;
   };
 
-  const handleCheckIn = (event: any) => {
-    setCheckInEvent(event);
-    setIsCheckInOpen(true);
+  const handleAttendance = (eventId: number) => {
+    navigate(`/event-attendance/${eventId}`);
   };
 
   const handleCreateEvent = () => {
@@ -191,7 +190,7 @@ const YourEvents = () => {
                     <div className="flex gap-2 mt-3">
                       <Button 
                         className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
-                        onClick={() => handleCheckIn(event)}
+                        onClick={() => handleAttendance(event.id)}
                       >
                         Attendance
                       </Button>

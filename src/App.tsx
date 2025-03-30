@@ -14,6 +14,7 @@ import CreateEventPage from "./pages/CreateEventPage";
 import CreateEventDetailsPage from "./pages/CreateEventDetailsPage";
 import CreateEventLogisticsPage from "./pages/CreateEventLogisticsPage";
 import EventPreviewPage from "./pages/EventPreviewPage";
+import EventAttendancePage from "./pages/EventAttendancePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/create-event/details" element={<CreateEventDetailsPage />} />
           <Route path="/create-event/logistics" element={<CreateEventLogisticsPage />} />
           <Route path="/event-preview" element={<EventPreviewPage />} />
+          <Route path="/event-attendance/:id" element={<EventAttendancePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
