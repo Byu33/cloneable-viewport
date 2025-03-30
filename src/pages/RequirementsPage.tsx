@@ -41,8 +41,12 @@ const RequirementsPage = () => {
     navigate(-1);
   };
 
-  const handleRequirementClick = (id: number) => {
-    navigate(`/requirement/${id}`);
+  const handleRequirementClick = (id: number, category: string) => {
+    if (category === "Sisterhood" || category === "Professional" || category === "Risk") {
+      navigate(`/explore?category=${category.toLowerCase()}`);
+    } else {
+      navigate(`/requirement/${id}`);
+    }
   };
 
   return (
@@ -75,8 +79,8 @@ const RequirementsPage = () => {
               {metRequirements.map(requirement => (
                 <div 
                   key={requirement.id}
-                  className="bg-purple-50 p-4 rounded-lg flex justify-between items-center"
-                  onClick={() => handleRequirementClick(requirement.id)}
+                  className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"
+                  onClick={() => handleRequirementClick(requirement.id, requirement.category)}
                 >
                   <span className="text-purple-900 font-medium">{requirement.title}</span>
                   <ChevronRight className="h-5 w-5 text-purple-500" />
@@ -105,8 +109,8 @@ const RequirementsPage = () => {
               {unmetRequirements.map(requirement => (
                 <div 
                   key={requirement.id}
-                  className="bg-purple-50 p-4 rounded-lg flex justify-between items-center"
-                  onClick={() => handleRequirementClick(requirement.id)}
+                  className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"
+                  onClick={() => handleRequirementClick(requirement.id, requirement.category)}
                 >
                   <span className="text-purple-900 font-medium">{requirement.title}</span>
                   <ChevronRight className="h-5 w-5 text-purple-500" />
