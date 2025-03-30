@@ -16,7 +16,14 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
+import {
+  Command,
+  CommandInput,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList
+} from "@/components/ui/command";
 
 const CreateEventPage = () => {
   const navigate = useNavigate();
@@ -264,34 +271,32 @@ const CreateEventPage = () => {
                     <div className="pt-2">
                       <h3 className="text-sm font-medium text-gray-700 mb-2">Individual Members</h3>
                       <Command className="rounded-lg border shadow-sm">
-                        <div className="flex items-center border-b px-3">
-                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                          <CommandInput 
-                            placeholder="Search members..." 
-                            className="flex h-9 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50" 
-                            value={searchQuery}
-                            onValueChange={setSearchQuery}
-                          />
-                        </div>
-                        {filteredMembers.length === 0 ? (
-                          <CommandEmpty>No members found.</CommandEmpty>
-                        ) : (
-                          <CommandGroup className="max-h-64 overflow-auto">
-                            {filteredMembers.map(member => (
-                              <CommandItem 
-                                key={member.id} 
-                                onSelect={() => toggleMemberSelection(member.id)}
-                                className="flex items-center gap-2 px-2 py-1.5 cursor-pointer"
-                              >
-                                <Checkbox 
-                                  checked={selectedMembers.includes(member.id)}
-                                  className="mr-1"
-                                />
-                                <span>{member.name}</span>
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        )}
+                        <CommandInput 
+                          placeholder="Search members..." 
+                          value={searchQuery}
+                          onValueChange={setSearchQuery}
+                        />
+                        <CommandList>
+                          {filteredMembers.length === 0 ? (
+                            <CommandEmpty>No members found.</CommandEmpty>
+                          ) : (
+                            <CommandGroup>
+                              {filteredMembers.map(member => (
+                                <CommandItem 
+                                  key={member.id} 
+                                  onSelect={() => toggleMemberSelection(member.id)}
+                                  className="flex items-center gap-2"
+                                >
+                                  <Checkbox 
+                                    checked={selectedMembers.includes(member.id)}
+                                    className="mr-2"
+                                  />
+                                  <span>{member.name}</span>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          )}
+                        </CommandList>
                       </Command>
                     </div>
                   </div>
