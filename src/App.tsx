@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -22,6 +21,10 @@ import SisterPointsPage from "./pages/SisterPointsPage";
 import RequirementsPage from "./pages/RequirementsPage";
 import OtherPage from "./pages/OtherPage";
 import ProfilePage from "./pages/ProfilePage";
+import TaskDetailPage from "./pages/TaskDetailPage";
+import TaskFilterPage from "./pages/TaskFilterPage";
+import CreateTaskPage from "./pages/CreateTaskPage";
+import DuesPage from "./pages/DuesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,13 +48,19 @@ const App = () => (
           <Route path="/event-attendance/:id" element={<EventAttendancePage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
           
-          {/* New pages */}
+          {/* Home, To Do and Related Pages */}
           <Route path="/home" element={<HomePage />} />
           <Route path="/todo" element={<ToDoPage />} />
+          <Route path="/todo/filter" element={<TaskFilterPage />} />
+          <Route path="/task/:id" element={<TaskDetailPage />} />
+          <Route path="/create-task" element={<CreateTaskPage />} />
+          
+          {/* Other Menu Pages */}
           <Route path="/sister-points" element={<SisterPointsPage />} />
           <Route path="/requirements" element={<RequirementsPage />} />
           <Route path="/other" element={<OtherPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/dues" element={<DuesPage />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
