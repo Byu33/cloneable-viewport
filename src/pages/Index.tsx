@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Calendar, User, ChevronDown, ChevronUp, Bell } from "lucide-react";
+import { Calendar, User, ChevronDown, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EventCard from "@/components/EventCard";
 import TabBar from "@/components/TabBar";
@@ -28,18 +28,6 @@ const Index = () => {
   const handleCheckIn = (event: any) => {
     setSelectedEvent(event);
     setIsCheckInOpen(true);
-  };
-
-  const handleNotifications = () => {
-    navigate("/notifications");
-  };
-
-  const handleCalendar = () => {
-    navigate("/calendar");
-  };
-
-  const handleProfile = () => {
-    navigate("/profile");
   };
 
   // Mock data for events
@@ -86,13 +74,10 @@ const Index = () => {
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
-          <button className="p-1 bg-white rounded-full" onClick={handleCalendar}>
+          <button className="p-1 bg-white rounded-full">
             <Calendar className="w-6 h-6" />
           </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
-            <Bell className="w-6 h-6" />
-          </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleProfile}>
+          <button className="p-1 bg-white rounded-full">
             <User className="w-6 h-6" />
           </button>
         </div>

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -21,16 +22,7 @@ import SisterPointsPage from "./pages/SisterPointsPage";
 import RequirementsPage from "./pages/RequirementsPage";
 import OtherPage from "./pages/OtherPage";
 import ProfilePage from "./pages/ProfilePage";
-import TaskDetailPage from "./pages/TaskDetailPage";
-import TaskFilterPage from "./pages/TaskFilterPage";
-import CreateTaskPage from "./pages/CreateTaskPage";
-import DuesPage from "./pages/DuesPage";
-import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
-import CalendarPage from "./pages/CalendarPage";
-import ChatPage from "./pages/ChatPage";
-import BirthdaysPage from "./pages/BirthdaysPage";
-import MembersPage from "./pages/MembersPage";
 
 const queryClient = new QueryClient();
 
@@ -53,24 +45,13 @@ const App = () => (
           <Route path="/event-attendance/:id" element={<EventAttendancePage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
           
-          {/* Home, Calendar, To Do and Related Pages */}
+          {/* New pages */}
           <Route path="/home" element={<HomePage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/todo" element={<ToDoPage />} />
-          <Route path="/todo/filter" element={<TaskFilterPage />} />
-          <Route path="/task/:id" element={<TaskDetailPage />} />
-          <Route path="/create-task" element={<CreateTaskPage />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/chat" element={<ChatPage />} />
-          
-          {/* Other Menu Pages */}
           <Route path="/sister-points" element={<SisterPointsPage />} />
           <Route path="/requirements" element={<RequirementsPage />} />
           <Route path="/other" element={<OtherPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/dues" element={<DuesPage />} />
-          <Route path="/birthdays" element={<BirthdaysPage />} />
-          <Route path="/members" element={<MembersPage />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

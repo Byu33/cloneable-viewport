@@ -44,21 +44,13 @@ const HomePage = () => {
     completed: 1,
     total: 7,
     upcoming: [
-      { id: 1, title: "1 Sisterhood Event", category: "Sisterhood" },
-      { id: 2, title: "1 Professional Event", category: "Professional" }
+      { id: 1, title: "1 Sisterhood Event" },
+      { id: 2, title: "1 Professional Event" }
     ]
   };
 
   const handleNotifications = () => {
     navigate("/notifications");
-  };
-  
-  const handleCalendar = () => {
-    navigate("/calendar");
-  };
-  
-  const handleProfile = () => {
-    navigate("/profile");
   };
 
   const handleSeeAllEvents = () => {
@@ -69,16 +61,12 @@ const HomePage = () => {
     navigate("/todo");
   };
 
-  const handleRequirementClick = (id: number, category?: string) => {
-    if (category) {
-      navigate(`/explore?category=${category.toLowerCase()}`);
-    } else {
-      navigate(`/requirements`);
-    }
+  const handleRequirementClick = (id: number) => {
+    navigate(`/requirements`);
   };
 
   const handlePayNow = () => {
-    navigate("/dues");
+    navigate("/payment");
   };
 
   const handlePaymentPlan = () => {
@@ -95,13 +83,13 @@ const HomePage = () => {
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold">Home</h1>
         <div className="flex gap-4">
-          <button className="p-1 bg-white rounded-full" onClick={handleCalendar}>
+          <button className="p-1 bg-white rounded-full">
             <Calendar className="w-6 h-6" />
           </button>
           <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
             <Bell className="w-6 h-6" />
           </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleProfile}>
+          <button className="p-1 bg-white rounded-full">
             <User className="w-6 h-6" />
           </button>
         </div>
@@ -228,7 +216,7 @@ const HomePage = () => {
             <div 
               key={index}
               className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
-              onClick={() => handleRequirementClick(req.id, req.category)}
+              onClick={() => handleRequirementClick(req.id)}
             >
               <span>{req.title}</span>
               <ChevronRight className="h-5 w-5 text-gray-400" />
