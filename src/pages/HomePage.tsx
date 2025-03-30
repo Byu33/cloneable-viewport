@@ -52,6 +52,14 @@ const HomePage = () => {
   const handleNotifications = () => {
     navigate("/notifications");
   };
+  
+  const handleCalendar = () => {
+    navigate("/calendar");
+  };
+  
+  const handleProfile = () => {
+    navigate("/profile");
+  };
 
   const handleSeeAllEvents = () => {
     navigate("/");
@@ -87,13 +95,13 @@ const HomePage = () => {
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold">Home</h1>
         <div className="flex gap-4">
-          <button className="p-1 bg-white rounded-full">
+          <button className="p-1 bg-white rounded-full" onClick={handleCalendar}>
             <Calendar className="w-6 h-6" />
           </button>
           <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
             <Bell className="w-6 h-6" />
           </button>
-          <button className="p-1 bg-white rounded-full">
+          <button className="p-1 bg-white rounded-full" onClick={handleProfile}>
             <User className="w-6 h-6" />
           </button>
         </div>
