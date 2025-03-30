@@ -67,12 +67,12 @@ const YourEvents = () => {
     navigate(`/event-attendance/${eventId}`);
   };
 
-  const handleEditEvent = (eventId: number) => {
-    navigate(`/edit-event/${eventId}`);
-  };
-
   const handleCreateEvent = () => {
     navigate("/create-event");
+  };
+  
+  const handleEditEvent = (eventId: number) => {
+    navigate(`/edit-event/${eventId}`);
   };
 
   return (
