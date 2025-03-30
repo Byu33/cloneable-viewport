@@ -99,23 +99,6 @@ const CreateEventPage = () => {
     const endTimeElement = document.querySelectorAll('input[type="time"]')[1] as HTMLInputElement;
     const locationElement = document.getElementById('location') as HTMLInputElement;
     
-    if (!titleElement.value) {
-      alert("Title is required");
-      return;
-    }
-    if (!date) {
-      alert("Date is required");
-      return;
-    }
-    if (!locationElement.value) {
-      alert("Location is required");
-      return;
-    }
-    if (selectedCategories.length === 0) {
-      alert("Category is required");
-      return;
-    }
-
     const newEvent = {
       title: titleElement?.value || "New Event",
       date: date || new Date(),
@@ -219,21 +202,18 @@ const CreateEventPage = () => {
         <div className="space-y-6">
           <div className="space-y-2">
             <label htmlFor="title" className="block text-gray-700 font-medium">
-              Title of Event <span className="text-red-500">*</span>
+              Title of Event
             </label>
             <Input
               id="title"
               placeholder="Enter event title"
               className="bg-gray-50"
-              required
             />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="block text-gray-700 font-medium">
-                Date <span className="text-red-500">*</span>
-              </label>
+              <label className="block text-gray-700 font-medium">Date</label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -282,14 +262,13 @@ const CreateEventPage = () => {
 
           <div className="space-y-2">
             <label htmlFor="location" className="block text-gray-700 font-medium">
-              Location <span className="text-red-500">*</span>
+              Location
             </label>
             <div className="relative">
               <Input
                 id="location"
                 placeholder="Enter location"
                 className="bg-gray-50 pr-10"
-                required
               />
               <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             </div>
@@ -297,7 +276,7 @@ const CreateEventPage = () => {
 
           <div className="space-y-3">
             <label className="block text-gray-700 font-medium">
-              Category <span className="text-red-500">*</span>
+              Category
             </label>
             <div className="flex flex-wrap gap-2">
               {categories.map((category) => (

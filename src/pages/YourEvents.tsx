@@ -1,150 +1,264 @@
-
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Plus, ArrowUpRight } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { User, Calendar, Search, MapPin } from "lucide-react";
 import TabBar from "@/components/TabBar";
-import YourEventCard from "@/components/YourEventCard";
-import { getStoredEvents, Event } from "@/utils/eventStorage";
-
-const upcomingEvents = [
-  {
-    id: 1,
-    title: "Alpha Phi Chapter Meeting",
-    date: new Date("2023-11-05"),
-    time: "7:00 PM - 8:30 PM",
-    location: "Student Center Room 302",
-    tag: "Chapter",
-    tagColor: "bg-purple-200 text-purple-700",
-    attendees: 42,
-    status: "upcoming" as const,
-  },
-  {
-    id: 2,
-    title: "Phi Mu Fundraiser",
-    date: new Date("2023-11-07"),
-    time: "12:00 PM - 3:00 PM",
-    location: "Campus Quad",
-    tag: "Fundraising",
-    tagColor: "bg-yellow-200 text-yellow-700",
-    attendees: 18,
-    status: "upcoming" as const,
-  },
-  {
-    id: 3,
-    title: "Pi Beta Phi Social",
-    date: new Date("2023-11-10"),
-    time: "8:00 PM - 11:00 PM",
-    location: "Greek Row House #12",
-    tag: "Social",
-    tagColor: "bg-pink-200 text-pink-700",
-    attendees: 35,
-    status: "upcoming" as const,
-  }
-];
-
-const pastEvents = [
-  {
-    id: 4,
-    title: "New Member Orientation",
-    date: new Date("2023-10-20"),
-    time: "6:00 PM - 7:30 PM",
-    location: "Chapter House",
-    tag: "Chapter",
-    tagColor: "bg-purple-200 text-purple-700",
-    attendees: 22,
-    status: "completed" as const,
-  },
-  {
-    id: 5,
-    title: "Homecoming Preparation",
-    date: new Date("2023-10-15"),
-    time: "2:00 PM - 5:00 PM",
-    location: "Art Studio",
-    tag: "Event",
-    tagColor: "bg-blue-200 text-blue-700",
-    attendees: 28,
-    status: "completed" as const,
-  }
-];
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import CheckInDialog from "@/components/CheckInDialog";
+import { getEvents, Event } from "@/utils/eventStorage";
 
 const YourEvents = () => {
-  const [combinedUpcomingEvents, setCombinedUpcomingEvents] = useState([...upcomingEvents]);
-  const [activeTab, setActiveTab] = useState("upcoming");
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("Your Events");
+  const tabs = ["Going", "Explore", "Your Events"];
+  const [checkInEvent, setCheckInEvent] = useState<any>(null);
+  const [isCheckInOpen, setIsCheckInOpen] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    const storedEvents = getStoredEvents();
-    const formattedStoredEvents = storedEvents.map(event => ({
-      id: event.id,
-      title: event.title,
-      date: event.date,
-      time: event.time,
-      location: event.location,
-      tag: event.tag || "Event", // Provide default values for optional fields
-      tagColor: event.tagColor || "bg-purple-200 text-purple-700",
-      attendees: event.attendees || 0,
-      status: "upcoming" as const
-    }));
+    const hardcodedEvents = [
+      {
+        id: 1,
+        title: "Chapter Meeting",
+        date: new Date(2024, 1, 16),
+        time: "5:00-6:00PM",
+        location: "Everitt Labratory",
+        tag: "Sisterhood",
+        tagColor: "bg-purple-200 text-purple-700",
+        attendees: 7,
+        status: "upcoming" as const,
+      },
+      {
+        id: 2,
+        title: "Daily Standup Call",
+        date: new Date(2024, 1, 16),
+        time: "5:00-6:00PM",
+        location: "Everitt Labratory",
+        tag: "Sisterhood",
+        tagColor: "bg-purple-200 text-purple-700",
+        attendees: 7,
+        status: "upcoming" as const,
+      },
+      {
+        id: 3,
+        title: "Chapter Meeting",
+        date: new Date(2024, 1, 16),
+        time: "5:00-6:00PM",
+        location: "Everitt Labratory",
+        tag: "Sisterhood",
+        tagColor: "bg-purple-200 text-purple-700",
+        attendees: 7,
+        status: "upcoming" as const,
+      }
+    ];
     
-    setCombinedUpcomingEvents([...upcomingEvents, ...formattedStoredEvents]);
+    const savedEvents = getEvents();
+    
+    const uniqueEvents = [...hardcodedEvents];
+    
+    savedEvents.forEach(savedEvent => {
+      if (!uniqueEvents.some(event => event.id === savedEvent.id)) {
+        uniqueEvents.push(savedEvent);
+      }
+    });
+    
+    setEvents(uniqueEvents);
   }, []);
 
+  const handleTabClick = (tab: string) => {
+    if (tab === "Going") {
+      window.location.href = "/";
+    } else if (tab === "Explore") {
+      window.location.href = "/explore";
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
+  const formatDate = (date: Date) => {
+    const month = date.toLocaleString('default', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  };
+
+  const handleAttendance = (eventId: number) => {
+    navigate(`/event-attendance/${eventId}`);
+  };
+
+  const handleEditEvent = (eventId: number) => {
+    navigate(`/edit-event/${eventId}`);
+  };
+
+  const handleCreateEvent = () => {
+    navigate("/create-event");
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <header className="bg-white p-4 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-xl font-semibold">Your Events</h1>
-          <Link 
-            to="/create-event" 
-            className="inline-flex items-center justify-center p-2 rounded-full bg-purple-100 text-purple-700"
-          >
-            <Plus className="h-5 w-5" />
-          </Link>
-        </div>
-        
-        <div className="flex space-x-4 border-b border-gray-200">
-          <button
-            className={`py-2 px-1 font-medium text-sm ${
-              activeTab === "upcoming" 
-                ? "text-purple-700 border-b-2 border-purple-700" 
-                : "text-gray-500"
-            }`}
-            onClick={() => setActiveTab("upcoming")}
-          >
-            Upcoming
+    <div className="flex flex-col h-screen bg-gray-50">
+      <header className="flex justify-between items-center px-6 py-4 bg-white">
+        <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
+        <div className="flex gap-4">
+          <button className="p-1 bg-white rounded-full">
+            <Calendar className="w-6 h-6" />
           </button>
-          <button
-            className={`py-2 px-1 font-medium text-sm ${
-              activeTab === "past" 
-                ? "text-purple-700 border-b-2 border-purple-700" 
-                : "text-gray-500"
-            }`}
-            onClick={() => setActiveTab("past")}
-          >
-            Past
+          <button className="p-1 bg-white rounded-full">
+            <User className="w-6 h-6" />
           </button>
         </div>
       </header>
-      
-      <main className="p-4">
-        <div className="space-y-4">
-          {activeTab === "upcoming" ? (
-            combinedUpcomingEvents.length > 0 ? (
-              combinedUpcomingEvents.map(event => (
-                <YourEventCard key={event.id} event={event} />
-              ))
-            ) : (
-              <div className="text-center py-10 text-gray-500">
-                No upcoming events
-              </div>
-            )
-          ) : (
-            pastEvents.map(event => (
-              <YourEventCard key={event.id} event={event} />
-            ))
-          )}
+
+      <div className="flex border-b bg-white">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={`flex-1 py-3 text-center bg-white ${
+              activeTab === tab
+                ? "text-black font-medium border-b-2 border-black"
+                : "text-gray-500"
+            }`}
+            onClick={() => handleTabClick(tab)}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      <div className="px-6 py-4">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search events..."
+            className="pl-10 pr-4 py-3 w-full rounded-full border border-gray-300 bg-white"
+          />
         </div>
-      </main>
-      
+      </div>
+
+      <div className="px-6 mb-4">
+        <button 
+          className="bg-purple-700 text-white py-3 px-4 rounded-md w-full flex items-center justify-center"
+          onClick={handleCreateEvent}
+        >
+          <span className="mr-2">+</span>
+          Create New Event
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-auto px-6 pb-20">
+        <div className="space-y-4">
+          {events.map((event, index) => (
+            <div key={event.id} className="bg-white rounded-lg p-4 shadow-sm relative">
+              <div className="flex justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-[#1A1F2C]">{event.title}</h3>
+                  <p className="text-gray-600">
+                    <span className="font-bold">{formatDate(event.date)}</span> {event.time}
+                  </p>
+                  <p className="text-gray-600 flex items-center">
+                    <MapPin className="h-4 w-4 mr-1" />
+                    {event.location}
+                  </p>
+                  
+                  <div className="flex flex-col mt-3">
+                    {index === 1 ? (
+                      <>
+                        <div className="flex -space-x-2">
+                          {[...Array(Math.min(5, event.attendees || 0))].map((_, i) => (
+                            <div 
+                              key={i} 
+                              className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
+                            >
+                              <Avatar className="w-full h-full">
+                                <AvatarImage 
+                                  src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
+                                  alt="Attendee"
+                                />
+                                <AvatarFallback>U{i+1}</AvatarFallback>
+                              </Avatar>
+                            </div>
+                          ))}
+                        </div>
+                        <span className="text-sm text-[#1A1F2C] mt-1">
+                          {event.attendees || 0} people have signed up
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-sm text-[#1A1F2C] mb-1">
+                          {event.attendees || 0} people have signed up
+                        </span>
+                        <div className="flex -space-x-2">
+                          {[...Array(Math.min(5, event.attendees || 0))].map((_, i) => (
+                            <div 
+                              key={i} 
+                              className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
+                            >
+                              <Avatar className="w-full h-full">
+                                <AvatarImage 
+                                  src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
+                                  alt="Attendee"
+                                />
+                                <AvatarFallback>U{i+1}</AvatarFallback>
+                              </Avatar>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  
+                  {index === 0 ? (
+                    <div className="flex gap-2 mt-3">
+                      <Button 
+                        className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
+                        onClick={() => handleAttendance(event.id)}
+                      >
+                        Attendance
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="text-purple-700 text-sm"
+                        onClick={() => handleEditEvent(event.id)}
+                      >
+                        Edit Event
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="mt-3">
+                      <Button 
+                        variant="ghost" 
+                        className="text-purple-700 text-sm px-0 py-2"
+                        onClick={() => handleEditEvent(event.id)}
+                      >
+                        Edit Event
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex flex-col items-end">
+                  {event.tag && (
+                    <span className={`${event.tagColor} text-xs px-3 py-1 rounded-full font-bold text-[13px]`}>
+                      {event.tag}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {checkInEvent && (
+        <CheckInDialog 
+          open={isCheckInOpen} 
+          onOpenChange={setIsCheckInOpen} 
+          event={checkInEvent} 
+        />
+      )}
+
       <TabBar />
     </div>
   );
