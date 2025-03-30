@@ -9,16 +9,28 @@ import CheckInDialog from "@/components/CheckInDialog";
 import { getEvents } from "@/utils/eventStorage";
 import YourEventCard from "@/components/YourEventCard";
 
+interface Event {
+  id: number;
+  title: string;
+  date: Date;
+  time: string;
+  location: string;
+  tag?: string;
+  tagColor?: string;
+  attendees?: number;
+  status: "upcoming" | "past";
+}
+
 const YourEvents = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Your Events");
   const tabs = ["Going", "Explore", "Your Events"];
   const [checkInEvent, setCheckInEvent] = useState<any>(null);
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    const hardcodedEvents = [
+    const hardcodedEvents: Event[] = [
       {
         id: 1,
         title: "Chapter Meeting",
@@ -28,7 +40,7 @@ const YourEvents = () => {
         tag: "Sisterhood",
         tagColor: "bg-purple-200 text-purple-700",
         attendees: 7,
-        status: "upcoming" as const,
+        status: "upcoming",
       },
       {
         id: 2,
@@ -39,7 +51,7 @@ const YourEvents = () => {
         tag: "Sisterhood",
         tagColor: "bg-purple-200 text-purple-700",
         attendees: 7,
-        status: "upcoming" as const,
+        status: "upcoming",
       },
       {
         id: 3,
@@ -50,7 +62,7 @@ const YourEvents = () => {
         tag: "Sisterhood",
         tagColor: "bg-purple-200 text-purple-700",
         attendees: 7,
-        status: "upcoming" as const,
+        status: "upcoming",
       }
     ];
     
@@ -59,8 +71,16 @@ const YourEvents = () => {
     const uniqueEvents = [...hardcodedEvents];
     
     savedEvents.forEach(savedEvent => {
-      if (!uniqueEvents.some(event => event.id === savedEvent.id)) {
-        uniqueEvents.push(savedEvent);
+      // Ensure that saved events have the required properties
+      const event: Event = {
+        ...savedEvent,
+        tag: savedEvent.tag || "General",
+        tagColor: savedEvent.tagColor || "bg-gray-200 text-gray-700",
+        status: savedEvent.status || "upcoming"
+      };
+      
+      if (!uniqueEvents.some(e => e.id === event.id)) {
+        uniqueEvents.push(event);
       }
     });
     

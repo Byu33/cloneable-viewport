@@ -27,6 +27,8 @@ import TaskDetailPage from "./pages/TaskDetailPage";
 import CreateTaskPage from "./pages/CreateTaskPage";
 import DuesPage from "./pages/DuesPage";
 import CalendarPage from "./pages/CalendarPage";
+import BirthdaysPage from "./pages/BirthdaysPage";
+import MembersPage from "./pages/MembersPage";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +62,8 @@ const App = () => (
           <Route path="/other" element={<OtherPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/dues" element={<DuesPage />} />
+          <Route path="/birthdays" element={<BirthdaysPage />} />
+          <Route path="/members" element={<MembersPage />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

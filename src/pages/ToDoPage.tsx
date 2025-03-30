@@ -119,7 +119,7 @@ const ToDoPage = () => {
         ? { 
             ...task, 
             completed: !task.completed,
-            status: task.completed ? "todo" : "completed"
+            status: task.completed ? "todo" as const : "completed" as const
           } 
         : task
     );
@@ -140,7 +140,7 @@ const ToDoPage = () => {
             onClick={() => {
               setTasks(prevTasks => prevTasks.map(t => 
                 t.id === taskId 
-                  ? { ...t, completed: false, status: "todo" } 
+                  ? { ...t, completed: false, status: "todo" as const } 
                   : t
               ));
               toast({
@@ -237,15 +237,6 @@ const ToDoPage = () => {
                 </div>
               </div>
               <div className="flex items-center">
-                <button 
-                  className="p-2 bg-gray-100 rounded-full mr-2"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleFilter();
-                  }}
-                >
-                  <Filter className="h-5 w-5 text-gray-600" />
-                </button>
                 {isToDoExpanded ? <ChevronUp /> : <ChevronDown />}
               </div>
             </CollapsibleTrigger>
