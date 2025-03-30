@@ -149,10 +149,6 @@ const ToDoPage = () => {
     navigate("/notifications");
   };
 
-  const handleCalendar = () => {
-    navigate("/calendar");
-  };
-
   const handleProfile = () => {
     navigate("/profile");
   };
@@ -162,7 +158,7 @@ const ToDoPage = () => {
       <header className="flex justify-between items-center px-6 py-6 bg-white">
         <h1 className="text-2xl font-semibold">To Do</h1>
         <div className="flex gap-4">
-          <button className="p-1 bg-white rounded-full" onClick={handleCalendar}>
+          <button className="p-1 bg-white rounded-full">
             <Calendar className="w-6 h-6" />
           </button>
           <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
@@ -214,18 +210,7 @@ const ToDoPage = () => {
                   {todoTasks.length}
                 </div>
               </div>
-              <div className="flex items-center">
-                <button 
-                  className="p-2 bg-gray-100 rounded-full mr-2"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleFilter();
-                  }}
-                >
-                  <Filter className="h-5 w-5 text-gray-600" />
-                </button>
-                {isToDoExpanded ? <ChevronUp /> : <ChevronDown />}
-              </div>
+              {isToDoExpanded ? <ChevronUp /> : <ChevronDown />}
             </CollapsibleTrigger>
             
             <CollapsibleContent>
