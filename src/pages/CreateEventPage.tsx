@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, CalendarIcon, MapPin, Plus, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +22,7 @@ import {
   CommandItem,
   CommandList
 } from "@/components/ui/command";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Define categories with unique identifiers and color variations
 const categories = [
@@ -54,13 +54,13 @@ const CreateEventPage = () => {
   const [requiredForMembers, setRequiredForMembers] = useState<string[]>([]);
   const [requiredSearchQuery, setRequiredSearchQuery] = useState("");
   
-  // Sample individual members list
+  // Update the individual members list with avatar URLs
   const individualMembers = [
-    { id: "1", name: "Emma Johnson" },
-    { id: "2", name: "Olivia Davis" },
-    { id: "3", name: "Sophia Martinez" },
-    { id: "4", name: "Ava Wilson" },
-    { id: "5", name: "Isabella Thompson" },
+    { id: "1", name: "Emma Johnson", avatarUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" },
+    { id: "2", name: "Olivia Davis", avatarUrl: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b" },
+    { id: "3", name: "Sophia Martinez", avatarUrl: "https://images.unsplash.com/photo-1501286353178-1ec881214838" },
+    { id: "4", name: "Ava Wilson", avatarUrl: "https://images.unsplash.com/photo-1501286353178-1ec881214838" },
+    { id: "5", name: "Isabella Thompson", avatarUrl: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b" },
   ];
   
   // Define group options for search
@@ -145,6 +145,29 @@ const CreateEventPage = () => {
       handleRequiredGroupChange(group.key as keyof typeof requiredForGroups);
     }
   };
+
+  // Modify the rendering of members to include Avatar
+  const renderMemberItem = (member: typeof individualMembers[0], toggleMemberSelection: (id: string) => void, selectedMembers: string[]) => (
+    <CommandItem 
+      key={member.id} 
+      onSelect={() => toggleMemberSelection(member.id)}
+      className="flex items-center gap-2"
+    >
+      <Checkbox 
+        id={`member-${member.id}`}
+        checked={selectedMembers.includes(member.id)}
+        onCheckedChange={() => toggleMemberSelection(member.id)}
+        className="mr-2"
+      />
+      <Avatar className="mr-2 h-8 w-8">
+        <AvatarImage src={member.avatarUrl} alt={member.name} />
+        <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+      </Avatar>
+      <label htmlFor={`member-${member.id}`} className="flex-1 cursor-pointer">
+        {member.name}
+      </label>
+    </CommandItem>
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -311,23 +334,9 @@ const CreateEventPage = () => {
                 {/* Members section */}
                 {filteredRequiredMembers.length > 0 && (
                   <CommandGroup heading="Required for Members">
-                    {filteredRequiredMembers.map(member => (
-                      <CommandItem 
-                        key={member.id} 
-                        onSelect={() => toggleRequiredMemberSelection(member.id)}
-                        className="flex items-center gap-2"
-                      >
-                        <Checkbox 
-                          id={`required-member-${member.id}`}
-                          checked={requiredForMembers.includes(member.id)}
-                          onCheckedChange={() => toggleRequiredMemberSelection(member.id)}
-                          className="mr-2"
-                        />
-                        <label htmlFor={`required-member-${member.id}`} className="flex-1 cursor-pointer">
-                          {member.name}
-                        </label>
-                      </CommandItem>
-                    ))}
+                    {filteredRequiredMembers.map(member => 
+                      renderMemberItem(member, toggleRequiredMemberSelection, requiredForMembers)
+                    )}
                   </CommandGroup>
                 )}
               </CommandList>
@@ -391,23 +400,9 @@ const CreateEventPage = () => {
                 {/* Members section */}
                 {filteredMembers.length > 0 && (
                   <CommandGroup heading="Members">
-                    {filteredMembers.map(member => (
-                      <CommandItem 
-                        key={member.id} 
-                        onSelect={() => toggleMemberSelection(member.id)}
-                        className="flex items-center gap-2"
-                      >
-                        <Checkbox 
-                          id={`member-${member.id}`}
-                          checked={selectedMembers.includes(member.id)}
-                          onCheckedChange={() => toggleMemberSelection(member.id)}
-                          className="mr-2"
-                        />
-                        <label htmlFor={`member-${member.id}`} className="flex-1 cursor-pointer">
-                          {member.name}
-                        </label>
-                      </CommandItem>
-                    ))}
+                    {filteredMembers.map(member => 
+                      renderMemberItem(member, toggleMemberSelection, selectedMembers)
+                    )}
                   </CommandGroup>
                 )}
               </CommandList>
