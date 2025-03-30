@@ -13,11 +13,35 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const CreateEventPage = () => {
   const navigate = useNavigate();
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [restrictAttendance, setRestrictAttendance] = useState(false);
+  const [attendeeGroups, setAttendeeGroups] = useState({
+    allMembers: false,
+    allCandidates: false,
+    allOfficers: false,
+  });
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  
+  // Sample individual members list
+  const individualMembers = [
+    { id: "1", name: "Emma Johnson" },
+    { id: "2", name: "Olivia Davis" },
+    { id: "3", name: "Sophia Martinez" },
+    { id: "4", name: "Ava Wilson" },
+    { id: "5", name: "Isabella Thompson" },
+  ];
   
   const categories = [
     { id: 1, name: "Sisterhood", color: "bg-purple-600 text-white" },
@@ -38,6 +62,21 @@ const CreateEventPage = () => {
 
   const handleNextClick = () => {
     navigate("/create-event/details");
+  };
+
+  const toggleMemberSelection = (id: string) => {
+    setSelectedMembers(prev => 
+      prev.includes(id) 
+        ? prev.filter(memberId => memberId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const handleGroupChange = (group: keyof typeof attendeeGroups) => {
+    setAttendeeGroups(prev => ({
+      ...prev,
+      [group]: !prev[group]
+    }));
   };
 
   return (
@@ -153,6 +192,99 @@ const CreateEventPage = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Who Can Attend - Toggle and Accordion */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <label className="text-gray-700 font-medium">
+                Restrict who can attend?
+              </label>
+              <Switch 
+                checked={restrictAttendance} 
+                onCheckedChange={setRestrictAttendance} 
+              />
+            </div>
+            
+            {restrictAttendance && (
+              <Accordion type="single" collapsible className="w-full bg-gray-50 rounded-md p-2">
+                <AccordionItem value="attendees" className="border-b-0">
+                  <AccordionTrigger className="py-3 px-3 hover:no-underline">
+                    <span className="text-gray-700">Who can attend?</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-3">
+                    <div className="space-y-3 py-2">
+                      {/* Group options */}
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="all-members" 
+                            checked={attendeeGroups.allMembers}
+                            onCheckedChange={() => handleGroupChange('allMembers')}
+                          />
+                          <label
+                            htmlFor="all-members"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            All Members
+                          </label>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="all-candidates" 
+                            checked={attendeeGroups.allCandidates}
+                            onCheckedChange={() => handleGroupChange('allCandidates')}
+                          />
+                          <label
+                            htmlFor="all-candidates"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            All Candidates
+                          </label>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="all-officers" 
+                            checked={attendeeGroups.allOfficers}
+                            onCheckedChange={() => handleGroupChange('allOfficers')}
+                          />
+                          <label
+                            htmlFor="all-officers"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            All Officers
+                          </label>
+                        </div>
+                      </div>
+                      
+                      {/* Individual members */}
+                      <div className="pt-2 border-t border-gray-200">
+                        <p className="text-sm font-medium mb-2">Individual Members</p>
+                        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                          {individualMembers.map(member => (
+                            <div key={member.id} className="flex items-center space-x-2">
+                              <Checkbox 
+                                id={`member-${member.id}`} 
+                                checked={selectedMembers.includes(member.id)}
+                                onCheckedChange={() => toggleMemberSelection(member.id)}
+                              />
+                              <label
+                                htmlFor={`member-${member.id}`}
+                                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                {member.name}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            )}
           </div>
 
           {/* Add Event Hosts */}
