@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { X, CalendarIcon, MapPin, Plus, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -147,7 +148,11 @@ const CreateEventPage = () => {
   };
 
   // Modify the rendering of members to include Avatar
-  const renderMemberItem = (member: typeof individualMembers[0], toggleMemberSelection: (id: string) => void, selectedMembers: string[]) => (
+  const renderMemberItem = (
+    member: typeof individualMembers[0], 
+    toggleMemberSelection: (id: string) => void, 
+    selectedMembers: string[]
+  ) => (
     <CommandItem 
       key={member.id} 
       onSelect={() => toggleMemberSelection(member.id)}
