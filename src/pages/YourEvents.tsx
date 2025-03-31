@@ -8,6 +8,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import CheckInDialog from "@/components/CheckInDialog";
 import { getEvents } from "@/utils/eventStorage";
 import YourEventCard from "@/components/YourEventCard";
+import EventFilterSheet from "@/components/EventFilterSheet";
+import { EventFilters } from "@/components/EventFilterSheet";
 
 interface Event {
   id: number;
@@ -29,6 +31,14 @@ const YourEvents = () => {
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<EventFilters>({
+    eventTypes: [],
+    tags: [],
+    attendeeStatus: [],
+    startDate: undefined,
+    endDate: undefined
+  });
 
   useEffect(() => {
     const hardcodedEvents: Event[] = [
@@ -115,8 +125,12 @@ const YourEvents = () => {
   };
   
   const handleFilter = () => {
-    // Handle filtering
-    console.log("Opening filter options");
+    setIsFilterOpen(true);
+  };
+
+  const handleApplyFilters = (filters: EventFilters) => {
+    setActiveFilters(filters);
+    console.log("Applied filters:", filters);
   };
   
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,6 +142,37 @@ const YourEvents = () => {
     event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (event.tag && event.tag.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  // Apply additional filters if any are active
+  const applyFilters = (events: Event[]) => {
+    if (activeFilters.eventTypes.length === 0 && 
+        activeFilters.tags.length === 0 && 
+        !activeFilters.startDate && 
+        !activeFilters.endDate) {
+      return events;
+    }
+
+    return events.filter(event => {
+      // Filter by event type (tag)
+      if (activeFilters.eventTypes.length > 0 && 
+          event.tag && 
+          !activeFilters.eventTypes.includes(event.tag.toLowerCase())) {
+        return false;
+      }
+
+      // Filter by date range
+      if (activeFilters.startDate && event.date < activeFilters.startDate) {
+        return false;
+      }
+      if (activeFilters.endDate && event.date > activeFilters.endDate) {
+        return false;
+      }
+
+      return true;
+    });
+  };
+
+  const finalFilteredEvents = applyFilters(filteredEvents);
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -182,6 +227,7 @@ const YourEvents = () => {
           <button 
             className="p-2 bg-gray-100 rounded-full"
             onClick={handleFilter}
+            aria-label="Filter events"
           >
             <Filter className="h-5 w-5 text-gray-600" />
           </button>
@@ -200,13 +246,16 @@ const YourEvents = () => {
 
       <div className="flex-1 overflow-auto px-6 pb-24">
         <div className="space-y-4">
-          {filteredEvents.map((event, index) => (
+          {finalFilteredEvents.map((event, index) => (
             <YourEventCard key={event.id} event={event} index={index} />
           ))}
           
-          {filteredEvents.length === 0 && searchTerm && (
+          {finalFilteredEvents.length === 0 && (
             <div className="text-center py-6 text-gray-500">
-              No events found matching "{searchTerm}"
+              {searchTerm ? 
+                `No events found matching "${searchTerm}"` : 
+                "No events found with the current filters"
+              }
             </div>
           )}
         </div>
@@ -219,6 +268,13 @@ const YourEvents = () => {
           event={checkInEvent} 
         />
       )}
+
+      {/* Filter Sheet */}
+      <EventFilterSheet 
+        open={isFilterOpen} 
+        onOpenChange={setIsFilterOpen} 
+        onApplyFilters={handleApplyFilters}
+      />
 
       <TabBar />
     </div>

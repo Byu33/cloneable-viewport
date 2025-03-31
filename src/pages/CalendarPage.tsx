@@ -77,7 +77,7 @@ const CalendarPage = () => {
         <h1 className="text-2xl font-semibold">Calendar</h1>
       </header>
 
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-4 pb-24">
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
           <div className="flex justify-between items-center mb-4">
             <button onClick={handlePrevMonth} className="p-1">
@@ -97,10 +97,14 @@ const CalendarPage = () => {
             onSelect={(newDate) => newDate && setDate(newDate)}
             month={currentMonth}
             className="rounded-md"
+            showOutsideDays
+            fixedWeeks
+            ISOWeek
+            hideHead={true} // Hide the built-in header to prevent duplication
           />
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-24">
           <h2 className="text-lg font-medium mb-4">
             {date ? format(date, 'MMMM d, yyyy') : 'Select a date'}
           </h2>

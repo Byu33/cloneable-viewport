@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { ArrowLeft, Calendar, Save } from "lucide-react";
+import { ArrowLeft, Calendar, Save, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -256,44 +256,7 @@ const EditEventPage = () => {
               </div>
             </TabsContent>
 
-            <div className="flex justify-between mt-8">
-              <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="text-red-600 border-red-200">
-                    Cancel Event
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="py-2">
-                    <label htmlFor="cancel-reason" className="text-sm font-medium">
-                      Reason (optional)
-                    </label>
-                    <Textarea
-                      id="cancel-reason"
-                      placeholder="Let attendees know why this event is being cancelled..."
-                      value={cancelReason}
-                      onChange={(e) => setCancelReason(e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Nevermind</AlertDialogCancel>
-                    <AlertDialogAction 
-                      className="bg-red-600 hover:bg-red-700"
-                      onClick={handleCancel}
-                    >
-                      Yes, Cancel Event
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-
+            <div className="flex justify-end mt-8">
               <Button 
                 className="bg-purple-700 hover:bg-purple-800 text-white"
                 onClick={handleNextTab}
@@ -305,13 +268,50 @@ const EditEventPage = () => {
         </Tabs>
       </div>
 
-      {/* Fixed Save button at the bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t flex justify-end z-20">
+      {/* Fixed Save and Cancel buttons at the bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t flex justify-between z-20">
+        <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" className="text-red-600 border-red-200 flex items-center">
+              <Trash2 className="mr-1 h-4 w-4" /> Cancel Event
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="py-2">
+              <label htmlFor="cancel-reason" className="text-sm font-medium">
+                Reason (optional)
+              </label>
+              <Textarea
+                id="cancel-reason"
+                placeholder="Let attendees know why this event is being cancelled..."
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Nevermind</AlertDialogCancel>
+              <AlertDialogAction 
+                className="bg-red-600 hover:bg-red-700"
+                onClick={handleCancel}
+              >
+                Yes, Cancel Event
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         <Button 
           className="bg-purple-700 hover:bg-purple-800 text-white"
           onClick={handleSubmit}
         >
-          <Save className="mr-1" /> Save
+          <Save className="mr-1 h-4 w-4" /> Save
         </Button>
       </div>
     </div>

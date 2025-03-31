@@ -29,7 +29,7 @@ const CheckInDialog = ({ open, onOpenChange, event }: CheckInDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-0 overflow-hidden max-w-md">
+      <DialogContent className="p-0 overflow-auto max-w-md max-h-[90vh]">
         <div className="p-6">
           <div className="flex justify-between items-start mb-6">
             <h2 className="text-2xl font-semibold">Check In</h2>

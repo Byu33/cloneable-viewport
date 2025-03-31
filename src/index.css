@@ -78,7 +78,7 @@
 
 /* Fix for scroll behavior and bottom navigation overlap */
 .pb-24 {
-  padding-bottom: 6rem !important; 
+  padding-bottom: 7rem !important; 
 }
 
 /* Make sure the fixed bottom tab bar has a high z-index */
@@ -88,5 +88,21 @@
 
 /* Keep content scrollable and visible under the fixed tab bar */
 .overflow-auto {
-  scroll-padding-bottom: 6rem;
+  scroll-padding-bottom: 7rem;
+}
+
+/* Fix for calendar page overlap issues */
+.max-h-\[90vh\] {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Better pointer events for calendar and other interactive elements */
+.pointer-events-auto {
+  pointer-events: auto !important;
+}
+
+/* Fix for dialogs and sheets */
+[data-radix-popper-content-wrapper] {
+  z-index: 999 !important;
 }

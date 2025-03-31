@@ -4,12 +4,22 @@ import { User, Calendar, Search, Bell, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TabBar from "@/components/TabBar";
 import ExploreEventCard from "@/components/ExploreEventCard";
+import EventFilterSheet from "@/components/EventFilterSheet";
+import { EventFilters } from "@/components/EventFilterSheet";
 
 const Explore = () => {
   const [activeTab, setActiveTab] = useState("Explore");
   const tabs = ["Going", "Explore", "Your Events"];
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<EventFilters>({
+    eventTypes: [],
+    tags: [],
+    attendeeStatus: [],
+    startDate: undefined,
+    endDate: undefined
+  });
 
   const handleTabClick = (tab: string) => {
     if (tab === "Going") {
@@ -34,12 +44,16 @@ const Explore = () => {
   };
   
   const handleFilter = () => {
-    // Handle filtering
-    console.log("Opening filter options");
+    setIsFilterOpen(true);
   };
   
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleApplyFilters = (filters: EventFilters) => {
+    setActiveFilters(filters);
+    console.log("Applied filters:", filters);
   };
 
   // Sample event data for different categories
@@ -111,6 +125,7 @@ const Explore = () => {
           <button 
             className="p-2 bg-gray-100 rounded-full"
             onClick={handleFilter}
+            aria-label="Filter events"
           >
             <Filter className="h-5 w-5 text-gray-600" />
           </button>
@@ -207,6 +222,13 @@ const Explore = () => {
           </div>
         </section>
       </div>
+
+      {/* Filter Sheet */}
+      <EventFilterSheet 
+        open={isFilterOpen} 
+        onOpenChange={setIsFilterOpen} 
+        onApplyFilters={handleApplyFilters}
+      />
 
       {/* Bottom Tab Bar */}
       <TabBar />
