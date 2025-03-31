@@ -1,82 +1,65 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar, ChevronDown, ChevronUp, Search, Users } from "lucide-react";
+import { ArrowLeft, Calendar as CalendarIcon, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
+import MemberSearchModal from "@/components/MemberSearchModal";
 
-const priorityOptions = [
-  { value: "high", label: "High Importance", color: "bg-purple-700 text-white" },
-  { value: "officer", label: "Officer Task", color: "bg-purple-200 text-purple-700" },
-  { value: "medium", label: "Medium Importance", color: "bg-blue-200 text-blue-700" },
-  { value: "low", label: "Low Importance", color: "bg-gray-200 text-gray-700" }
-];
+interface Member {
+  id: number;
+  name: string;
+  avatar?: string;
+  initials: string;
+  role?: string;
+  selected?: boolean;
+}
 
 const CreateTaskPage = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [taskTitle, setTaskTitle] = useState("");
-  const [startDate, setStartDate] = useState("");
+  const [taskName, setTaskName] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [description, setDescription] = useState("");
-  const [isPriorityOpen, setIsPriorityOpen] = useState(false);
-  const [isAssigneesOpen, setIsAssigneesOpen] = useState(false);
-  const [selectedPriority, setSelectedPriority] = useState<typeof priorityOptions[0] | null>(null);
   const [isRequired, setIsRequired] = useState(false);
-  const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Mock members data
-  const members = [
-    { id: "1", name: "Alice Johnson", image: "https://randomuser.me/api/portraits/women/44.jpg" },
-    { id: "2", name: "Bob Smith", image: "https://randomuser.me/api/portraits/men/32.jpg" },
-    { id: "3", name: "Carol White", image: "https://randomuser.me/api/portraits/women/17.jpg" },
-    { id: "4", name: "David Brown", image: "https://randomuser.me/api/portraits/men/76.jpg" },
-    { id: "5", name: "Emma Davis", image: "https://randomuser.me/api/portraits/women/23.jpg" }
-  ];
-
-  const filteredMembers = members.filter(member =>
-    member.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [assignees, setAssignees] = useState<Member[]>([]);
+  const [isMemberSearchOpen, setIsMemberSearchOpen] = useState(false);
 
   const handleBack = () => {
     navigate(-1);
   };
 
-  const toggleAssignee = (id: string) => {
-    if (selectedAssignees.includes(id)) {
-      setSelectedAssignees(selectedAssignees.filter(assigneeId => assigneeId !== id));
-    } else {
-      setSelectedAssignees([...selectedAssignees, id]);
-    }
-  };
-
   const handleCreateTask = () => {
-    if (!taskTitle) {
+    if (!taskName) {
       toast({
-        title: "Error",
-        description: "Please provide a task title",
+        title: "Task name required",
+        description: "Please enter a name for the task",
         variant: "destructive"
       });
       return;
     }
 
-    // In a real app, you would save the task to your backend
-    toast({
-      title: "Task created successfully",
-      description: "Your new task has been created."
+    // Logic to create task would go here
+    console.log({
+      taskName,
+      taskDescription,
+      dueDate,
+      isRequired,
+      assignees
     });
 
-    // Navigate back to the todo page
-    setTimeout(() => {
-      navigate("/todo");
-    }, 1500);
+    toast({
+      title: "Task created successfully",
+      description: "The task has been added to your tasks",
+    });
+
+    navigate("/todo");
+  };
+
+  const handleAssigneeSelection = (selectedMembers: Member[]) => {
+    setAssignees(selectedMembers);
   };
 
   return (
@@ -85,162 +68,99 @@ const CreateTaskPage = () => {
         <button onClick={handleBack} className="mr-4">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-2xl font-semibold">Create New Task</h1>
+        <h1 className="text-2xl font-semibold">Create Task</h1>
       </header>
 
-      <div className="flex-1 overflow-auto px-6 py-4 pb-20">
-        <div className="space-y-6">
-          <div>
-            <Label htmlFor="title" className="text-base font-medium block mb-2">Task Title</Label>
-            <Input 
-              id="title"
-              placeholder="Enter task title" 
-              className="w-full bg-white"
-              value={taskTitle}
-              onChange={(e) => setTaskTitle(e.target.value)}
+      <div className="flex-1 overflow-auto px-6 py-4 pb-24">
+        <div className="bg-white rounded-lg p-4 shadow-sm mb-4">
+          <label className="block mb-1 text-lg font-medium">Task Name</label>
+          <input
+            type="text"
+            placeholder="Enter task name"
+            className="w-full p-3 rounded-md border border-gray-300 mb-4"
+            value={taskName}
+            onChange={(e) => setTaskName(e.target.value)}
+          />
+
+          <label className="block mb-1 text-lg font-medium">Description</label>
+          <textarea
+            placeholder="Enter task description"
+            className="w-full p-3 rounded-md border border-gray-300 mb-4 h-24"
+            value={taskDescription}
+            onChange={(e) => setTaskDescription(e.target.value)}
+          />
+
+          <label className="block mb-1 text-lg font-medium">Due Date</label>
+          <div className="relative mb-4">
+            <div className="absolute right-3 top-3">
+              <CalendarIcon className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="date"
+              className="w-full p-3 rounded-md border border-gray-300"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
             />
           </div>
 
-          <div>
-            <Label htmlFor="startDate" className="text-base font-medium block mb-2">Start Date</Label>
-            <div className="relative">
-              <Input 
-                id="startDate"
-                type="date" 
-                className="w-full bg-white"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-              <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            </div>
-          </div>
+          <div className="flex flex-col gap-4">
+            <Button 
+              variant="outline" 
+              className="flex items-center justify-center gap-2 text-purple-700 border-purple-300 hover:bg-purple-50"
+              onClick={() => setIsMemberSearchOpen(true)}
+            >
+              <Users className="h-5 w-5" />
+              Add Assignees to the Task
+            </Button>
 
-          <div>
-            <Label htmlFor="dueDate" className="text-base font-medium block mb-2">Due Date</Label>
-            <div className="relative">
-              <Input 
-                id="dueDate"
-                type="date" 
-                className="w-full bg-white"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-              <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            </div>
-          </div>
-
-          <Collapsible 
-            open={isPriorityOpen} 
-            onOpenChange={setIsPriorityOpen}
-            className="bg-white rounded-lg overflow-hidden"
-          >
-            <CollapsibleTrigger className="flex w-full justify-between items-center p-4 text-left">
-              <span className="font-medium">Priority</span>
-              {isPriorityOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-            </CollapsibleTrigger>
-            <CollapsibleContent className="p-4 pt-0 border-t">
-              <div className="space-y-2">
-                {priorityOptions.map((option) => (
-                  <div 
-                    key={option.value}
-                    className={`p-3 rounded-lg flex items-center justify-between cursor-pointer ${
-                      selectedPriority?.value === option.value ? "bg-purple-50" : "bg-gray-50"
-                    }`}
-                    onClick={() => setSelectedPriority(option)}
-                  >
-                    <span>{option.label}</span>
-                    <span className={`px-3 py-1 rounded-full text-xs ${option.color}`}>
-                      {option.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-
-          <div>
-            <Label htmlFor="description" className="text-base font-medium block mb-2">Description</Label>
-            <Textarea 
-              id="description"
-              placeholder="Add task details here..." 
-              className="w-full min-h-[120px] bg-white"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-
-          <Collapsible 
-            open={isAssigneesOpen} 
-            onOpenChange={setIsAssigneesOpen}
-            className="bg-white rounded-lg overflow-hidden"
-          >
-            <CollapsibleTrigger className="flex w-full justify-between items-center p-4 text-left">
-              <div className="flex items-center">
-                <span className="font-medium">+ Add Assignees to the Task</span>
-              </div>
-              {isAssigneesOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-            </CollapsibleTrigger>
-            <CollapsibleContent className="p-4 pt-0 border-t">
-              <div className="relative mb-4">
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search members..."
-                  className="pl-10 pr-4 py-2 w-full rounded-full border border-gray-300 bg-white"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                {filteredMembers.map((member) => (
-                  <div 
-                    key={member.id}
-                    className={`p-3 rounded-lg flex items-center justify-between cursor-pointer ${
-                      selectedAssignees.includes(member.id) ? "bg-purple-50" : "bg-gray-50"
-                    }`}
-                    onClick={() => toggleAssignee(member.id)}
-                  >
-                    <div className="flex items-center">
-                      <Avatar className="h-8 w-8 mr-2">
-                        <AvatarImage src={member.image} alt={member.name} />
-                        <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+            {assignees.length > 0 && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600 mb-2">Assigned to:</p>
+                <div className="flex flex-wrap gap-2">
+                  {assignees.map(assignee => (
+                    <div 
+                      key={assignee.id} 
+                      className="flex items-center bg-gray-100 rounded-full px-3 py-1"
+                    >
+                      <Avatar className="h-6 w-6 mr-2">
+                        <AvatarImage src={assignee.avatar} alt={assignee.name} />
+                        <AvatarFallback>{assignee.initials}</AvatarFallback>
                       </Avatar>
-                      <span>{member.name}</span>
+                      <span className="text-sm">{assignee.name}</span>
                     </div>
-                    <div className="h-5 w-5 border border-purple-300 rounded flex items-center justify-center">
-                      {selectedAssignees.includes(member.id) && (
-                        <div className="h-3 w-3 bg-purple-700 rounded-sm"></div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </CollapsibleContent>
-          </Collapsible>
+            )}
 
-          <div className="flex items-center justify-between p-4 bg-white rounded-lg">
-            <Label htmlFor="required" className="font-medium cursor-pointer">
-              + Required Task
-            </Label>
-            <Switch 
-              id="required" 
-              checked={isRequired} 
-              onCheckedChange={setIsRequired} 
-              className="data-[state=checked]:bg-purple-700"
-            />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="required-task" className="text-base font-medium">Required Task</Label>
+                <span className="text-xs text-gray-500">(for all users)</span>
+              </div>
+              <Switch
+                id="required-task"
+                checked={isRequired}
+                onCheckedChange={setIsRequired}
+              />
+            </div>
           </div>
-
-          <Button 
-            className="w-full bg-purple-900 hover:bg-purple-800 py-6"
-            onClick={handleCreateTask}
-          >
-            Create Task
-          </Button>
         </div>
+
+        <Button 
+          className="w-full bg-purple-700 hover:bg-purple-800 py-6 text-base"
+          onClick={handleCreateTask}
+        >
+          Create Task
+        </Button>
       </div>
+
+      <MemberSearchModal 
+        open={isMemberSearchOpen}
+        onOpenChange={setIsMemberSearchOpen}
+        onSelectMembers={handleAssigneeSelection}
+        selectedMembers={assignees}
+      />
     </div>
   );
 };

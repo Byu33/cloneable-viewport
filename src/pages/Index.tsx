@@ -37,6 +37,10 @@ const Index = () => {
   const handleProfileClick = () => {
     navigate("/profile");
   };
+  
+  const handleNotificationsClick = () => {
+    navigate("/notifications");
+  };
 
   // Mock data for events
   const upcomingEvents = [
@@ -82,7 +86,10 @@ const Index = () => {
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
-          <button className="p-1 bg-white rounded-full">
+          <button 
+            className="p-1 bg-white rounded-full"
+            onClick={handleNotificationsClick}
+          >
             <Bell className="w-6 h-6" />
           </button>
           <button className="p-1 bg-white rounded-full" onClick={handleCalendarClick}>
@@ -112,7 +119,7 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto px-6 py-4">
+      <div className="flex-1 overflow-auto px-6 py-4 pb-24">
         {/* Calendar Section */}
         <div className="mb-6">
           {/* Calendar */}

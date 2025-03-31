@@ -29,6 +29,8 @@ import DuesPage from "./pages/DuesPage";
 import CalendarPage from "./pages/CalendarPage";
 import BirthdaysPage from "./pages/BirthdaysPage";
 import MembersPage from "./pages/MembersPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import EventAttendeesPage from "./pages/EventAttendeesPage";
 
 const queryClient = new QueryClient();
 
@@ -50,12 +52,14 @@ const App = () => (
           <Route path="/event-preview" element={<EventPreviewPage />} />
           <Route path="/event-attendance/:id" element={<EventAttendancePage />} />
           <Route path="/edit-event/:id" element={<EditEventPage />} />
+          <Route path="/event/:id/attendees" element={<EventAttendeesPage />} />
           
           <Route path="/home" element={<HomePage />} />
           <Route path="/todo" element={<ToDoPage />} />
           <Route path="/task/:id" element={<TaskDetailPage />} />
           <Route path="/create-task" element={<CreateTaskPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           
           <Route path="/sister-points" element={<SisterPointsPage />} />
           <Route path="/requirements" element={<RequirementsPage />} />

@@ -88,11 +88,7 @@ const ProfilePage = () => {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">Your Stats</h3>
           
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="text-purple-900 text-2xl font-bold">42</p>
-              <p className="text-sm text-gray-600">Points</p>
-            </div>
+          <div className="grid grid-cols-2 gap-4 text-center">
             <div className="bg-purple-50 p-3 rounded-lg">
               <p className="text-purple-900 text-2xl font-bold">12</p>
               <p className="text-sm text-gray-600">Events</p>

@@ -1,5 +1,6 @@
+
 import React from "react";
-import { ArrowLeft, Share2, User, MapPin, X } from "lucide-react";
+import { ArrowLeft, Share2, User, MapPin, X, MessageSquare, Edit } from "lucide-react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -12,6 +13,7 @@ const EventDetails = () => {
   const location = useLocation();
   
   const isAlreadyAttending = location.search.includes("source=going");
+  const isYourEvent = location.search.includes("source=your-events");
   
   const event = {
     id: 1,
@@ -51,6 +53,28 @@ const EventDetails = () => {
   const handleSignUp = () => {
     navigate(`/signup/${id}`);
   };
+  
+  const handleViewAttendees = () => {
+    navigate(`/event/${id}/attendees`);
+  };
+  
+  const handleMessageAttendees = () => {
+    // Handle messaging attendees
+    console.log("Message attendees about event");
+  };
+  
+  const handleEditEvent = () => {
+    navigate(`/edit-event/${id}`);
+  };
+  
+  const handleCancelEvent = () => {
+    // Handle cancelling the event
+    toast({
+      title: "Event Cancelled",
+      description: "The event has been cancelled",
+    });
+    navigate('/your-events');
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -68,16 +92,20 @@ const EventDetails = () => {
 
       <div className="flex-grow overflow-auto pb-24">
         <div className="px-6 py-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
-          <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
+          <div className="flex justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
+              <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
+            </div>
+            
+            {event.tag && (
+              <span className={`${event.tagColor || "bg-purple-200 text-purple-700"} text-xs px-3 py-1 rounded-full font-medium inline-block`}>
+                {event.tag}
+              </span>
+            )}
+          </div>
           
-          {event.tag && (
-            <span className="bg-purple-200 text-purple-700 text-xs px-4 py-2 rounded-full font-medium inline-block mb-4">
-              {event.tag}
-            </span>
-          )}
-          
-          <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
+          <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-4">
             <div className="mr-3 mt-1">
               <MapPin className="h-6 w-6 text-gray-500" />
             </div>
@@ -109,9 +137,14 @@ const EventDetails = () => {
         </div>
 
         <div className="px-6 mb-6">
-          <div className="bg-purple-50 rounded-lg p-5">
+          <div className="bg-white rounded-lg p-5">
             <h2 className="text-xl font-semibold mb-3">Attendees</h2>
-            <p className="text-sm text-gray-600 mb-3">{event.attendees.length} people are attending</p>
+            <button 
+              className="text-sm text-gray-600 mb-3 flex items-center"
+              onClick={handleViewAttendees}
+            >
+              <span>{event.attendees.length} people are attending</span>
+            </button>
             
             <div className="space-y-3">
               {event.attendees.map(attendee => (
@@ -124,12 +157,39 @@ const EventDetails = () => {
                 </div>
               ))}
             </div>
+            
+            <Button 
+              className="w-full bg-purple-700 hover:bg-purple-800 mt-4"
+              onClick={handleMessageAttendees}
+            >
+              <MessageSquare className="h-5 w-5 mr-2" />
+              Message attendees about event
+            </Button>
           </div>
         </div>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white shadow-lg">
-        {isAlreadyAttending ? (
+        {isYourEvent ? (
+          <div className="space-y-2">
+            <Button 
+              variant="outline" 
+              className="w-full border-purple-300 text-purple-700 hover:bg-purple-50 hover:text-purple-800 py-6 text-base"
+              onClick={handleEditEvent}
+            >
+              <Edit className="w-5 h-5 mr-2" />
+              Edit Event
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 py-6 text-base"
+              onClick={handleCancelEvent}
+            >
+              <X className="w-5 h-5 mr-2" />
+              Cancel Event
+            </Button>
+          </div>
+        ) : isAlreadyAttending ? (
           <div className="space-y-2">
             <p className="text-center text-purple-600 font-medium text-base">
               <span className="font-bold">You are attending this event</span>

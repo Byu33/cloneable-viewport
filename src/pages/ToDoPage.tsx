@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Filter, PlusCircle, CheckCircle, ChevronDown, ChevronUp, Calendar, User } from "lucide-react";
+import { Filter, PlusCircle, CheckCircle, ChevronDown, ChevronUp, Calendar, User, Bell } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,6 +28,7 @@ const ToDoPage = () => {
   const [activeTab, setActiveTab] = useState("Assigned Tasks");
   const [isToDoExpanded, setIsToDoExpanded] = useState(true);
   const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [tasks, setTasks] = useState<Task[]>([
     {
       id: 1,
@@ -98,8 +99,23 @@ const ToDoPage = () => {
     }
   ]);
 
-  const todoTasks = tasks.filter(task => task.status === "todo");
-  const completedTasks = tasks.filter(task => task.status === "completed");
+  const todoTasks = tasks
+    .filter(task => task.status === "todo")
+    .filter(task => 
+      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (task.assignedBy && task.assignedBy.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (task.category && task.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (task.priority && task.priority.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    
+  const completedTasks = tasks
+    .filter(task => task.status === "completed")
+    .filter(task => 
+      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (task.assignedBy && task.assignedBy.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (task.category && task.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (task.priority && task.priority.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -168,12 +184,26 @@ const ToDoPage = () => {
   const handleCalendarClick = () => {
     navigate("/calendar");
   };
+  
+  const handleNotificationsClick = () => {
+    navigate("/notifications");
+  };
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <header className="px-6 py-6 bg-white flex justify-between items-center">
         <h1 className="text-2xl font-semibold">To Do</h1>
         <div className="flex gap-4">
+          <button 
+            className="p-1 bg-white rounded-full"
+            onClick={handleNotificationsClick}
+          >
+            <Bell className="w-6 h-6" />
+          </button>
           <button 
             className="p-1 bg-white rounded-full"
             onClick={handleCalendarClick}
@@ -205,25 +235,23 @@ const ToDoPage = () => {
         ))}
       </div>
       
-      {activeTab === "Assigned Tasks" ? (
-        <div className="px-6 py-4 flex-1 overflow-auto pb-20">
-          <div className="flex justify-between items-center mb-4">
-            <Button 
-              className="bg-purple-900 hover:bg-purple-800 flex items-center gap-2"
-              onClick={handleCreateTask}
-            >
-              <PlusCircle className="h-4 w-4" />
-              Create New Task
-            </Button>
-            
-            <button 
-              className="p-2 bg-gray-100 rounded-full"
-              onClick={handleFilter}
-            >
-              <Filter className="h-5 w-5 text-gray-600" />
-            </button>
+      <div className="px-6 py-4">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search tasks..."
+            className="pl-10 pr-4 py-3 w-full rounded-full border border-gray-300 bg-white"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <Filter className="h-5 w-5 text-gray-400" />
           </div>
-
+        </div>
+      </div>
+      
+      {activeTab === "Assigned Tasks" ? (
+        <div className="px-6 py-4 flex-1 overflow-auto pb-24">
           <Collapsible 
             open={isToDoExpanded} 
             onOpenChange={setIsToDoExpanded}
@@ -237,6 +265,15 @@ const ToDoPage = () => {
                 </div>
               </div>
               <div className="flex items-center">
+                <button 
+                  className="p-2 bg-gray-100 rounded-full mr-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFilter();
+                  }}
+                >
+                  <Filter className="h-5 w-5 text-gray-600" />
+                </button>
                 {isToDoExpanded ? <ChevronUp /> : <ChevronDown />}
               </div>
             </CollapsibleTrigger>
@@ -272,7 +309,8 @@ const ToDoPage = () => {
                     </div>
                     
                     {task.id === 2 && (
-                      <div className="flex items-center justify-between mt-2">
+                      <div className="flex flex-col mt-2">
+                        <p className="text-sm text-gray-600 mb-1">29/50 people have completed this task</p>
                         <div className="flex -space-x-2">
                           {[...Array(5)].map((_, i) => (
                             <Avatar key={i} className="h-7 w-7 border-2 border-white">
@@ -281,7 +319,6 @@ const ToDoPage = () => {
                             </Avatar>
                           ))}
                         </div>
-                        <p className="text-sm text-gray-600">29/50 people have completed this task</p>
                       </div>
                     )}
                     
@@ -298,6 +335,12 @@ const ToDoPage = () => {
                     )}
                   </div>
                 ))}
+                
+                {todoTasks.length === 0 && searchTerm && (
+                  <div className="text-center py-6 text-gray-500">
+                    No tasks found matching "{searchTerm}"
+                  </div>
+                )}
               </div>
             </CollapsibleContent>
           </Collapsible>
@@ -313,7 +356,18 @@ const ToDoPage = () => {
                   {completedTasks.length}
                 </div>
               </div>
-              {isCompletedExpanded ? <ChevronUp /> : <ChevronDown />}
+              <div className="flex items-center">
+                <button 
+                  className="p-2 bg-gray-100 rounded-full mr-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFilter();
+                  }}
+                >
+                  <Filter className="h-5 w-5 text-gray-600" />
+                </button>
+                {isCompletedExpanded ? <ChevronUp /> : <ChevronDown />}
+              </div>
             </CollapsibleTrigger>
             
             <CollapsibleContent>
@@ -356,13 +410,19 @@ const ToDoPage = () => {
                     </div>
                   </div>
                 ))}
+                
+                {completedTasks.length === 0 && searchTerm && (
+                  <div className="text-center py-6 text-gray-500">
+                    No completed tasks found matching "{searchTerm}"
+                  </div>
+                )}
               </div>
             </CollapsibleContent>
           </Collapsible>
         </div>
       ) : (
-        <div className="px-6 py-4 flex-1 overflow-auto pb-20">
-          <div className="flex justify-end mb-4">
+        <div className="px-6 py-4 flex-1 overflow-auto pb-24">
+          <div className="flex justify-between items-center mb-4">
             <Button 
               className="bg-purple-900 hover:bg-purple-800 flex items-center gap-2"
               onClick={handleCreateTask}
@@ -370,6 +430,13 @@ const ToDoPage = () => {
               <PlusCircle className="h-4 w-4" />
               Create New Task
             </Button>
+            
+            <button 
+              className="p-2 bg-gray-100 rounded-full"
+              onClick={handleFilter}
+            >
+              <Filter className="h-5 w-5 text-gray-600" />
+            </button>
           </div>
           
           <div className="flex-1 flex items-center justify-center text-gray-500">

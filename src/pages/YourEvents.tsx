@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Calendar, Search, Bell } from "lucide-react";
+import { User, Calendar, Search, Bell, Filter } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -28,6 +28,7 @@ const YourEvents = () => {
   const [checkInEvent, setCheckInEvent] = useState<any>(null);
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const hardcodedEvents: Event[] = [
@@ -108,13 +109,35 @@ const YourEvents = () => {
   const handleProfileClick = () => {
     navigate("/profile");
   };
+  
+  const handleNotificationsClick = () => {
+    navigate("/notifications");
+  };
+  
+  const handleFilter = () => {
+    // Handle filtering
+    console.log("Opening filter options");
+  };
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+  
+  const filteredEvents = events.filter(event => 
+    event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (event.tag && event.tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
-          <button className="p-1 bg-white rounded-full">
+          <button 
+            className="p-1 bg-white rounded-full"
+            onClick={handleNotificationsClick}
+          >
             <Bell className="w-6 h-6" />
           </button>
           <button className="p-1 bg-white rounded-full" onClick={handleCalendarClick}>
@@ -143,15 +166,25 @@ const YourEvents = () => {
       </div>
 
       <div className="px-6 py-4">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search events..."
+              className="pl-10 pr-4 py-3 w-full rounded-full border border-gray-300 bg-white"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
           </div>
-          <input
-            type="text"
-            placeholder="Search events..."
-            className="pl-10 pr-4 py-3 w-full rounded-full border border-gray-300 bg-white"
-          />
+          <button 
+            className="p-2 bg-gray-100 rounded-full"
+            onClick={handleFilter}
+          >
+            <Filter className="h-5 w-5 text-gray-600" />
+          </button>
         </div>
       </div>
 
@@ -165,11 +198,17 @@ const YourEvents = () => {
         </button>
       </div>
 
-      <div className="flex-1 overflow-auto px-6 pb-20">
+      <div className="flex-1 overflow-auto px-6 pb-24">
         <div className="space-y-4">
-          {events.map((event, index) => (
+          {filteredEvents.map((event, index) => (
             <YourEventCard key={event.id} event={event} index={index} />
           ))}
+          
+          {filteredEvents.length === 0 && searchTerm && (
+            <div className="text-center py-6 text-gray-500">
+              No events found matching "{searchTerm}"
+            </div>
+          )}
         </div>
       </div>
 

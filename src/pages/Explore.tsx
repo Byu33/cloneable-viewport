@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { User, Calendar, Search, Bell } from "lucide-react";
+import { User, Calendar, Search, Bell, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TabBar from "@/components/TabBar";
 import ExploreEventCard from "@/components/ExploreEventCard";
@@ -9,6 +9,7 @@ const Explore = () => {
   const [activeTab, setActiveTab] = useState("Explore");
   const tabs = ["Going", "Explore", "Your Events"];
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleTabClick = (tab: string) => {
     if (tab === "Going") {
@@ -26,6 +27,19 @@ const Explore = () => {
   
   const handleProfileClick = () => {
     navigate("/profile");
+  };
+  
+  const handleNotificationsClick = () => {
+    navigate("/notifications");
+  };
+  
+  const handleFilter = () => {
+    // Handle filtering
+    console.log("Opening filter options");
+  };
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   // Sample event data for different categories
@@ -47,7 +61,10 @@ const Explore = () => {
       <header className="flex justify-between items-center px-6 py-4 bg-white">
         <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
         <div className="flex gap-4">
-          <button className="p-1 bg-white rounded-full">
+          <button 
+            className="p-1 bg-white rounded-full"
+            onClick={handleNotificationsClick}
+          >
             <Bell className="w-6 h-6" />
           </button>
           <button className="p-1 bg-white rounded-full" onClick={handleCalendarClick}>
@@ -78,20 +95,30 @@ const Explore = () => {
 
       {/* Search Bar */}
       <div className="px-6 py-4">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search events..."
+              className="pl-10 pr-4 py-3 w-full rounded-full border border-gray-300 bg-white"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
           </div>
-          <input
-            type="text"
-            placeholder="Search events..."
-            className="pl-10 pr-4 py-3 w-full rounded-full border border-gray-300 bg-white"
-          />
+          <button 
+            className="p-2 bg-gray-100 rounded-full"
+            onClick={handleFilter}
+          >
+            <Filter className="h-5 w-5 text-gray-600" />
+          </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto px-6 pb-4">
+      <div className="flex-1 overflow-auto px-6 pb-24">
         {/* Suggested Events */}
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-4">Suggested</h2>

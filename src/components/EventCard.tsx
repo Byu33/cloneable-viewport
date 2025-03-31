@@ -35,14 +35,23 @@ const EventCard = ({ event, onCheckIn, source = "going" }: EventCardProps) => {
   const handleCardClick = () => {
     if (source === "going" && isUpcoming) {
       navigate(`/event/${event.id}?source=going`);
+    } else if (source === "explore") {
+      navigate(`/event/${event.id}`);
+    } else if (source === "past") {
+      navigate(`/event/${event.id}?source=past`);
     }
+  };
+  
+  const handleAttendeeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/event/${event.id}/attendees`);
   };
 
   return (
     <div 
       className="bg-white rounded-xl p-5 shadow-sm"
       onClick={handleCardClick}
-      style={{ cursor: source === "going" && isUpcoming ? "pointer" : "default" }}
+      style={{ cursor: "pointer" }}
     >
       <div className="flex justify-between items-start mb-3">
         <div>
@@ -91,9 +100,12 @@ const EventCard = ({ event, onCheckIn, source = "going" }: EventCardProps) => {
         
         {event.attendees ? (
           <div className="flex flex-col items-end ml-auto">
-            <span className="text-sm text-gray-600 mb-1">
+            <button 
+              className="text-sm text-gray-600 mb-1"
+              onClick={handleAttendeeClick}
+            >
               {event.attendees} {event.attendees === 1 ? "person" : "people"} going
-            </span>
+            </button>
             <div className="flex -space-x-2">
               {[...Array(Math.min(3, event.attendees))].map((_, i) => (
                 <Avatar key={i} className="h-7 w-7 border-2 border-white">

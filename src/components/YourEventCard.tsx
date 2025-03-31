@@ -20,16 +20,25 @@ const YourEventCard = ({ event, index }: YourEventCardProps) => {
     return `${month} ${day}`;
   };
 
-  const handleAttendance = (eventId: number) => {
+  const handleEventClick = (eventId: number) => {
+    navigate(`/event/${eventId}?source=your-events`);
+  };
+
+  const handleAttendance = (e: React.MouseEvent, eventId: number) => {
+    e.stopPropagation();
     navigate(`/event-attendance/${eventId}`);
   };
 
-  const handleEditEvent = (eventId: number) => {
+  const handleEditEvent = (e: React.MouseEvent, eventId: number) => {
+    e.stopPropagation();
     navigate(`/edit-event/${eventId}`);
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm relative">
+    <div 
+      className="bg-white rounded-lg p-4 shadow-sm relative"
+      onClick={() => handleEventClick(event.id)}
+    >
       <div className="flex justify-between">
         <div>
           <h3 className="text-lg font-semibold text-[#1A1F2C]">{event.title}</h3>
@@ -93,14 +102,14 @@ const YourEventCard = ({ event, index }: YourEventCardProps) => {
             <div className="flex gap-2 mt-3">
               <Button 
                 className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
-                onClick={() => handleAttendance(event.id)}
+                onClick={(e) => handleAttendance(e, event.id)}
               >
                 Attendance
               </Button>
               <Button 
                 variant="ghost" 
                 className="text-purple-700 text-sm"
-                onClick={() => handleEditEvent(event.id)}
+                onClick={(e) => handleEditEvent(e, event.id)}
               >
                 Edit Event
               </Button>
@@ -110,7 +119,7 @@ const YourEventCard = ({ event, index }: YourEventCardProps) => {
               <Button 
                 variant="ghost" 
                 className="text-purple-700 text-sm px-0 py-2"
-                onClick={() => handleEditEvent(event.id)}
+                onClick={(e) => handleEditEvent(e, event.id)}
               >
                 Edit Event
               </Button>
