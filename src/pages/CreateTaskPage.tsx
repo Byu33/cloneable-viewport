@@ -158,7 +158,7 @@ const CreateTaskPage = () => {
       <MemberSearchModal 
         open={isMemberSearchOpen}
         onOpenChange={setIsMemberSearchOpen}
-        onSelectMembers={handleAssigneeSelection}
+        onMembersSelected={handleAssigneeSelection}
         selectedMembers={assignees}
       />
     </div>
