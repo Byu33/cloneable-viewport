@@ -1,6 +1,6 @@
+
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { ChevronDown, ChevronUp } from "react-native-feather";
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CalendarViewProps {
   isExpanded: boolean;
@@ -75,225 +75,121 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   const days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
 
   return (
-    <View style={styles.container}>
+    <div className="bg-white rounded-lg shadow-sm p-4">
       {/* Title and toggle button */}
-      <TouchableOpacity style={styles.toggleButton} onPress={onToggleExpand}>
-        <Text style={styles.title}>{title}</Text>
-        {isExpanded ? <ChevronUp width={20} height={20} /> : <ChevronDown width={20} height={20} />}
-      </TouchableOpacity>
+      <button 
+        className="w-full flex justify-between items-center mb-4" 
+        onClick={onToggleExpand}
+      >
+        <span className="text-lg font-semibold">{title}</span>
+        {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+      </button>
 
       {isExpanded ? (
         // Expanded Calendar View
-        <ScrollView>
-          <View style={styles.header}>
-            <Text style={styles.monthYear}>{monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}</Text>
-            <View style={styles.navButtons}>
-              <TouchableOpacity style={styles.navButton}>
-                <ChevronLeft width={20} height={20} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.navButton}>
-                <ChevronRight width={20} height={20} />
-              </TouchableOpacity>
-            </View>
-          </View>
+        <div className="overflow-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-base font-semibold">
+              {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+            </h2>
+            <div className="flex gap-2">
+              <button className="p-1 bg-gray-100 rounded-full">
+                <ChevronLeft size={20} />
+              </button>
+              <button className="p-1 bg-gray-100 rounded-full">
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
 
-          <View style={styles.grid}>
+          <div className="grid grid-cols-7 gap-1">
             {days.map((day) => (
-              <Text key={day} style={styles.dayHeader}>{day}</Text>
+              <div key={day} className="text-center font-medium text-sm">
+                {day}
+              </div>
             ))}
 
             {weeks.map((week, weekIndex) =>
               week.map((day, dayIndex) => (
-                <View
+                <div
                   key={`${weekIndex}-${dayIndex}`}
-                  style={[
-                    styles.day,
-                    day.isToday ? styles.today : null,
-                    day.isCurrentMonth ? styles.currentMonth : styles.otherMonth,
-                  ]}
+                  className={`
+                    relative py-2 text-center
+                    ${day.isToday ? 'bg-purple-200 text-purple-900 rounded-full font-bold' : ''}
+                    ${day.isCurrentMonth ? 'font-medium' : 'text-gray-400'}
+                  `}
                 >
-                  <Text>{day.day}</Text>
+                  <div>{day.day}</div>
                   {/* Example event indicators */}
-                  {day.isCurrentMonth && day.day === 30 && (
-                    <View style={styles.eventIndicator}></View>
+                  {day.isCurrentMonth && day.day === 15 && (
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-700 rounded-full"></div>
                   )}
-                  {day.isCurrentMonth && day.day === 2 && (
-                    <View style={styles.eventIndicator}></View>
+                  {day.isCurrentMonth && day.day === 22 && (
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-700 rounded-full"></div>
                   )}
-                </View>
+                </div>
               ))
             )}
-          </View>
+          </div>
 
           {/* Events for selected day */}
-          <View style={styles.events}>
-            <Text style={styles.eventsTitle}>Events on Selected Day</Text>
-            <View style={styles.eventItem}>
-              <View style={styles.eventIndicator}></View>
-              <View>
-                <Text style={styles.eventTitle}>Chapter Meeting</Text>
-                <Text style={styles.eventTime}>5:00-6:00PM</Text>
-              </View>
-            </View>
-            <View style={styles.eventItem}>
-              <View style={styles.eventIndicator}></View>
-              <View>
-                <Text style={styles.eventTitle}>Daily Standup Call</Text>
-                <Text style={styles.eventTime}>5:00-6:00PM</Text>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
+          <div className="mt-4 border-t border-gray-200 pt-4">
+            <h3 className="font-semibold mb-2">Events on Selected Day</h3>
+            <div className="bg-gray-50 p-3 rounded-md mb-2 flex">
+              <div className="w-2 h-2 bg-purple-700 rounded-full mt-2 mr-2"></div>
+              <div>
+                <div className="font-medium">Chapter Meeting</div>
+                <div className="text-sm text-gray-600">5:00-6:00PM</div>
+              </div>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-md flex">
+              <div className="w-2 h-2 bg-purple-700 rounded-full mt-2 mr-2"></div>
+              <div>
+                <div className="font-medium">Daily Standup Call</div>
+                <div className="text-sm text-gray-600">5:00-6:00PM</div>
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
         // Compact Calendar View
-        <View style={styles.grid}>
+        <div className="grid grid-cols-7 gap-1">
           {days.map((day) => (
-            <Text key={day} style={styles.dayHeader}>{day}</Text>
+            <div key={day} className="text-center font-medium text-sm">
+              {day}
+            </div>
           ))}
 
           {/* First Week */}
           {compactFirstWeek.map((date, index) => (
-            <View
+            <div
               key={`first-${index}`}
-              style={[
-                styles.day,
-                date.isToday ? styles.todayCompact : null,
-                date.isCurrentMonth ? styles.currentMonth : styles.otherMonth,
-              ]}
+              className={`
+                py-2 text-center
+                ${date.isToday ? 'bg-purple-200 text-purple-900 rounded-full font-bold' : ''}
+                ${date.isCurrentMonth ? 'font-medium' : 'text-gray-400'}
+              `}
             >
-              <Text>{date.day}</Text>
-            </View>
+              {date.day}
+            </div>
           ))}
 
           {/* Second Week */}
           {compactSecondWeek.map((date, index) => (
-            <View
+            <div
               key={`second-${index}`}
-              style={[
-                styles.day,
-                date.isCurrentMonth ? styles.currentMonth : styles.otherMonth,
-              ]}
+              className={`
+                py-2 text-center
+                ${date.isCurrentMonth ? 'font-medium' : 'text-gray-400'}
+              `}
             >
-              <Text>{date.day}</Text>
-            </View>
+              {date.day}
+            </div>
           ))}
-        </View>
+        </div>
       )}
-    </View>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  toggleButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  monthYear: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  navButtons: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  navButton: {
-    padding: 5,
-    borderRadius: 50,
-    backgroundColor: "#f0f0f0",
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  dayHeader: {
-    flexBasis: "14.28%",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  day: {
-    flexBasis: "14.28%",
-    textAlign: "center",
-    paddingVertical: 10,
-    position: "relative",
-  },
-  today: {
-    backgroundColor: "#e0bbff",
-    borderRadius: 50,
-    fontWeight: "bold",
-    color: "#6a1b9a",
-  },
-  currentMonth: {
-    fontWeight: "bold",
-  },
-  otherMonth: {
-    color: "#d3d3d3",
-  },
-  todayCompact: {
-    backgroundColor: "#e0bbff",
-    borderRadius: 50,
-    fontWeight: "bold",
-    color: "#6a1b9a",
-    width: 30,
-    height: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: "auto",
-  },
-  eventIndicator: {
-    position: "absolute",
-    bottom: 2,
-    left: "50%",
-    transform: [{ translateX: -2 }],
-    width: 4,
-    height: 4,
-    backgroundColor: "#6a1b9a",
-    borderRadius: 50,
-  },
-  events: {
-    marginTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#d3d3d3",
-    paddingTop: 10,
-  },
-  eventsTitle: {
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  eventItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 5,
-    borderRadius: 5,
-    backgroundColor: "#f9f9f9",
-    marginBottom: 5,
-  },
-  eventTitle: {
-    fontWeight: "bold",
-  },
-  eventTime: {
-    color: "#888",
-  },
-});
 
 export default CalendarView;
