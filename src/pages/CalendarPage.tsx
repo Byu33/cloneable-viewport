@@ -1,13 +1,13 @@
+
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Feather";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
 import TabBar from "@/components/TabBar";
 import { format, addMonths, subMonths } from "date-fns";
-import { NavigationProp } from "@/types/navigation";
 
 const CalendarPage = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigate = useNavigate();
   const [date, setDate] = useState<Date>(new Date());
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
@@ -44,7 +44,7 @@ const CalendarPage = () => {
   ];
 
   const handleBack = () => {
-    navigation.goBack();
+    navigate(-1);
   };
 
   const handleNextMonth = () => {
@@ -57,179 +57,93 @@ const CalendarPage = () => {
 
   const handleItemClick = (item: typeof calendarItems[0]) => {
     if (item.type === "event") {
-      navigation.navigate("EventDetails", { eventId: item.id.toString() });
+      navigate(`/event/${item.id}`);
     } else {
-      navigation.navigate("TaskDetail", { taskId: item.id.toString() });
+      navigate(`/task/${item.id}`);
     }
   };
 
-  const renderCalendarHeader = () => (
-    <View style={styles.calendarHeader}>
-      <TouchableOpacity onPress={handlePrevMonth}>
-        <Icon name="chevron-left" size={24} color="#000" />
-      </TouchableOpacity>
-      <Text style={styles.monthText}>
-        {format(currentMonth, "MMMM yyyy")}
-      </Text>
-      <TouchableOpacity onPress={handleNextMonth}>
-        <Icon name="chevron-right" size={24} color="#000" />
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderCalendarDays = () => {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    return (
-      <View style={styles.daysContainer}>
-        {days.map((day) => (
-          <Text key={day} style={styles.dayText}>
-            {day}
-          </Text>
-        ))}
-      </View>
-    );
-  };
-
-  const renderCalendarGrid = () => {
-    // This is a simplified version. In a real app, you'd want to use a proper calendar library
-    return (
-      <View style={styles.calendarGrid}>
-        {/* Calendar grid implementation */}
-      </View>
-    );
-  };
-
-  const renderCalendarItems = () => (
-    <View style={styles.itemsContainer}>
-      {calendarItems.map((item) => (
-        <TouchableOpacity
-          key={item.id}
-          style={styles.itemCard}
-          onPress={() => handleItemClick(item)}
-        >
-          <View style={styles.itemInfo}>
-            <Text style={styles.itemTitle}>{item.title}</Text>
-            <Text style={styles.itemDate}>
-              {format(item.date, "MMMM d, yyyy")}
-            </Text>
-          </View>
-          <View style={[
-            styles.itemTag,
-            { backgroundColor: item.type === "event" ? "#E9D5FF" : "#F3E8FF" }
-          ]}>
-            <Text style={[
-              styles.tagText,
-              { color: item.type === "event" ? "#7C3AED" : "#9333EA" }
-            ]}>
-              {item.type === "event" ? item.tag : item.priority}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      ))}
-    </View>
+  // Filter items for the selected day
+  const selectedDayItems = calendarItems.filter(
+    item => item.date.toDateString() === date?.toDateString()
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack}>
-          <Icon name="arrow-left" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Calendar</Text>
-        <View style={{ width: 24 }} />
-      </View>
+    <div className="flex flex-col h-screen bg-gray-50">
+      <header className="flex items-center px-6 py-4 bg-white">
+        <button onClick={handleBack} className="mr-4">
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <h1 className="text-2xl font-semibold">Calendar</h1>
+      </header>
 
-      <ScrollView style={styles.content}>
-        {renderCalendarHeader()}
-        {renderCalendarDays()}
-        {renderCalendarGrid()}
-        {renderCalendarItems()}
-      </ScrollView>
+      <div className="flex-1 overflow-auto p-4 pb-24">
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <button onClick={handlePrevMonth} className="p-1">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <h2 className="text-lg font-medium">
+              {format(currentMonth, 'MMMM yyyy')}
+            </h2>
+            <button onClick={handleNextMonth} className="p-1">
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(newDate) => newDate && setDate(newDate)}
+            month={currentMonth}
+            className="rounded-md"
+            showOutsideDays
+            fixedWeeks
+            ISOWeek
+            hideHead={true} // Hide the built-in header to prevent duplication
+          />
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-24">
+          <h2 className="text-lg font-medium mb-4">
+            {date ? format(date, 'MMMM d, yyyy') : 'Select a date'}
+          </h2>
+          
+          {selectedDayItems.length > 0 ? (
+            <div className="space-y-3">
+              {selectedDayItems.map(item => (
+                <div 
+                  key={item.id}
+                  onClick={() => handleItemClick(item)}
+                  className="p-3 border border-gray-200 rounded-lg cursor-pointer"
+                >
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-medium">{item.title}</h3>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      item.type === "event" 
+                        ? "bg-purple-100 text-purple-800" 
+                        : "bg-blue-100 text-blue-800"
+                    }`}>
+                      {item.type === "event" ? item.tag : item.priority}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {item.type === "event" ? "Event" : "Task"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-4">
+              No events or tasks for this day
+            </p>
+          )}
+        </div>
+      </div>
 
       <TabBar />
-    </View>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "600",
-  },
-  content: {
-    flex: 1,
-  },
-  calendarHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-  },
-  monthText: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  daysContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 8,
-    backgroundColor: "#FFFFFF",
-  },
-  dayText: {
-    width: 40,
-    textAlign: "center",
-    color: "#6B7280",
-  },
-  calendarGrid: {
-    backgroundColor: "#FFFFFF",
-    padding: 16,
-  },
-  itemsContainer: {
-    padding: 16,
-  },
-  itemCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  itemInfo: {
-    flex: 1,
-  },
-  itemTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  itemDate: {
-    color: "#6B7280",
-  },
-  itemTag: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  tagText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-});
 
 export default CalendarPage;

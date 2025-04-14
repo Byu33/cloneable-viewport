@@ -1,55 +1,27 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NavigationProp } from "@/types/navigation";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 const NotFound = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.error(
+      "404 Error: User attempted to access non-existent route:",
+      location.pathname
+    );
+  }, [location.pathname]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>404</Text>
-        <Text style={styles.subtitle}>Oops! Page not found</Text>
-        <TouchableOpacity 
-          onPress={() => navigation.navigate("Home" as keyof NavigationProp['navigate'])}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Return to Home</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4">404</h1>
+        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
+        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
+          Return to Home
+        </a>
+      </div>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F3F4F6",
-  },
-  content: {
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: "#6B7280",
-    marginBottom: 16,
-  },
-  button: {
-    padding: 12,
-  },
-  buttonText: {
-    color: "#3B82F6",
-    fontSize: 16,
-    textDecorationLine: "underline",
-  },
-});
 
 export default NotFound;

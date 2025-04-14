@@ -1,46 +1,24 @@
 import * as React from "react"
-import { Text, TextProps, StyleSheet, TextStyle } from "react-native"
+import * as LabelPrimitive from "@radix-ui/react-label"
+import { cva, type VariantProps } from "class-variance-authority"
 
-export interface LabelProps extends TextProps {
-  variant?: "default" | "secondary" | "disabled"
-  style?: TextStyle
-}
+import { cn } from "@/lib/utils"
 
-const Label = React.forwardRef<Text, LabelProps>(
-  ({ 
-    variant = "default",
-    style,
-    ...props 
-  }, ref) => {
-    return (
-      <Text
-        ref={ref}
-        style={[
-          styles.base,
-          variant === "secondary" && styles.secondary,
-          variant === "disabled" && styles.disabled,
-          style
-        ]}
-        {...props}
-      />
-    )
-  }
+const labelVariants = cva(
+  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 )
 
-Label.displayName = "Label"
-
-const styles = StyleSheet.create({
-  base: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#374151",
-  },
-  secondary: {
-    color: "#6B7280",
-  },
-  disabled: {
-    opacity: 0.7,
-  },
-})
+const Label = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+    VariantProps<typeof labelVariants>
+>(({ className, ...props }, ref) => (
+  <LabelPrimitive.Root
+    ref={ref}
+    className={cn(labelVariants(), className)}
+    {...props}
+  />
+))
+Label.displayName = LabelPrimitive.Root.displayName
 
 export { Label }

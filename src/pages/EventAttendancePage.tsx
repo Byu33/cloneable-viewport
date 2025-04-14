@@ -1,29 +1,24 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet, Switch } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
-import { NavigationProp } from "@/types/navigation";
-
-type IconName = keyof typeof Feather.glyphMap;
-
-type EventAttendanceParams = {
-  id: string;
-};
+import { ArrowLeft, ChevronDown, ChevronUp, Plus, ChevronRight, Edit } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 const EventAttendancePage = () => {
-  const navigation = useNavigation<NavigationProp>();
-  const route = useRoute();
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [isCheckedInOpen, setIsCheckedInOpen] = useState(false);
 
   // Mock data for the event
   const event = {
-    id: (route.params as EventAttendanceParams)?.id || "1",
+    id: id || "1",
     title: "Daily Standup Call",
     date: new Date(2024, 1, 16),
     time: "5:00-6:00PM",
     location: "Everitt Laboratory",
     tag: "Sisterhood",
-    tagColor: "#7C3AED",
+    tagColor: "bg-purple-200 text-purple-700",
   };
 
   // Mock data for checked-in users
@@ -51,219 +46,121 @@ const EventAttendancePage = () => {
     return `Feb ${date.getDate()}`;
   };
 
-  const handleBack = () => {
-    navigation.goBack();
-  };
-
-  const handleEditEvent = () => {
-    navigation.navigate("EditEvent", { eventId: event.id });
-  };
-
-  const handleAddAttendee = () => {
-    // Logic to add attendee would go here
-    console.log("Adding attendee");
-  };
-
-  const handleCheckIn = (userId: number) => {
-    // Logic to check in user would go here
-    console.log("Checking in user:", userId);
-  };
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color="#000" />
-        </TouchableOpacity>
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle}>{event.title}</Text>
-          <Text style={styles.headerSubtitle}>
-            {formatDate(event.date)} • {event.time}
-          </Text>
-        </View>
-        <TouchableOpacity onPress={handleEditEvent} style={styles.editButton}>
-          <Feather name="edit" size={24} color="#7C3AED" />
-        </TouchableOpacity>
-      </View>
+    <div className="flex flex-col h-screen bg-gray-50">
+      <header className="p-4 flex items-center bg-white border-b">
+        <button className="mr-4" onClick={() => navigate("/your-events")}>
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      </header>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Checked In</Text>
-            <TouchableOpacity 
-              onPress={() => setIsCheckedInOpen(!isCheckedInOpen)}
-              style={styles.toggleButton}
-            >
-              <Feather 
-                name={isCheckedInOpen ? "chevron-up" : "chevron-down"} 
-                size={20} 
-                color="#6B7280" 
-              />
-            </TouchableOpacity>
-          </View>
+      <div className="flex-grow overflow-auto">
+        {/* Event Card */}
+        <div className="m-4 bg-white rounded-lg p-4 shadow-sm">
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="font-semibold text-lg">{event.title}</h2>
+              <p className="text-gray-600 text-sm">
+                {formatDate(event.date)} {event.time}
+              </p>
+              <p className="text-gray-600 text-sm">{event.location}</p>
+            </div>
+            
+            <div className="flex flex-col items-end space-y-2">
+              <span className={`${event.tagColor} text-xs px-3 py-1 rounded-full font-bold`}>
+                {event.tag}
+              </span>
+              <button className="flex items-center text-purple-700 text-sm">
+                <Edit className="w-4 h-4 mr-1" />
+                Edit Event
+              </button>
+            </div>
+          </div>
+        </div>
 
-          {isCheckedInOpen && (
-            <View style={styles.userList}>
-              {checkedInUsers.map((user) => (
-                <View key={user.id} style={styles.userItem}>
-                  <View style={styles.userInfo}>
-                    <Image 
-                      source={{ uri: user.avatar }} 
-                      style={styles.avatar}
-                    />
-                    <Text style={styles.userName}>{user.name}</Text>
-                  </View>
-                  <TouchableOpacity 
-                    style={styles.checkInButton}
-                    onPress={() => handleCheckIn(user.id)}
-                  >
-                    <Text style={styles.checkInButtonText}>Check In</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </View>
-          )}
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Signed Up</Text>
-            <TouchableOpacity 
-              onPress={handleAddAttendee}
-              style={styles.addButton}
-            >
-              <Feather name="plus" size={20} color="#7C3AED" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.userList}>
-            {signedUpUsers.map((user) => (
-              <View key={user.id} style={styles.userItem}>
-                <View style={styles.userInfo}>
-                  <Image 
-                    source={{ uri: user.avatar }} 
-                    style={styles.avatar}
-                  />
-                  <View>
-                    <Text style={styles.userName}>{user.name}</Text>
-                    {user.status && (
-                      <Text style={styles.userStatus}>{user.status}</Text>
-                    )}
-                  </View>
-                </View>
-                <TouchableOpacity 
-                  style={styles.checkInButton}
-                  onPress={() => handleCheckIn(user.id)}
-                >
-                  <Text style={styles.checkInButtonText}>Check In</Text>
-                </TouchableOpacity>
-              </View>
+        {/* Checked In Section */}
+        <div className="mx-4 mb-4 bg-white rounded-lg shadow-sm">
+          <button 
+            className="w-full p-4 flex justify-between items-center"
+            onClick={() => setIsCheckedInOpen(!isCheckedInOpen)}
+          >
+            <div className="flex items-center">
+              <h3 className="text-lg font-medium">Checked In</h3>
+              <span className="ml-2 bg-gray-200 px-2 py-1 rounded-full text-xs font-semibold">
+                {checkedInUsers.length}
+              </span>
+            </div>
+            {isCheckedInOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          </button>
+          
+          {/* Always show circle avatars, expand to full list when open */}
+          <div className="px-4 pb-4 flex -space-x-2 overflow-x-auto">
+            {checkedInUsers.map(user => (
+              <Avatar key={user.id} className="h-10 w-10 border-2 border-white">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
+              </Avatar>
             ))}
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+          </div>
+          
+          {isCheckedInOpen && (
+            <div className="px-4 pb-4">
+              {checkedInUsers.map(user => (
+                <div key={user.id} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-gray-800">{user.name}</span>
+                  <ChevronRight className="w-4 h-4 text-gray-400 ml-auto" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Signed Up Section */}
+        <div className="mx-4 bg-white rounded-lg shadow-sm">
+          <div className="p-4 flex justify-between items-center border-b">
+            <div>
+              <h3 className="text-lg font-medium">Signed Up</h3>
+              <p className="text-sm text-gray-500">Check box if member is present</p>
+            </div>
+            <Button variant="outline" className="flex items-center gap-1 text-purple-700 border-purple-200">
+              <Plus className="w-4 h-4" />
+              Add Member
+            </Button>
+          </div>
+          
+          <div>
+            {signedUpUsers.map((user, index) => (
+              <div key={user.id} className="flex items-center justify-between p-4 border-b">
+                <div className="flex items-center gap-3">
+                  <Checkbox id={`user-${user.id}`} className="border-purple-300 data-[state=checked]:bg-purple-700" />
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <label htmlFor={`user-${user.id}`} className="text-gray-800">
+                    {user.name}
+                  </label>
+                </div>
+                
+                <div className="flex items-center">
+                  {user.status && (
+                    <span className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full mr-2">
+                      {user.status}
+                    </span>
+                  )}
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: 4,
-  },
-  headerTitleContainer: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "#6B7280",
-  },
-  editButton: {
-    padding: 4,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  section: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  toggleButton: {
-    padding: 4,
-  },
-  addButton: {
-    padding: 4,
-  },
-  userList: {
-    marginTop: 8,
-  },
-  userItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  userInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 12,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  userStatus: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginTop: 2,
-  },
-  checkInButton: {
-    backgroundColor: "#7C3AED",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  checkInButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-});
 
 export default EventAttendancePage;

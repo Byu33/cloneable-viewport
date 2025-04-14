@@ -1,14 +1,13 @@
-import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
-import TabBar from "@/components/TabBar";
-import { NavigationProp } from "@/types/navigation";
 
-type IconName = keyof typeof Feather.glyphMap;
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Calendar, Bell, User, ChevronRight } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import TabBar from "@/components/TabBar";
+import { Button } from "@/components/ui/button";
 
 const HomePage = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigate = useNavigate();
 
   const upcomingEvents = [
     {
@@ -27,7 +26,7 @@ const HomePage = () => {
       title: "Turn in Dues",
       dueDate: "Tomorrow",
       priority: "High Importance",
-      priorityColor: "#7C3AED",
+      priorityColor: "bg-purple-700 text-white",
     },
     {
       id: 2,
@@ -35,9 +34,9 @@ const HomePage = () => {
       dueDate: "Tomorrow",
       assignedBy: "Me",
       priority: "Officer Task",
-      priorityColor: "#E9D5FF",
+      priorityColor: "bg-purple-200 text-purple-700",
       category: "Risk",
-      categoryColor: "#E9D5FF",
+      categoryColor: "bg-purple-200 text-purple-700",
     }
   ];
 
@@ -51,264 +50,217 @@ const HomePage = () => {
   };
 
   const handleNotifications = () => {
-    navigation.navigate("Notifications" as keyof NavigationProp['navigate']);
+    navigate("/notifications");
   };
 
   const handleSeeAllEvents = () => {
-    navigation.navigate("Calendar" as keyof NavigationProp['navigate']);
+    navigate("/");
   };
 
   const handleSeeAllTasks = () => {
-    navigation.navigate("ToDo" as keyof NavigationProp['navigate']);
+    navigate("/todo");
   };
 
   const handleRequirementClick = (tag: string) => {
-    navigation.navigate("Requirements" as keyof NavigationProp['navigate']);
+    // Navigate to Explore with filter for the specific tag
+    navigate("/explore", { state: { filterTag: tag } });
   };
 
   const handlePayNow = () => {
-    navigation.navigate("Dues" as keyof NavigationProp['navigate']);
+    navigate("/dues");
   };
 
   const handlePaymentPlan = () => {
-    navigation.navigate("Dues" as keyof NavigationProp['navigate']);
+    navigate("/payment-plan");
+  };
+
+  const handleCheckIn = (eventId: number) => {
+    // Check-in logic
+    console.log(`Checking in to event ${eventId}`);
+  };
+
+  const handleCalendarClick = () => {
+    navigate("/calendar");
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.content}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Home</Text>
-          <View style={styles.headerButtons}>
-            <TouchableOpacity onPress={handleNotifications}>
-              <Feather name="bell" size={24} color="#000" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Calendar" as keyof NavigationProp['navigate'])}>
-              <Feather name="calendar" size={24} color="#000" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Profile" as keyof NavigationProp['navigate'])}>
-              <Feather name="user" size={24} color="#000" />
-            </TouchableOpacity>
-          </View>
-        </View>
+    <div className="flex flex-col h-screen bg-gray-50">
+      <header className="flex justify-between items-center px-6 py-4 bg-white">
+        <h1 className="text-2xl font-semibold">Home</h1>
+        <div className="flex gap-4">
+          <button className="p-1 bg-white rounded-full" onClick={handleCalendarClick}>
+            <Calendar className="w-6 h-6" />
+          </button>
+          <button className="p-1 bg-white rounded-full" onClick={handleNotifications}>
+            <Bell className="w-6 h-6" />
+          </button>
+          <button className="p-1 bg-white rounded-full" onClick={handleProfileClick}>
+            <User className="w-6 h-6" />
+          </button>
+        </div>
+      </header>
 
+      <div className="flex-1 overflow-auto px-6 py-4 pb-20">
         {/* Upcoming Events */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Upcoming Events</Text>
-            <TouchableOpacity onPress={handleSeeAllEvents}>
-              <Text style={styles.seeAll}>See All</Text>
-            </TouchableOpacity>
-          </View>
-          {upcomingEvents.map((event) => (
-            <TouchableOpacity
-              key={event.id}
-              style={styles.eventCard}
-              onPress={() => navigation.navigate("EventDetails", { eventId: event.id.toString() })}
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-xl font-semibold">Upcoming Events</h2>
+            <button 
+              className="text-purple-700 font-medium text-sm"
+              onClick={handleSeeAllEvents}
             >
-              <View style={styles.eventInfo}>
-                <Text style={styles.eventTitle}>{event.title}</Text>
-                <Text style={styles.eventDetails}>{event.time} • {event.location}</Text>
-                <View style={styles.eventTag}>
-                  <Text style={styles.tagText}>{event.tag}</Text>
-                </View>
-              </View>
-              <Feather name="chevron-right" size={24} color="#000" />
-            </TouchableOpacity>
-          ))}
-        </View>
+              See All
+            </button>
+          </div>
 
-        {/* Upcoming Tasks */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Upcoming Tasks</Text>
-            <TouchableOpacity onPress={handleSeeAllTasks}>
-              <Text style={styles.seeAll}>See All</Text>
-            </TouchableOpacity>
-          </View>
-          {upcomingTasks.map((task) => (
-            <TouchableOpacity
-              key={task.id}
-              style={styles.taskCard}
-              onPress={() => navigation.navigate("TaskDetail", { taskId: task.id.toString() })}
-            >
-              <View style={styles.taskInfo}>
-                <Text style={styles.taskTitle}>{task.title}</Text>
-                <Text style={styles.taskDueDate}>Due {task.dueDate}</Text>
-                <View style={[styles.taskPriority, { backgroundColor: task.priorityColor }]}>
-                  <Text style={styles.priorityText}>{task.priority}</Text>
-                </View>
-              </View>
-              <Feather name="chevron-right" size={24} color="#000" />
-            </TouchableOpacity>
+          {upcomingEvents.map(event => (
+            <div key={event.id} className="bg-white rounded-lg p-4 shadow-sm mb-2">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-semibold">{event.title}</h3>
+                  <p className="text-gray-600 text-sm">{event.time}</p>
+                  <p className="text-gray-600 text-sm">{event.location}</p>
+                </div>
+                <span className="bg-purple-200 text-purple-700 text-xs px-3 py-1 rounded-full font-medium">
+                  {event.tag}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center mt-3">
+                <Button 
+                  className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1"
+                  onClick={() => handleCheckIn(event.id)}
+                >
+                  Check In
+                </Button>
+
+                <div className="flex flex-col items-end">
+                  <p className="text-sm text-gray-600 mb-1">{event.attendees} people are attending</p>
+                  <div className="flex -space-x-2">
+                    {[...Array(Math.min(5, event.attendees))].map((_, i) => (
+                      <Avatar key={i} className="h-7 w-7 border-2 border-white">
+                        <AvatarImage src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} />
+                        <AvatarFallback>{String.fromCharCode(65 + i)}</AvatarFallback>
+                      </Avatar>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           ))}
-        </View>
+        </div>
+
+        {/* Upcoming To Do */}
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-xl font-semibold">Upcoming To Do</h2>
+            <button 
+              className="text-purple-700 font-medium text-sm"
+              onClick={handleSeeAllTasks}
+            >
+              See All
+            </button>
+          </div>
+
+          {upcomingTasks.map(task => (
+            <div key={task.id} className="bg-white rounded-lg p-4 shadow-sm mb-2">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold">{task.title}</h3>
+                  <p className="text-gray-600 text-sm">{task.dueDate}</p>
+                  {task.assignedBy && (
+                    <p className="text-gray-600 text-sm">Assigned by {task.assignedBy}</p>
+                  )}
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <span className={`${task.priorityColor} text-xs px-3 py-1 rounded-full font-medium`}>
+                    {task.priority}
+                  </span>
+                  {task.category && (
+                    <span className={`${task.categoryColor} text-xs px-3 py-1 rounded-full font-medium`}>
+                      {task.category}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {task.id === 2 && (
+                <div className="mt-2 flex justify-end">
+                  <input 
+                    type="checkbox" 
+                    className="h-5 w-5 border-gray-300 rounded text-purple-600 focus:ring-purple-500"
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
 
         {/* Requirements */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Requirements</Text>
-          <View style={styles.requirementsProgress}>
-            <Text style={styles.progressText}>
-              {requirements.completed}/{requirements.total} Completed
-            </Text>
-          </View>
-          {requirements.upcoming.map((req) => (
-            <TouchableOpacity
-              key={req.id}
-              style={styles.requirementCard}
-              onPress={() => handleRequirementClick(req.tag)}
+        <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+          <h2 className="text-xl font-semibold mb-4">Requirements</h2>
+          
+          <div className="relative flex justify-center items-center mb-6">
+            <div className="w-32 h-32 rounded-full bg-gray-200 flex justify-center items-center">
+              <div className="w-24 h-24 rounded-full bg-white flex flex-col justify-center items-center">
+                <span className="text-xl font-bold">{requirements.completed}/{requirements.total}</span>
+                <span className="text-sm text-gray-500">Completed</span>
+              </div>
+            </div>
+            {/* Purple overlay for completed portion (1/7) */}
+            <div 
+              className="absolute top-0 left-0 w-32 h-32 rounded-full" 
+              style={{ 
+                background: `conic-gradient(#6d28d9 0% ${(requirements.completed / requirements.total) * 100}%, transparent ${(requirements.completed / requirements.total) * 100}% 100%)` 
+              }}
+            ></div>
+          </div>
+
+          <h3 className="font-medium mb-2">To Be Completed</h3>
+          
+          {requirements.upcoming.map((req, index) => (
+            <div 
+              key={index}
+              className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
+              onClick={() => handleRequirementClick(req.tag)}
             >
-              <Text style={styles.requirementTitle}>{req.title}</Text>
-              <View style={styles.requirementTag}>
-                <Text style={styles.tagText}>{req.tag}</Text>
-              </View>
-            </TouchableOpacity>
+              <span>{req.title}</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
+            </div>
           ))}
-        </View>
-      </ScrollView>
+        </div>
+
+        {/* Dues */}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-3">This Semester's Dues</h2>
+          
+          <div className="bg-white rounded-lg p-6 shadow-sm text-center">
+            <p className="text-5xl font-bold mb-1">$300</p>
+            <p className="text-gray-600 mb-4">Due by January 6</p>
+            
+            <Button 
+              className="w-full bg-purple-900 hover:bg-purple-800 mb-2"
+              onClick={handlePayNow}
+            >
+              Pay Now
+            </Button>
+            
+            <button 
+              className="text-purple-700 font-medium"
+              onClick={handlePaymentPlan}
+            >
+              Payment Plan
+            </button>
+          </div>
+        </div>
+      </div>
+
       <TabBar />
-    </View>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  content: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "600",
-  },
-  headerButtons: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  section: {
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    marginBottom: 8,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  seeAll: {
-    color: "#6B7280",
-  },
-  eventCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  eventInfo: {
-    flex: 1,
-  },
-  eventTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  eventDetails: {
-    color: "#6B7280",
-    marginBottom: 8,
-  },
-  eventTag: {
-    backgroundColor: "#E9D5FF",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    alignSelf: "flex-start",
-  },
-  tagText: {
-    color: "#7C3AED",
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  taskCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  taskInfo: {
-    flex: 1,
-  },
-  taskTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  taskDueDate: {
-    color: "#6B7280",
-    marginBottom: 8,
-  },
-  taskPriority: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    alignSelf: "flex-start",
-  },
-  priorityText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  requirementsProgress: {
-    marginBottom: 16,
-  },
-  progressText: {
-    fontSize: 16,
-    color: "#6B7280",
-  },
-  requirementCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  requirementTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  requirementTag: {
-    backgroundColor: "#E9D5FF",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-});
 
 export default HomePage;

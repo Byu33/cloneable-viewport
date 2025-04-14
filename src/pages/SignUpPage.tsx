@@ -1,183 +1,139 @@
+
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, ScrollView, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Feather";
-import { NavigationProp } from "@/types/navigation";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
 
 const SignUpPage = () => {
-  const navigation = useNavigation<NavigationProp>();
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [checkboxes, setCheckboxes] = useState({
+    leavingEarly: false,
+    arrivingLate: false,
+    foodAllergies: false,
+    bringingGuest: false,
   });
 
-  const handleBack = () => {
-    navigation.goBack();
+  // Sample event data - in a real app this would come from an API or context
+  const event = {
+    id: Number(id),
+    title: "Daily Standup Call",
+    date: new Date("2024-02-16"),
+    time: "5:00-6:00PM",
+    tag: "Sisterhood",
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleCheckboxChange = (key: keyof typeof checkboxes) => {
+    setCheckboxes(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
   };
 
-  const handleSignUp = () => {
-    // Handle sign up logic here
-    navigation.navigate("Home");
+  const handleConfirm = () => {
+    toast({
+      title: "Signed up!",
+      description: "You have been successfully registered for this event.",
+    });
+    navigate('/?source=going');
+  };
+
+  const formatDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Icon name="arrow-left" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Sign Up</Text>
-      </View>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <header className="flex items-center px-4 py-3 bg-white">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-1 rounded-full"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+      </header>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.firstName}
-              onChangeText={(value) => handleInputChange("firstName", value)}
-              placeholder="Enter your first name"
-            />
-          </View>
+      <div className="flex-grow px-6 py-4">
+        <h1 className="text-2xl font-semibold text-gray-800 mt-2">{event.title}</h1>
+        <p className="text-gray-600 mb-3">{formatDate(event.date)} {event.time}</p>
+        
+        {event.tag && (
+          <span className="bg-purple-200 text-purple-700 text-xs px-3 py-1 rounded-full font-bold inline-block mb-6">
+            {event.tag}
+          </span>
+        )}
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Last Name</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.lastName}
-              onChangeText={(value) => handleInputChange("lastName", value)}
-              placeholder="Enter your last name"
-            />
-          </View>
+        <div className="text-gray-500 mb-3">
+          <a href="#" className="text-purple-600">Add to Google Calendar</a>
+        </div>
+        
+        <div className="space-y-3 mt-6">
+          <CheckboxItem 
+            id="leaving-early" 
+            label="Leaving Early" 
+            checked={checkboxes.leavingEarly}
+            onCheckedChange={() => handleCheckboxChange('leavingEarly')}
+          />
+          
+          <CheckboxItem 
+            id="arriving-late" 
+            label="Arriving Late" 
+            checked={checkboxes.arrivingLate}
+            onCheckedChange={() => handleCheckboxChange('arrivingLate')}
+          />
+          
+          <CheckboxItem 
+            id="food-allergies" 
+            label="Food Allergies?" 
+            checked={checkboxes.foodAllergies}
+            onCheckedChange={() => handleCheckboxChange('foodAllergies')}
+          />
+          
+          <CheckboxItem 
+            id="bringing-guest" 
+            label="Are you bringing a +1?" 
+            checked={checkboxes.bringingGuest}
+            onCheckedChange={() => handleCheckboxChange('bringingGuest')}
+          />
+        </div>
+      </div>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.email}
-              onChangeText={(value) => handleInputChange("email", value)}
-              placeholder="Enter your email"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.password}
-              onChangeText={(value) => handleInputChange("password", value)}
-              placeholder="Create a password"
-              secureTextEntry
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Confirm Password</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.confirmPassword}
-              onChangeText={(value) => handleInputChange("confirmPassword", value)}
-              placeholder="Confirm your password"
-              secureTextEntry
-            />
-          </View>
-
-          <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
-            <Text style={styles.signUpButtonText}>Sign Up</Text>
-          </TouchableOpacity>
-
-          <View style={styles.loginPrompt}>
-            <Text style={styles.loginText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text style={styles.loginLink}>Log In</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+      <div className="px-6 pb-8">
+        <Button 
+          className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6 text-base"
+          onClick={handleConfirm}
+        >
+          Confirm
+        </Button>
+      </div>
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: 4,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginLeft: 12,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  form: {
-    gap: 16,
-  },
-  inputGroup: {
-    gap: 4,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#374151",
-  },
-  input: {
-    backgroundColor: "#FFFFFF",
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    fontSize: 16,
-  },
-  signUpButton: {
-    backgroundColor: "#7C3AED",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 8,
-  },
-  signUpButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  loginPrompt: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 16,
-  },
-  loginText: {
-    color: "#6B7280",
-    fontSize: 14,
-  },
-  loginLink: {
-    color: "#7C3AED",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-});
+interface CheckboxItemProps {
+  id: string;
+  label: string;
+  checked: boolean;
+  onCheckedChange: () => void;
+}
+
+const CheckboxItem: React.FC<CheckboxItemProps> = ({ id, label, checked, onCheckedChange }) => {
+  return (
+    <div className="flex items-center space-x-3 bg-gray-100 p-4 rounded-md">
+      <Checkbox 
+        id={id} 
+        checked={checked} 
+        onCheckedChange={onCheckedChange} 
+        className="h-5 w-5 border-2 border-purple-300 data-[state=checked]:bg-purple-700"
+      />
+      <label htmlFor={id} className="text-base font-medium text-gray-700 cursor-pointer">
+        {label}
+      </label>
+    </div>
+  );
+};
 
 export default SignUpPage;

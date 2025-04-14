@@ -1,122 +1,27 @@
-import React, { useState } from "react"
-import { View, Modal, TouchableOpacity, StyleSheet, ViewStyle, Animated } from "react-native"
+import * as React from "react"
+import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
 
-interface HoverCardProps {
-  children: React.ReactNode
-  style?: ViewStyle
-}
+import { cn } from "@/lib/utils"
 
-interface HoverCardTriggerProps {
-  children: React.ReactNode
-  onPress?: () => void
-  style?: ViewStyle
-}
+const HoverCard = HoverCardPrimitive.Root
 
-interface HoverCardContentProps {
-  children: React.ReactNode
-  visible: boolean
-  onClose: () => void
-  style?: ViewStyle
-}
+const HoverCardTrigger = HoverCardPrimitive.Trigger
 
-const HoverCard = ({ children, style }: HoverCardProps) => {
-  return (
-    <View style={[styles.container, style]}>
-      {children}
-    </View>
-  )
-}
-
-const HoverCardTrigger = ({ children, onPress, style }: HoverCardTriggerProps) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={[styles.trigger, style]}>
-      {children}
-    </TouchableOpacity>
-  )
-}
-
-const HoverCardContent = ({ children, visible, onClose, style }: HoverCardContentProps) => {
-  const [fadeAnim] = useState(new Animated.Value(0))
-
-  React.useEffect(() => {
-    if (visible) {
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }).start()
-    } else {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start()
-    }
-  }, [visible])
-
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <Animated.View
-          style={[
-            styles.content,
-            style,
-            {
-              opacity: fadeAnim,
-              transform: [
-                {
-                  scale: fadeAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.95, 1],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          {children}
-        </Animated.View>
-      </TouchableOpacity>
-    </Modal>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
-  trigger: {
-    width: "100%",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.25)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  content: {
-    width: 256, // w-64
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 16,
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-})
+const HoverCardContent = React.forwardRef<
+  React.ElementRef<typeof HoverCardPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>
+>(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+  <HoverCardPrimitive.Content
+    ref={ref}
+    align={align}
+    sideOffset={sideOffset}
+    className={cn(
+      "z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      className
+    )}
+    {...props}
+  />
+))
+HoverCardContent.displayName = HoverCardPrimitive.Content.displayName
 
 export { HoverCard, HoverCardTrigger, HoverCardContent }

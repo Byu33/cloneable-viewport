@@ -1,188 +1,64 @@
 import * as React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from "date-fns";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DayPicker } from "react-day-picker";
 
-export interface CalendarProps {
-  selectedDate?: Date;
-  onSelectDate?: (date: Date) => void;
-  minDate?: Date;
-  maxDate?: Date;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-}
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
-const Calendar = ({
-  selectedDate = new Date(),
-  onSelectDate,
-  minDate,
-  maxDate,
-  style,
-  textStyle,
-}: CalendarProps) => {
-  const [currentMonth, setCurrentMonth] = React.useState(selectedDate);
-  
-  const days = eachDayOfInterval({
-    start: startOfMonth(currentMonth),
-    end: endOfMonth(currentMonth),
-  });
-  
-  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  
-  const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
-  };
-  
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
-  };
-  
-  const handleSelectDate = (date: Date) => {
-    if (onSelectDate) {
-      onSelectDate(date);
-    }
-  };
-  
-  const isDateDisabled = (date: Date) => {
-    if (minDate && date < minDate) return true;
-    if (maxDate && date > maxDate) return true;
-    return false;
-  };
-  
+export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  ...props
+}: CalendarProps) {
   return (
-    <View style={[styles.container, style]}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handlePrevMonth} style={styles.navButton}>
-          <Feather name="chevron-left" size={20} color="#6B7280" />
-        </TouchableOpacity>
-        <Text style={[styles.monthText, textStyle]}>
-          {format(currentMonth, "MMMM yyyy")}
-        </Text>
-        <TouchableOpacity onPress={handleNextMonth} style={styles.navButton}>
-          <Feather name="chevron-right" size={20} color="#6B7280" />
-        </TouchableOpacity>
-      </View>
-      
-      <View style={styles.weekDaysContainer}>
-        {weekDays.map((day) => (
-          <Text key={day} style={[styles.weekDay, textStyle]}>
-            {day}
-          </Text>
-        ))}
-      </View>
-      
-      <View style={styles.daysContainer}>
-        {days.map((day) => {
-          const isSelected = selectedDate && isSameDay(day, selectedDate);
-          const isCurrentMonth = isSameMonth(day, currentMonth);
-          const isCurrentDay = isToday(day);
-          const disabled = isDateDisabled(day);
-          
-          return (
-            <TouchableOpacity
-              key={day.toISOString()}
-              style={[
-                styles.dayButton,
-                isSelected && styles.selectedDay,
-                isCurrentDay && !isSelected && styles.todayDay,
-                !isCurrentMonth && styles.outsideDay,
-                disabled && styles.disabledDay,
-              ]}
-              onPress={() => !disabled && handleSelectDate(day)}
-              disabled={disabled}
-            >
-              <Text
-                style={[
-                  styles.dayText,
-                  isSelected && styles.selectedDayText,
-                  !isCurrentMonth && styles.outsideDayText,
-                  disabled && styles.disabledDayText,
-                  textStyle,
-                ]}
-              >
-                {format(day, "d")}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </View>
+    <DayPicker
+      showOutsideDays={showOutsideDays}
+      className={cn("p-3", className)}
+      classNames={{
+        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+        month: "space-y-4",
+        caption: "flex justify-center pt-1 relative items-center",
+        caption_label: "text-sm font-medium",
+        nav: "space-x-1 flex items-center",
+        nav_button: cn(
+          buttonVariants({ variant: "outline" }),
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+        ),
+        nav_button_previous: "absolute left-1",
+        nav_button_next: "absolute right-1",
+        table: "w-full border-collapse space-y-1",
+        head_row: "flex",
+        head_cell:
+          "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
+        row: "flex w-full mt-2",
+        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        day: cn(
+          buttonVariants({ variant: "ghost" }),
+          "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
+        ),
+        day_range_end: "day-range-end",
+        day_selected:
+          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+        day_today: "bg-accent text-accent-foreground",
+        day_outside:
+          "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
+        day_disabled: "text-muted-foreground opacity-50",
+        day_range_middle:
+          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        day_hidden: "invisible",
+        ...classNames,
+      }}
+      components={{
+        IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
+        IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
+      }}
+      {...props}
+    />
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  navButton: {
-    padding: 8,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  monthText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  weekDaysContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  weekDay: {
-    width: 36,
-    textAlign: "center",
-    fontSize: 12,
-    color: "#6B7280",
-  },
-  daysContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  dayButton: {
-    width: 36,
-    height: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
-    borderRadius: 4,
-  },
-  dayText: {
-    fontSize: 14,
-  },
-  selectedDay: {
-    backgroundColor: "#7C3AED",
-  },
-  selectedDayText: {
-    color: "#FFFFFF",
-    fontWeight: "500",
-  },
-  todayDay: {
-    backgroundColor: "#F3F4F6",
-  },
-  outsideDay: {
-    opacity: 0.5,
-  },
-  outsideDayText: {
-    color: "#9CA3AF",
-  },
-  disabledDay: {
-    opacity: 0.3,
-  },
-  disabledDayText: {
-    color: "#9CA3AF",
-  },
-});
+}
+Calendar.displayName = "Calendar";
 
 export { Calendar };

@@ -1,126 +1,56 @@
 import * as React from "react"
-import { View, Text, TouchableOpacity, Animated, StyleSheet, ViewStyle, TextStyle } from "react-native"
-import { Feather } from "@expo/vector-icons"
+import * as AccordionPrimitive from "@radix-ui/react-accordion"
+import { ChevronDown } from "lucide-react"
 
-export interface AccordionProps {
-  children: React.ReactNode
-  style?: ViewStyle
-}
+import { cn } from "@/lib/utils"
 
-export interface AccordionItemProps {
-  children: React.ReactNode
-  style?: ViewStyle
-}
+const Accordion = AccordionPrimitive.Root
 
-export interface AccordionTriggerProps {
-  children: React.ReactNode
-  style?: ViewStyle
-  textStyle?: TextStyle
-  onPress?: () => void
-  isOpen?: boolean
-}
+const AccordionItem = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
+>(({ className, ...props }, ref) => (
+  <AccordionPrimitive.Item
+    ref={ref}
+    className={cn("border-b", className)}
+    {...props}
+  />
+))
+AccordionItem.displayName = "AccordionItem"
 
-export interface AccordionContentProps {
-  children: React.ReactNode
-  style?: ViewStyle
-  isOpen?: boolean
-}
-
-const Accordion = ({ children, style }: AccordionProps) => {
-  return (
-    <View style={[styles.accordion, style]}>
-      {children}
-    </View>
-  )
-}
-
-const AccordionItem = ({ children, style }: AccordionItemProps) => {
-  return (
-    <View style={[styles.item, style]}>
-      {children}
-    </View>
-  )
-}
-
-const AccordionTrigger = ({ 
-  children, 
-  style, 
-  textStyle, 
-  onPress, 
-  isOpen 
-}: AccordionTriggerProps) => {
-  return (
-    <TouchableOpacity 
-      style={[styles.trigger, style]} 
-      onPress={onPress}
-      activeOpacity={0.7}
+const AccordionTrigger = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Trigger
+      ref={ref}
+      className={cn(
+        "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+        className
+      )}
+      {...props}
     >
-      <Text style={[styles.triggerText, textStyle]}>
-        {children}
-      </Text>
-      <Feather 
-        name={isOpen ? "chevron-up" : "chevron-down"} 
-        size={16} 
-        color="#374151" 
-      />
-    </TouchableOpacity>
-  )
-}
+      {children}
+      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+    </AccordionPrimitive.Trigger>
+  </AccordionPrimitive.Header>
+))
+AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 
-const AccordionContent = ({ children, style, isOpen }: AccordionContentProps) => {
-  const [height] = React.useState(new Animated.Value(0))
-  const [contentHeight, setContentHeight] = React.useState(0)
-  
-  React.useEffect(() => {
-    Animated.timing(height, {
-      toValue: isOpen ? contentHeight : 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start()
-  }, [isOpen, contentHeight])
-  
-  return (
-    <Animated.View style={[styles.content, { height }, style]}>
-      <View 
-        style={styles.contentInner}
-        onLayout={(event) => {
-          const { height } = event.nativeEvent.layout
-          setContentHeight(height)
-        }}
-      >
-        {children}
-      </View>
-    </Animated.View>
-  )
-}
+const AccordionContent = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <AccordionPrimitive.Content
+    ref={ref}
+    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    {...props}
+  >
+    <div className={cn("pb-4 pt-0", className)}>{children}</div>
+  </AccordionPrimitive.Content>
+))
 
-const styles = StyleSheet.create({
-  accordion: {
-    width: "100%",
-  },
-  item: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  trigger: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  triggerText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#374151",
-  },
-  content: {
-    overflow: "hidden",
-  },
-  contentInner: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-})
+AccordionContent.displayName = AccordionPrimitive.Content.displayName
 
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }

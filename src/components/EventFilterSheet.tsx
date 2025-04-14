@@ -1,6 +1,16 @@
+
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
+import { X } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
 interface EventFilterSheetProps {
@@ -38,36 +48,43 @@ const EventFilterSheet = ({ open, onOpenChange, onApplyFilters }: EventFilterShe
     { id: "required", label: "Required" },
     { id: "optional", label: "Optional" },
     { id: "social", label: "Social" },
+    { id: "academic", label: "Academic" },
   ];
 
   const attendeeStatusOptions = [
+    { id: "signed-up", label: "Signed Up" },
+    { id: "not-signed-up", label: "Not Signed Up" },
     { id: "attending", label: "Attending" },
-    { id: "not_attending", label: "Not Attending" },
-    { id: "maybe", label: "Maybe" },
   ];
 
   const handleEventTypeChange = (type: string) => {
-    setEventTypes(prev =>
-      prev.includes(type)
-        ? prev.filter(t => t !== type)
-        : [...prev, type]
-    );
+    setEventTypes(prev => {
+      if (prev.includes(type)) {
+        return prev.filter(t => t !== type);
+      } else {
+        return [...prev, type];
+      }
+    });
   };
 
   const handleTagChange = (tag: string) => {
-    setTags(prev =>
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
+    setTags(prev => {
+      if (prev.includes(tag)) {
+        return prev.filter(t => t !== tag);
+      } else {
+        return [...prev, tag];
+      }
+    });
   };
 
   const handleAttendeeStatusChange = (status: string) => {
-    setAttendeeStatus(prev =>
-      prev.includes(status)
-        ? prev.filter(s => s !== status)
-        : [...prev, status]
-    );
+    setAttendeeStatus(prev => {
+      if (prev.includes(status)) {
+        return prev.filter(s => s !== status);
+      } else {
+        return [...prev, status];
+      }
+    });
   };
 
   const handleReset = () => {
@@ -81,188 +98,147 @@ const EventFilterSheet = ({ open, onOpenChange, onApplyFilters }: EventFilterShe
   const handleApply = () => {
     onApplyFilters({
       eventTypes,
+      tags,
       attendeeStatus,
       startDate,
       endDate,
-      tags,
     });
     onOpenChange(false);
   };
 
   return (
-    <Modal
-      visible={open}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={() => onOpenChange(false)}
-    >
-      <View style={styles.modalContainer}>
-        <View style={styles.sheet}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Filters</Text>
-            <TouchableOpacity onPress={() => onOpenChange(false)}>
-              <Icon name="x" size={24} color="#000" />
-            </TouchableOpacity>
-          </View>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="w-[90%] sm:max-w-md overflow-y-auto">
+        <SheetHeader className="flex justify-between items-center border-b pb-4">
+          <SheetTitle className="text-xl font-semibold">Filter Events</SheetTitle>
+          <SheetClose className="rounded-full focus:outline-none">
+            <X className="h-5 w-5" />
+          </SheetClose>
+        </SheetHeader>
 
-          <ScrollView style={styles.content}>
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Event Types</Text>
-              {eventTypeOptions.map(option => (
-                <TouchableOpacity
-                  key={option.id}
-                  style={styles.option}
-                  onPress={() => handleEventTypeChange(option.id)}
-                >
-                  <View style={[styles.checkbox, eventTypes.includes(option.id) && styles.checkboxChecked]}>
-                    {eventTypes.includes(option.id) && (
-                      <Icon name="check" size={16} color="#FFF" />
-                    )}
-                  </View>
-                  <Text style={styles.optionLabel}>{option.label}</Text>
-                </TouchableOpacity>
+        <div className="py-6 space-y-6">
+          {/* Event Type Section */}
+          <div>
+            <h3 className="text-lg font-medium mb-3">Event Type</h3>
+            <div className="space-y-2">
+              {eventTypeOptions.map(type => (
+                <div key={type.id} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`event-type-${type.id}`} 
+                    checked={eventTypes.includes(type.id)}
+                    onCheckedChange={() => handleEventTypeChange(type.id)}
+                    className="border-purple-300 data-[state=checked]:bg-purple-700" 
+                  />
+                  <label 
+                    htmlFor={`event-type-${type.id}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {type.label}
+                  </label>
+                </div>
               ))}
-            </View>
+            </div>
+          </div>
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Tags</Text>
-              {tagOptions.map(option => (
-                <TouchableOpacity
-                  key={option.id}
-                  style={styles.option}
-                  onPress={() => handleTagChange(option.id)}
-                >
-                  <View style={[styles.checkbox, tags.includes(option.id) && styles.checkboxChecked]}>
-                    {tags.includes(option.id) && (
-                      <Icon name="check" size={16} color="#FFF" />
-                    )}
-                  </View>
-                  <Text style={styles.optionLabel}>{option.label}</Text>
-                </TouchableOpacity>
+          {/* Date Range Section */}
+          <div>
+            <h3 className="text-lg font-medium mb-3">Date Range</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium mb-1">Start Date</p>
+                <div className="border rounded-md p-2 bg-gray-50">
+                  {startDate ? (
+                    <p className="text-sm">{format(startDate, 'MMMM d, yyyy')}</p>
+                  ) : (
+                    <p className="text-sm text-gray-500">Select a start date</p>
+                  )}
+                </div>
+                <Calendar
+                  mode="single"
+                  selected={startDate}
+                  onSelect={setStartDate}
+                  className="mt-2 rounded-md pointer-events-auto"
+                />
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium mb-1">End Date</p>
+                <div className="border rounded-md p-2 bg-gray-50">
+                  {endDate ? (
+                    <p className="text-sm">{format(endDate, 'MMMM d, yyyy')}</p>
+                  ) : (
+                    <p className="text-sm text-gray-500">Select an end date</p>
+                  )}
+                </div>
+                <Calendar
+                  mode="single"
+                  selected={endDate}
+                  onSelect={setEndDate}
+                  className="mt-2 rounded-md pointer-events-auto"
+                  disabled={(date) => startDate ? date < startDate : false}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Tags Section */}
+          <div>
+            <h3 className="text-lg font-medium mb-3">Tags</h3>
+            <div className="space-y-2">
+              {tagOptions.map(tag => (
+                <div key={tag.id} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`tag-${tag.id}`} 
+                    checked={tags.includes(tag.id)}
+                    onCheckedChange={() => handleTagChange(tag.id)}
+                    className="border-purple-300 data-[state=checked]:bg-purple-700" 
+                  />
+                  <label 
+                    htmlFor={`tag-${tag.id}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {tag.label}
+                  </label>
+                </div>
               ))}
-            </View>
+            </div>
+          </div>
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Attendee Status</Text>
-              {attendeeStatusOptions.map(option => (
-                <TouchableOpacity
-                  key={option.id}
-                  style={styles.option}
-                  onPress={() => handleAttendeeStatusChange(option.id)}
-                >
-                  <View style={[styles.checkbox, attendeeStatus.includes(option.id) && styles.checkboxChecked]}>
-                    {attendeeStatus.includes(option.id) && (
-                      <Icon name="check" size={16} color="#FFF" />
-                    )}
-                  </View>
-                  <Text style={styles.optionLabel}>{option.label}</Text>
-                </TouchableOpacity>
+          {/* Attendee Status Section */}
+          <div>
+            <h3 className="text-lg font-medium mb-3">Attendee Status</h3>
+            <div className="space-y-2">
+              {attendeeStatusOptions.map(status => (
+                <div key={status.id} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`status-${status.id}`} 
+                    checked={attendeeStatus.includes(status.id)}
+                    onCheckedChange={() => handleAttendeeStatusChange(status.id)}
+                    className="border-purple-300 data-[state=checked]:bg-purple-700" 
+                  />
+                  <label 
+                    htmlFor={`status-${status.id}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {status.label}
+                  </label>
+                </div>
               ))}
-            </View>
-          </ScrollView>
+            </div>
+          </div>
+        </div>
 
-          <View style={styles.footer}>
-            <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-              <Text style={styles.resetButtonText}>Reset</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.applyButton} onPress={handleApply}>
-              <Text style={styles.applyButtonText}>Apply Filters</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
+        <div className="mt-6 flex gap-4 border-t pt-4">
+          <Button variant="outline" className="flex-1" onClick={handleReset}>
+            Reset
+          </Button>
+          <Button className="flex-1 bg-purple-700 hover:bg-purple-800 text-white" onClick={handleApply}>
+            Apply Filters
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "flex-end",
-  },
-  sheet: {
-    backgroundColor: "#FFF",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: "80%",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  content: {
-    padding: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 12,
-  },
-  option: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    marginRight: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkboxChecked: {
-    backgroundColor: "#7C3AED",
-    borderColor: "#7C3AED",
-  },
-  optionLabel: {
-    fontSize: 16,
-  },
-  footer: {
-    flexDirection: "row",
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
-    gap: 12,
-  },
-  resetButton: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    alignItems: "center",
-  },
-  resetButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  applyButton: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#7C3AED",
-    alignItems: "center",
-  },
-  applyButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#FFF",
-  },
-});
 
 export default EventFilterSheet;

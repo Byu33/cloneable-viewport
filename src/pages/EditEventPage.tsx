@@ -1,645 +1,321 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, ScrollView, StyleSheet, Alert, Modal } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Feather";
-import { NavigationProp } from "@/types/navigation";
 
-interface Event {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  category: string;
-  maxAttendees: number;
-  isPrivate: boolean;
-}
+import React, { useState } from "react";
+import { ArrowLeft, Calendar, Save, Trash2 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
 const EditEventPage = () => {
-  const navigation = useNavigation<NavigationProp>();
-  const route = useRoute();
-  const eventId = (route.params as { eventId: number })?.eventId;
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [notifyAttendees, setNotifyAttendees] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
 
-  const [event, setEvent] = useState<Event>({
-    id: eventId,
-    title: "Spring Social Mixer",
-    description: "Join us for a fun evening of networking and socializing with fellow members!",
-    date: "2024-03-15",
-    time: "18:00",
-    location: "Student Center Ballroom",
-    category: "Social",
-    maxAttendees: 50,
-    isPrivate: false,
-  });
-
-  const handleBack = () => {
-    navigation.goBack();
+  // Mock event data - in a real app, you would fetch this based on the ID
+  const eventData = {
+    id: id || "1",
+    title: "Chapter Meeting",
+    date: "2024-02-16",
+    startTime: "5:00PM",
+    endTime: "6:00PM",
+    location: "Everitt Laboratory",
+    category: "Sisterhood",
   };
 
-  const handleSave = () => {
-    // Logic to save event changes would go here
-    console.log("Saving event changes:", event);
-    navigation.goBack();
+  const [formData, setFormData] = useState(eventData);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleDelete = () => {
-    // Logic to delete event would go here
-    console.log("Deleting event:", eventId);
-    navigation.goBack();
-  };
-
-  const handleInputChange = (field: keyof Event, value: string | number | boolean) => {
-    setEvent(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleSubmit = () => {
+    // In a real app, you would update the event in your backend
+    toast({
+      title: "Event Updated",
+      description: "Your event changes have been saved.",
+    });
+    navigate("/your-events");
   };
 
   const handleCancel = () => {
-    setIsDialogOpen(true);
-  };
-
-  const handleConfirmCancel = () => {
-    if (cancelReason.trim() === "") {
-      Alert.alert("Error", "Please provide a reason for cancellation");
-      return;
-    }
-    
-    // Logic to cancel event would go here
-    console.log("Cancelling event with reason:", cancelReason);
-    navigation.goBack();
+    // In a real app, you would delete or update the event status in your backend
+    toast({
+      title: "Event Cancelled",
+      description: notifyAttendees 
+        ? "The event has been cancelled and attendees have been notified."
+        : "The event has been cancelled.",
+    });
+    navigate("/your-events");
   };
 
   const handleNextTab = () => {
     if (activeTab === "details") {
-      setActiveTab("attendance");
-    } else if (activeTab === "attendance") {
+      setActiveTab("content");
+    } else if (activeTab === "content") {
       setActiveTab("logistics");
+    } else if (activeTab === "logistics") {
+      handleSubmit();
     }
   };
 
-  const handlePreviousTab = () => {
-    if (activeTab === "logistics") {
-      setActiveTab("attendance");
-    } else if (activeTab === "attendance") {
-      setActiveTab("details");
-    }
-  };
-
-  const renderDetailsTab = () => (
-    <View style={styles.tabContent}>
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Event Title</Text>
-        <TextInput
-          style={styles.input}
-          value={event.title}
-          onChangeText={(value) => handleInputChange("title", value)}
-          placeholder="Enter event title"
-        />
-      </View>
-
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          value={event.description}
-          onChangeText={(value) => handleInputChange("description", value)}
-          placeholder="Enter event description"
-          multiline
-          numberOfLines={4}
-        />
-      </View>
-
-      <View style={styles.formRow}>
-        <View style={[styles.formGroup, { flex: 1, marginRight: 8 }]}>
-          <Text style={styles.label}>Date</Text>
-          <TextInput
-            style={styles.input}
-            value={event.date}
-            onChangeText={(value) => handleInputChange("date", value)}
-            placeholder="YYYY-MM-DD"
-          />
-        </View>
-        <View style={[styles.formGroup, { flex: 1, marginLeft: 8 }]}>
-          <Text style={styles.label}>Time</Text>
-          <TextInput
-            style={styles.input}
-            value={event.time}
-            onChangeText={(value) => handleInputChange("time", value)}
-            placeholder="HH:MM"
-          />
-        </View>
-      </View>
-
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Location</Text>
-        <TextInput
-          style={styles.input}
-          value={event.location}
-          onChangeText={(value) => handleInputChange("location", value)}
-          placeholder="Enter event location"
-        />
-      </View>
-
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Category</Text>
-        <TextInput
-          style={styles.input}
-          value={event.category}
-          onChangeText={(value) => handleInputChange("category", value)}
-          placeholder="Enter event category"
-        />
-      </View>
-
-      <View style={styles.formGroup}>
-        <Text style={styles.label}>Maximum Attendees</Text>
-        <TextInput
-          style={styles.input}
-          value={event.maxAttendees.toString()}
-          onChangeText={(value) => handleInputChange("maxAttendees", parseInt(value) || 0)}
-          placeholder="Enter maximum number of attendees"
-          keyboardType="numeric"
-        />
-      </View>
-
-      <View style={styles.formGroup}>
-        <View style={styles.switchContainer}>
-          <Text style={styles.label}>Private Event</Text>
-          <TouchableOpacity
-            style={[styles.switch, event.isPrivate && styles.switchActive]}
-            onPress={() => handleInputChange("isPrivate", !event.isPrivate)}
-          >
-            <View style={[styles.switchKnob, event.isPrivate && styles.switchKnobActive]} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
-
-  const renderAttendanceTab = () => (
-    <View style={styles.tabContent}>
-      <Text style={styles.tabTitle}>Attendance Settings</Text>
-      <Text style={styles.tabDescription}>
-        Configure who can attend this event and who is required to attend.
-      </Text>
-      
-      {/* Attendance settings would go here */}
-    </View>
-  );
-
-  const renderLogisticsTab = () => (
-    <View style={styles.tabContent}>
-      <Text style={styles.tabTitle}>Event Logistics</Text>
-      <Text style={styles.tabDescription}>
-        Set up logistics details for the event.
-      </Text>
-      
-      {/* Logistics settings would go here */}
-    </View>
-  );
+  const categories = [
+    { id: 1, name: "Sisterhood", selected: true, color: "bg-purple-700 text-white" },
+    { id: 2, name: "Professional", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 3, name: "Fundraising", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 4, name: "EOH", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 5, name: "Risk", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 6, name: "Historian", selected: false, color: "bg-gray-200 text-gray-800" },
+    // Added some duplicates to match the design
+    { id: 7, name: "Risk", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 8, name: "Risk", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 9, name: "Professional", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 10, name: "Fundraising", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 11, name: "EOH", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 12, name: "Risk", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 13, name: "Historian", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 14, name: "Historian", selected: false, color: "bg-gray-200 text-gray-800" },
+    { id: 15, name: "Historian", selected: false, color: "bg-gray-200 text-gray-800" },
+  ];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Icon name="arrow-left" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Edit Event</Text>
-        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
-      </View>
+    <div className="flex flex-col min-h-screen bg-gray-50 pb-20">
+      <header className="p-4 flex items-center bg-white border-b sticky top-0 z-10">
+        <button className="mr-4" onClick={() => navigate(-1)}>
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <h1 className="text-xl font-semibold">Edit Event</h1>
+      </header>
 
-      <View style={styles.tabs}>
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === "details" && styles.activeTab]}
-          onPress={() => setActiveTab("details")}
-        >
-          <Text style={[styles.tabText, activeTab === "details" && styles.activeTabText]}>
-            Details
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === "attendance" && styles.activeTab]}
-          onPress={() => setActiveTab("attendance")}
-        >
-          <Text style={[styles.tabText, activeTab === "attendance" && styles.activeTabText]}>
-            Attendance
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === "logistics" && styles.activeTab]}
-          onPress={() => setActiveTab("logistics")}
-        >
-          <Text style={[styles.tabText, activeTab === "logistics" && styles.activeTabText]}>
-            Logistics
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <div className="flex-1">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 sticky top-[60px] bg-white z-10 border-b">
+            <TabsTrigger value="details" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
+              Details
+            </TabsTrigger>
+            <TabsTrigger value="content" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
+              Content
+            </TabsTrigger>
+            <TabsTrigger value="logistics" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-700 data-[state=active]:text-purple-700 rounded-none">
+              Logistics
+            </TabsTrigger>
+          </TabsList>
 
-      <ScrollView style={styles.content}>
-        {activeTab === "details" && renderDetailsTab()}
-        {activeTab === "attendance" && renderAttendanceTab()}
-        {activeTab === "logistics" && renderLogisticsTab()}
-        
-        <View style={styles.buttonContainer}>
-          {activeTab !== "details" && (
-            <TouchableOpacity 
-              style={styles.previousButton}
-              onPress={handlePreviousTab}
-            >
-              <Text style={styles.previousButtonText}>Previous</Text>
-            </TouchableOpacity>
-          )}
-          
-          {activeTab !== "logistics" ? (
-            <TouchableOpacity 
-              style={styles.nextButton}
-              onPress={handleNextTab}
-            >
-              <Text style={styles.nextButtonText}>Next</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity 
-              style={styles.saveButton}
-              onPress={handleSave}
-            >
-              <Text style={styles.saveButtonText}>Save Changes</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        
-        <TouchableOpacity 
-          style={styles.deleteButton}
-          onPress={handleDelete}
-        >
-          <Icon name="trash-2" size={20} color="#EF4444" style={styles.deleteIcon} />
-          <Text style={styles.deleteButtonText}>Delete Event</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.cancelButton}
-          onPress={handleCancel}
-        >
-          <Icon name="trash-2" size={20} color="#EF4444" />
-          <Text style={styles.cancelButtonText}>Cancel Event</Text>
-        </TouchableOpacity>
-      </ScrollView>
+          <div className="p-4">
+            <div className="flex items-center mb-6">
+              <Checkbox 
+                id="notify-attendees"
+                checked={notifyAttendees}
+                onCheckedChange={(checked) => setNotifyAttendees(!!checked)}
+                className="border-purple-300 data-[state=checked]:bg-purple-700"
+              />
+              <label htmlFor="notify-attendees" className="ml-2 text-sm font-medium text-purple-700">
+                Notify Attendees about Changes
+              </label>
+            </div>
 
-      <Modal
-        visible={isDialogOpen}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsDialogOpen(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Cancel Event</Text>
-            <Text style={styles.modalDescription}>
-              Are you sure you want to cancel this event? This action cannot be undone.
-            </Text>
-            
-            <Text style={styles.modalLabel}>Reason for Cancellation</Text>
-            <TextInput
-              style={styles.modalInput}
-              value={cancelReason}
-              onChangeText={setCancelReason}
-              placeholder="Enter reason for cancellation"
-              placeholderTextColor="#9CA3AF"
-              multiline
-              numberOfLines={3}
-            />
-            
-            <View style={styles.modalSwitchContainer}>
-              <Text style={styles.modalSwitchLabel}>Notify Attendees</Text>
-              <TouchableOpacity
-                onPress={() => setNotifyAttendees(!notifyAttendees)}
-                style={styles.modalSwitch}
+            <TabsContent value="details" className="space-y-4 mt-0">
+              <div className="space-y-2">
+                <label htmlFor="title" className="text-sm font-medium">
+                  Title of Event
+                </label>
+                <Input 
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className="bg-gray-100"
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="date" className="text-sm font-medium">
+                    Date
+                  </label>
+                  <div className="relative">
+                    <Input 
+                      id="date"
+                      name="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={handleInputChange}
+                      className="bg-gray-100"
+                    />
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <Calendar className="h-4 w-4 text-gray-500" />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="startTime" className="text-sm font-medium">
+                    Start Time
+                  </label>
+                  <Input 
+                    id="startTime"
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleInputChange}
+                    className="bg-gray-100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="endTime" className="text-sm font-medium">
+                    End Time
+                  </label>
+                  <Input 
+                    id="endTime"
+                    name="endTime"
+                    value={formData.endTime}
+                    onChange={handleInputChange}
+                    className="bg-gray-100"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="location" className="text-sm font-medium">
+                  Location
+                </label>
+                <Input 
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  className="bg-gray-100"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Category
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map(category => (
+                    <button
+                      key={category.id}
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        category.name === formData.category ? category.color : "bg-gray-200 text-gray-800"
+                      }`}
+                      onClick={() => setFormData(prev => ({ ...prev, category: category.name }))}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="content" className="mt-0">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label htmlFor="description" className="text-sm font-medium">
+                    Event Description
+                  </label>
+                  <Textarea 
+                    id="description"
+                    name="description"
+                    placeholder="Add a description of your event..."
+                    className="bg-gray-100 min-h-[100px]"
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="logistics" className="mt-0">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label htmlFor="additionalInfo" className="text-sm font-medium">
+                    Additional Information
+                  </label>
+                  <Textarea 
+                    id="additionalInfo"
+                    name="additionalInfo"
+                    placeholder="Add any logistics information..."
+                    className="bg-gray-100 min-h-[100px]"
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <div className="flex justify-end mt-8">
+              <Button 
+                className="bg-purple-700 hover:bg-purple-800 text-white"
+                onClick={handleNextTab}
               >
-                <View style={[
-                  styles.modalSwitchTrack,
-                  notifyAttendees && { backgroundColor: "#7C3AED" }
-                ]}>
-                  {notifyAttendees && (
-                    <View style={styles.modalSwitchThumb} />
-                  )}
-                </View>
-              </TouchableOpacity>
-            </View>
-            
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={styles.modalCancelButton}
-                onPress={() => setIsDialogOpen(false)}
+                {activeTab === "logistics" ? "Save" : "Next"}
+              </Button>
+            </div>
+          </div>
+        </Tabs>
+      </div>
+
+      {/* Fixed Save and Cancel buttons at the bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t flex justify-between z-20">
+        <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" className="text-red-600 border-red-200 flex items-center">
+              <Trash2 className="mr-1 h-4 w-4" /> Cancel Event
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure you want to cancel this event?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. The event will be removed from the calendar and all attendees will be notified.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="py-2">
+              <label htmlFor="cancel-reason" className="text-sm font-medium">
+                Reason (optional)
+              </label>
+              <Textarea
+                id="cancel-reason"
+                placeholder="Let attendees know why this event is being cancelled..."
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Nevermind</AlertDialogCancel>
+              <AlertDialogAction 
+                className="bg-red-600 hover:bg-red-700"
+                onClick={handleCancel}
               >
-                <Text style={styles.modalCancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={styles.modalConfirmButton}
-                onPress={handleConfirmCancel}
-              >
-                <Text style={styles.modalConfirmButtonText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </View>
+                Yes, Cancel Event
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <Button 
+          className="bg-purple-700 hover:bg-purple-800 text-white"
+          onClick={handleSubmit}
+        >
+          <Save className="mr-1 h-4 w-4" /> Save
+        </Button>
+      </div>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: 4,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  saveButton: {
-    backgroundColor: "#7C3AED",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  saveButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "600",
-  },
-  tabs: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#7C3AED",
-  },
-  tabText: {
-    color: "#6B7280",
-    fontSize: 16,
-  },
-  activeTabText: {
-    color: "#7C3AED",
-    fontWeight: "500",
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  tabContent: {
-    marginBottom: 24,
-  },
-  tabTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  tabDescription: {
-    fontSize: 16,
-    color: "#6B7280",
-    marginBottom: 24,
-  },
-  formGroup: {
-    marginBottom: 16,
-  },
-  formRow: {
-    flexDirection: "row",
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#374151",
-    marginBottom: 4,
-  },
-  input: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#D1D5DB",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-  switchContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  switch: {
-    width: 48,
-    height: 24,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 12,
-    padding: 2,
-  },
-  switchActive: {
-    backgroundColor: "#7C3AED",
-  },
-  switchKnob: {
-    width: 20,
-    height: 20,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-  },
-  switchKnobActive: {
-    transform: [{ translateX: 24 }],
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 24,
-  },
-  previousButton: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#7C3AED",
-    marginRight: 8,
-  },
-  previousButtonText: {
-    color: "#7C3AED",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  nextButton: {
-    flex: 1,
-    backgroundColor: "#7C3AED",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    marginLeft: 8,
-  },
-  nextButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  deleteButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FEE2E2",
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 24,
-  },
-  deleteIcon: {
-    marginRight: 8,
-  },
-  deleteButtonText: {
-    color: "#EF4444",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  cancelButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-    marginBottom: 32,
-  },
-  cancelButtonText: {
-    color: "#EF4444",
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 24,
-    width: "90%",
-    maxWidth: 400,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  modalDescription: {
-    fontSize: 16,
-    color: "#6B7280",
-    marginBottom: 16,
-  },
-  modalLabel: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginBottom: 8,
-    color: "#374151",
-  },
-  modalInput: {
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: "#FFFFFF",
-    marginBottom: 16,
-    height: 100,
-    textAlignVertical: "top",
-  },
-  modalSwitchContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  modalSwitchLabel: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  modalSwitch: {
-    width: 50,
-    height: 30,
-  },
-  modalSwitchTrack: {
-    width: 50,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "#E5E7EB",
-    justifyContent: "center",
-  },
-  modalSwitchThumb: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: "#FFFFFF",
-    position: "absolute",
-    right: 2,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  modalCancelButton: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    marginRight: 8,
-  },
-  modalCancelButtonText: {
-    color: "#374151",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  modalConfirmButton: {
-    flex: 1,
-    backgroundColor: "#EF4444",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    marginLeft: 8,
-  },
-  modalConfirmButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
 
 export default EditEventPage;

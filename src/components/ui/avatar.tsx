@@ -1,94 +1,48 @@
 import * as React from "react"
-import { View, Image, Text, StyleSheet, ViewStyle, ImageStyle, TextStyle } from "react-native"
+import * as AvatarPrimitive from "@radix-ui/react-avatar"
 
-export interface AvatarProps {
-  children: React.ReactNode
-  style?: ViewStyle
-  size?: "sm" | "md" | "lg" | "xl"
-}
+import { cn } from "@/lib/utils"
 
-export interface AvatarImageProps {
-  source: { uri: string } | number
-  style?: ImageStyle
-}
+const Avatar = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Root
+    ref={ref}
+    className={cn(
+      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+      className
+    )}
+    {...props}
+  />
+))
+Avatar.displayName = AvatarPrimitive.Root.displayName
 
-export interface AvatarFallbackProps {
-  children: React.ReactNode
-  style?: ViewStyle
-  textStyle?: TextStyle
-}
+const AvatarImage = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Image>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Image
+    ref={ref}
+    className={cn("aspect-square h-full w-full", className)}
+    {...props}
+  />
+))
+AvatarImage.displayName = AvatarPrimitive.Image.displayName
 
-const getSize = (size: "sm" | "md" | "lg" | "xl" = "md") => {
-  switch (size) {
-    case "sm":
-      return 32
-    case "lg":
-      return 48
-    case "xl":
-      return 64
-    case "md":
-    default:
-      return 40
-  }
-}
-
-const Avatar = ({ children, style, size = "md" }: AvatarProps) => {
-  const dimension = getSize(size)
-  
-  return (
-    <View 
-      style={[
-        styles.avatar, 
-        { width: dimension, height: dimension },
-        style
-      ]}
-    >
-      {children}
-    </View>
-  )
-}
-
-const AvatarImage = ({ source, style }: AvatarImageProps) => {
-  return (
-    <Image
-      source={source}
-      style={[styles.image, style]}
-      resizeMode="cover"
-    />
-  )
-}
-
-const AvatarFallback = ({ children, style, textStyle }: AvatarFallbackProps) => {
-  return (
-    <View style={[styles.fallback, style]}>
-      <Text style={[styles.fallbackText, textStyle]}>
-        {children}
-      </Text>
-    </View>
-  )
-}
-
-const styles = StyleSheet.create({
-  avatar: {
-    borderRadius: 9999,
-    overflow: "hidden",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  fallback: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#F3F4F6",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  fallbackText: {
-    color: "#6B7280",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-})
+const AvatarFallback = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Fallback>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Fallback
+    ref={ref}
+    className={cn(
+      "flex h-full w-full items-center justify-center rounded-full bg-muted",
+      className
+    )}
+    {...props}
+  />
+))
+AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
 
 export { Avatar, AvatarImage, AvatarFallback }

@@ -1,8 +1,9 @@
+
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Feather";
-import { NavigationProp } from "@/types/navigation";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, MessageSquare } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 interface Attendee {
   id: number;
@@ -13,8 +14,8 @@ interface Attendee {
 }
 
 const EventAttendeesPage = () => {
-  const navigation = useNavigation<NavigationProp>();
-  const route = useRoute();
+  const navigate = useNavigate();
+  const { id } = useParams();
 
   // Mock data for attendees
   const attendees: Attendee[] = [
@@ -47,142 +48,88 @@ const EventAttendeesPage = () => {
     {
       id: 5,
       name: "Emma Thompson",
-      avatar: "https://randomuser.me/api/portraits/women/33.jpg",
+      avatar: "https://randomuser.me/api/portraits/women/22.jpg",
       initials: "ET"
+    },
+    {
+      id: 6,
+      name: "Sophia Martinez",
+      avatar: "https://randomuser.me/api/portraits/women/26.jpg",
+      initials: "SM"
+    },
+    {
+      id: 7,
+      name: "Isabella Wilson",
+      avatar: "https://randomuser.me/api/portraits/women/29.jpg",
+      initials: "IW"
     }
   ];
 
   const handleBack = () => {
-    navigation.goBack();
+    navigate(-1);
   };
 
   const handleMessageAll = () => {
-    // Logic to message all attendees would go here
-    console.log("Messaging all attendees");
-  };
-
-  const handleMessageAttendee = (attendee: Attendee) => {
-    // Logic to message specific attendee would go here
-    console.log("Messaging attendee:", attendee.name);
+    // Handle messaging all attendees
+    console.log("Message all attendees");
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Icon name="arrow-left" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Event Attendees</Text>
-        <TouchableOpacity onPress={handleMessageAll} style={styles.messageAllButton}>
-          <Icon name="message-square" size={24} color="#7C3AED" />
-        </TouchableOpacity>
-      </View>
+    <div className="flex flex-col h-screen bg-gray-50">
+      <header className="flex items-center px-6 py-4 bg-white">
+        <button onClick={handleBack} className="mr-4">
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <h1 className="text-2xl font-semibold">Event Attendees</h1>
+        <div className="ml-2 h-6 w-6 bg-gray-200 text-gray-800 rounded-full flex items-center justify-center text-sm">
+          {attendees.length}
+        </div>
+      </header>
 
-      <ScrollView style={styles.content}>
-        {attendees.map((attendee) => (
-          <View key={attendee.id} style={styles.attendeeCard}>
-            <View style={styles.attendeeInfo}>
-              {attendee.avatar ? (
-                <Image 
-                  source={{ uri: attendee.avatar }} 
-                  style={styles.avatar}
-                />
-              ) : (
-                <View style={styles.avatarFallback}>
-                  <Text style={styles.avatarText}>{attendee.initials}</Text>
-                </View>
-              )}
-              <View style={styles.attendeeDetails}>
-                <Text style={styles.attendeeName}>{attendee.name}</Text>
-                {attendee.role && (
-                  <Text style={styles.attendeeRole}>{attendee.role}</Text>
-                )}
-              </View>
-            </View>
-            <TouchableOpacity 
-              onPress={() => handleMessageAttendee(attendee)}
-              style={styles.messageButton}
-            >
-              <Icon name="message-square" size={20} color="#7C3AED" />
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+      <div className="flex-1 overflow-auto px-6 py-4 pb-20">
+        <div className="bg-white rounded-lg p-4 mb-4">
+          <h2 className="font-semibold text-lg mb-2">Event Hosts</h2>
+          <div className="space-y-3">
+            {attendees.filter(a => a.role === "Host").map((attendee) => (
+              <div key={attendee.id} className="flex items-center">
+                <Avatar className="h-10 w-10 mr-3">
+                  <AvatarImage src={attendee.avatar} alt={attendee.name} />
+                  <AvatarFallback>{attendee.initials}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">{attendee.name}</p>
+                  <p className="text-sm text-purple-700">Host</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-4">
+          <h2 className="font-semibold text-lg mb-2">Attendees</h2>
+          <div className="space-y-3">
+            {attendees.filter(a => a.role !== "Host").map((attendee) => (
+              <div key={attendee.id} className="flex items-center">
+                <Avatar className="h-10 w-10 mr-3">
+                  <AvatarImage src={attendee.avatar} alt={attendee.name} />
+                  <AvatarFallback>{attendee.initials}</AvatarFallback>
+                </Avatar>
+                <p className="font-medium">{attendee.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Button 
+          className="w-full bg-purple-700 hover:bg-purple-800 mt-4 py-2"
+          onClick={handleMessageAll}
+        >
+          <MessageSquare className="h-5 w-5 mr-2" />
+          Message all attendees
+        </Button>
+      </div>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-  },
-  backButton: {
-    padding: 4,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "600",
-  },
-  messageAllButton: {
-    padding: 4,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  attendeeCard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  attendeeInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  avatarFallback: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#E9D5FF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: {
-    color: "#7C3AED",
-    fontWeight: "600",
-  },
-  attendeeDetails: {
-    marginLeft: 12,
-  },
-  attendeeName: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  attendeeRole: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginTop: 2,
-  },
-  messageButton: {
-    padding: 8,
-  },
-});
 
 export default EventAttendeesPage;

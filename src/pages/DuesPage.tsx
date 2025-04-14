@@ -1,11 +1,12 @@
+
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Feather";
-import { NavigationProp } from "@/types/navigation";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import TabBar from "@/components/TabBar";
 
 const DuesPage = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigate = useNavigate();
 
   const duesInfo = {
     totalAmount: 300,
@@ -19,7 +20,7 @@ const DuesPage = () => {
   };
 
   const handleBack = () => {
-    navigation.goBack();
+    navigate(-1);
   };
 
   const handlePayNow = () => {
@@ -28,192 +29,71 @@ const DuesPage = () => {
   };
 
   const handlePaymentPlan = () => {
-    navigation.navigate("PaymentPlan");
+    navigate("/payment-plan");
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Icon name="arrow-left" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Dues</Text>
-        <View style={{ width: 24 }} />
-      </View>
+    <div className="flex flex-col h-screen bg-gray-50">
+      <header className="flex items-center px-6 py-4 bg-white">
+        <button onClick={handleBack} className="mr-4">
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <h1 className="text-2xl font-semibold">Dues</h1>
+      </header>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>This Semester's Dues</Text>
+      <div className="flex-1 overflow-auto px-6 py-4 pb-20">
+        <div className="bg-white rounded-lg p-6 shadow-sm mb-6 text-center">
+          <h2 className="text-xl font-semibold mb-6">This Semester's Dues</h2>
           
           {duesInfo.isPaid ? (
-            <View style={styles.paidContainer}>
-              <Icon name="check-circle" size={64} color="#10B981" />
-              <Text style={styles.paidText}>Dues Paid</Text>
-              <Text style={styles.paidDate}>Paid on {duesInfo.dueDate}</Text>
-            </View>
+            <div className="flex flex-col items-center mb-4">
+              <CheckCircle className="h-16 w-16 text-green-500 mb-2" />
+              <p className="text-green-600 font-medium">Paid in Full</p>
+            </div>
           ) : (
-            <View style={styles.unpaidContainer}>
-              <Text style={styles.amountLabel}>Total Amount Due</Text>
-              <Text style={styles.amount}>${duesInfo.totalAmount}</Text>
-              <Text style={styles.dueDate}>Due by {duesInfo.dueDate}</Text>
-              
-              <View style={styles.breakdownContainer}>
-                <Text style={styles.breakdownTitle}>Breakdown</Text>
-                {duesInfo.breakdown.map((item, index) => (
-                  <View key={index} style={styles.breakdownItem}>
-                    <Text style={styles.breakdownName}>{item.name}</Text>
-                    <Text style={styles.breakdownAmount}>${item.amount}</Text>
-                  </View>
-                ))}
-              </View>
-              
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity 
-                  style={styles.payButton}
-                  onPress={handlePayNow}
-                >
-                  <Text style={styles.payButtonText}>Pay Now</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity 
-                  style={styles.planButton}
-                  onPress={handlePaymentPlan}
-                >
-                  <Text style={styles.planButtonText}>Set Up Payment Plan</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            <div>
+              <p className="text-5xl font-bold mb-1">${duesInfo.totalAmount}</p>
+              <p className="text-gray-600 mb-8">Due by {duesInfo.dueDate}</p>
+            </div>
           )}
-        </View>
-      </ScrollView>
-    </View>
+          
+          <div className="border-t border-b py-4 mb-6">
+            <h3 className="font-medium mb-4 text-left">Breakdown</h3>
+            {duesInfo.breakdown.map((item, index) => (
+              <div key={index} className="flex justify-between py-2">
+                <span>{item.name}</span>
+                <span className="font-medium">${item.amount}</span>
+              </div>
+            ))}
+            <div className="flex justify-between py-2 mt-2 border-t">
+              <span className="font-medium">Total</span>
+              <span className="font-bold">${duesInfo.totalAmount}</span>
+            </div>
+          </div>
+          
+          {!duesInfo.isPaid && (
+            <>
+              <Button 
+                className="w-full bg-purple-900 hover:bg-purple-800 mb-3"
+                onClick={handlePayNow}
+              >
+                Pay Now
+              </Button>
+              
+              <button 
+                className="text-purple-700 font-medium"
+                onClick={handlePaymentPlan}
+              >
+                Set Up Payment Plan
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      <TabBar />
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-  },
-  backButton: {
-    padding: 4,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "600",
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  card: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  paidContainer: {
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  paidText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#10B981",
-    marginTop: 8,
-  },
-  paidDate: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginTop: 4,
-  },
-  unpaidContainer: {
-    alignItems: "center",
-  },
-  amountLabel: {
-    fontSize: 16,
-    color: "#6B7280",
-  },
-  amount: {
-    fontSize: 36,
-    fontWeight: "700",
-    marginVertical: 8,
-  },
-  dueDate: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginBottom: 16,
-  },
-  breakdownContainer: {
-    width: "100%",
-    marginTop: 16,
-    marginBottom: 24,
-  },
-  breakdownTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  breakdownItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
-  },
-  breakdownName: {
-    fontSize: 16,
-  },
-  breakdownAmount: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  buttonContainer: {
-    width: "100%",
-  },
-  payButton: {
-    backgroundColor: "#7C3AED",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  payButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  planButton: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#7C3AED",
-  },
-  planButtonText: {
-    color: "#7C3AED",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
 
 export default DuesPage;

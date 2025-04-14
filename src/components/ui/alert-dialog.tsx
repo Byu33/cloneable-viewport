@@ -1,293 +1,134 @@
 import * as React from "react"
-import { 
-  View, 
-  Text, 
-  Modal, 
-  TouchableOpacity, 
-  StyleSheet, 
-  ViewStyle, 
-  TextStyle,
-  TouchableWithoutFeedback,
-  Animated,
-  Dimensions
-} from "react-native"
-import { Feather } from "@expo/vector-icons"
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 
-export interface AlertDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  children: React.ReactNode
-}
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
-export interface AlertDialogTriggerProps {
-  children: React.ReactNode
-  onPress: () => void
-}
+const AlertDialog = AlertDialogPrimitive.Root
 
-export interface AlertDialogContentProps {
-  children: React.ReactNode
-  style?: ViewStyle
-}
+const AlertDialogTrigger = AlertDialogPrimitive.Trigger
 
-export interface AlertDialogHeaderProps {
-  children: React.ReactNode
-  style?: ViewStyle
-}
+const AlertDialogPortal = AlertDialogPrimitive.Portal
 
-export interface AlertDialogFooterProps {
-  children: React.ReactNode
-  style?: ViewStyle
-}
+const AlertDialogOverlay = React.forwardRef<
+  React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <AlertDialogPrimitive.Overlay
+    className={cn(
+      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    )}
+    {...props}
+    ref={ref}
+  />
+))
+AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
 
-export interface AlertDialogTitleProps {
-  children: React.ReactNode
-  style?: TextStyle
-}
+const AlertDialogContent = React.forwardRef<
+  React.ElementRef<typeof AlertDialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <AlertDialogPortal>
+    <AlertDialogOverlay />
+    <AlertDialogPrimitive.Content
+      ref={ref}
+      className={cn(
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        className
+      )}
+      {...props}
+    />
+  </AlertDialogPortal>
+))
+AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
 
-export interface AlertDialogDescriptionProps {
-  children: React.ReactNode
-  style?: TextStyle
-}
+const AlertDialogHeader = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "flex flex-col space-y-2 text-center sm:text-left",
+      className
+    )}
+    {...props}
+  />
+)
+AlertDialogHeader.displayName = "AlertDialogHeader"
 
-export interface AlertDialogActionProps {
-  children: React.ReactNode
-  onPress: () => void
-  style?: ViewStyle
-  textStyle?: TextStyle
-  variant?: "default" | "destructive"
-}
+const AlertDialogFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      className
+    )}
+    {...props}
+  />
+)
+AlertDialogFooter.displayName = "AlertDialogFooter"
 
-export interface AlertDialogCancelProps {
-  children: React.ReactNode
-  onPress: () => void
-  style?: ViewStyle
-  textStyle?: TextStyle
-}
+const AlertDialogTitle = React.forwardRef<
+  React.ElementRef<typeof AlertDialogPrimitive.Title>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
+>(({ className, ...props }, ref) => (
+  <AlertDialogPrimitive.Title
+    ref={ref}
+    className={cn("text-lg font-semibold", className)}
+    {...props}
+  />
+))
+AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
 
-const AlertDialog = ({ open, onOpenChange, children }: AlertDialogProps) => {
-  return (
-    <Modal
-      visible={open}
-      transparent
-      animationType="fade"
-      onRequestClose={() => onOpenChange(false)}
-    >
-      {children}
-    </Modal>
-  )
-}
+const AlertDialogDescription = React.forwardRef<
+  React.ElementRef<typeof AlertDialogPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
+>(({ className, ...props }, ref) => (
+  <AlertDialogPrimitive.Description
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props}
+  />
+))
+AlertDialogDescription.displayName =
+  AlertDialogPrimitive.Description.displayName
 
-const AlertDialogTrigger = ({ children, onPress }: AlertDialogTriggerProps) => {
-  return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-      {children}
-    </TouchableOpacity>
-  )
-}
+const AlertDialogAction = React.forwardRef<
+  React.ElementRef<typeof AlertDialogPrimitive.Action>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
+>(({ className, ...props }, ref) => (
+  <AlertDialogPrimitive.Action
+    ref={ref}
+    className={cn(buttonVariants(), className)}
+    {...props}
+  />
+))
+AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
-const AlertDialogOverlay = ({ onPress }: { onPress: () => void }) => {
-  return (
-    <TouchableWithoutFeedback onPress={onPress}>
-      <View style={styles.overlay} />
-    </TouchableWithoutFeedback>
-  )
-}
-
-const AlertDialogContent = ({ children, style }: AlertDialogContentProps) => {
-  const [fadeAnim] = React.useState(new Animated.Value(0))
-  const [scaleAnim] = React.useState(new Animated.Value(0.95))
-  
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start()
-  }, [])
-  
-  return (
-    <View style={styles.contentContainer}>
-      <AlertDialogOverlay onPress={() => {}} />
-      <Animated.View 
-        style={[
-          styles.content,
-          style,
-          {
-            opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
-      >
-        {children}
-      </Animated.View>
-    </View>
-  )
-}
-
-const AlertDialogHeader = ({ children, style }: AlertDialogHeaderProps) => {
-  return (
-    <View style={[styles.header, style]}>
-      {children}
-    </View>
-  )
-}
-
-const AlertDialogFooter = ({ children, style }: AlertDialogFooterProps) => {
-  return (
-    <View style={[styles.footer, style]}>
-      {children}
-    </View>
-  )
-}
-
-const AlertDialogTitle = ({ children, style }: AlertDialogTitleProps) => {
-  return (
-    <Text style={[styles.title, style]}>
-      {children}
-    </Text>
-  )
-}
-
-const AlertDialogDescription = ({ children, style }: AlertDialogDescriptionProps) => {
-  return (
-    <Text style={[styles.description, style]}>
-      {children}
-    </Text>
-  )
-}
-
-const AlertDialogAction = ({ 
-  children, 
-  onPress, 
-  style, 
-  textStyle,
-  variant = "default"
-}: AlertDialogActionProps) => {
-  return (
-    <TouchableOpacity 
-      style={[
-        styles.actionButton,
-        variant === "destructive" && styles.destructiveButton,
-        style
-      ]} 
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <Text 
-        style={[
-          styles.actionButtonText,
-          variant === "destructive" && styles.destructiveButtonText,
-          textStyle
-        ]}
-      >
-        {children}
-      </Text>
-    </TouchableOpacity>
-  )
-}
-
-const AlertDialogCancel = ({ children, onPress, style, textStyle }: AlertDialogCancelProps) => {
-  return (
-    <TouchableOpacity 
-      style={[styles.cancelButton, style]} 
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <Text style={[styles.cancelButtonText, textStyle]}>
-        {children}
-      </Text>
-    </TouchableOpacity>
-  )
-}
-
-const styles = StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  content: {
-    width: "90%",
-    maxWidth: 500,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  header: {
-    marginBottom: 16,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginTop: 24,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 14,
-    color: "#6B7280",
-  },
-  actionButton: {
-    backgroundColor: "#7C3AED",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    marginLeft: 8,
-  },
-  destructiveButton: {
-    backgroundColor: "#EF4444",
-  },
-  actionButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  destructiveButtonText: {
-    color: "#FFFFFF",
-  },
-  cancelButton: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-  },
-  cancelButtonText: {
-    color: "#374151",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-})
+const AlertDialogCancel = React.forwardRef<
+  React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
+  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
+>(({ className, ...props }, ref) => (
+  <AlertDialogPrimitive.Cancel
+    ref={ref}
+    className={cn(
+      buttonVariants({ variant: "outline" }),
+      "mt-2 sm:mt-0",
+      className
+    )}
+    {...props}
+  />
+))
+AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
 
 export {
   AlertDialog,
-  AlertDialogTrigger,
+  AlertDialogPortal,
   AlertDialogOverlay,
+  AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogFooter,
