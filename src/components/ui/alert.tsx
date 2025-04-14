@@ -1,59 +1,74 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { View, Text, StyleSheet, ViewStyle, TextStyle } from "react-native"
 
-import { cn } from "@/lib/utils"
+export type AlertVariant = "default" | "destructive"
 
-const alertVariants = cva(
-  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
-  {
-    variants: {
-      variant: {
-        default: "bg-background text-foreground",
-        destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
+export interface AlertProps {
+  children: React.ReactNode
+  variant?: AlertVariant
+  style?: ViewStyle
+}
 
-const Alert = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, ...props }, ref) => (
-  <div
-    ref={ref}
-    role="alert"
-    className={cn(alertVariants({ variant }), className)}
-    {...props}
-  />
-))
-Alert.displayName = "Alert"
+export interface AlertTitleProps {
+  children: React.ReactNode
+  style?: TextStyle
+}
 
-const AlertTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h5
-    ref={ref}
-    className={cn("mb-1 font-medium leading-none tracking-tight", className)}
-    {...props}
-  />
-))
-AlertTitle.displayName = "AlertTitle"
+export interface AlertDescriptionProps {
+  children: React.ReactNode
+  style?: TextStyle
+}
 
-const AlertDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("text-sm [&_p]:leading-relaxed", className)}
-    {...props}
-  />
-))
-AlertDescription.displayName = "AlertDescription"
+const Alert = ({ children, variant = "default", style }: AlertProps) => {
+  return (
+    <View style={[styles.alert, styles[variant], style]}>
+      {children}
+    </View>
+  )
+}
+
+const AlertTitle = ({ children, style }: AlertTitleProps) => {
+  return (
+    <Text style={[styles.title, style]}>
+      {children}
+    </Text>
+  )
+}
+
+const AlertDescription = ({ children, style }: AlertDescriptionProps) => {
+  return (
+    <Text style={[styles.description, style]}>
+      {children}
+    </Text>
+  )
+}
+
+const styles = StyleSheet.create({
+  alert: {
+    width: "100%",
+    borderRadius: 8,
+    borderWidth: 1,
+    padding: 16,
+  },
+  default: {
+    backgroundColor: "#FFFFFF",
+    borderColor: "#E5E7EB",
+  },
+  destructive: {
+    backgroundColor: "#FEF2F2",
+    borderColor: "#FCA5A5",
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "500",
+    marginBottom: 4,
+    color: "#111827",
+  },
+  description: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#4B5563",
+  },
+})
 
 export { Alert, AlertTitle, AlertDescription }

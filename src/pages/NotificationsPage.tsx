@@ -1,162 +1,201 @@
-
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, X, Plus } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
+import { NavigationProp } from "@/types/navigation";
 
 interface Notification {
-  id: number;
-  sender: {
-    name: string;
-    avatar?: string;
-    initials: string;
-  };
-  date: string;
-  content: string;
-  tag?: string;
-  tagColor?: string;
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  type: "event" | "task" | "system";
+  read: boolean;
 }
 
 const NotificationsPage = () => {
-  const navigate = useNavigate();
-
-  const notifications: Notification[] = [
+  const navigation = useNavigation<NavigationProp>();
+  const [notifications, setNotifications] = useState<Notification[]>([
     {
-      id: 1,
-      sender: {
-        name: "Lily L",
-        avatar: "https://randomuser.me/api/portraits/women/22.jpg",
-        initials: "LL"
-      },
-      date: "Feb 2",
-      content: "Baking Cake event has been changed to 1:30!",
-      tag: "High Importance",
-      tagColor: "bg-purple-700 text-white"
+      id: "1",
+      title: "Event Reminder",
+      message: "Daily Standup Call starts in 30 minutes",
+      time: "5 minutes ago",
+      type: "event",
+      read: false,
     },
     {
-      id: 2,
-      sender: {
-        name: "Aparna B",
-        avatar: "https://randomuser.me/api/portraits/women/32.jpg",
-        initials: "AB"
-      },
-      date: "Feb 2",
-      content: "@You when are we planning on setting up?",
-      tag: "in Committee Chat"
+      id: "2",
+      title: "Task Due",
+      message: "Turn in Dues is due tomorrow",
+      time: "1 hour ago",
+      type: "task",
+      read: false,
     },
     {
-      id: 3,
-      sender: {
-        name: "Melina A",
-        avatar: "https://randomuser.me/api/portraits/women/33.jpg",
-        initials: "MA"
-      },
-      date: "Feb 3",
-      content: "Please sign up for the baking event if you're interested!",
-      tag: "Sisterhood",
-      tagColor: "bg-purple-200 text-purple-700"
+      id: "3",
+      title: "System Update",
+      message: "New features have been added to the app",
+      time: "2 hours ago",
+      type: "system",
+      read: true,
     },
-    {
-      id: 4,
-      sender: {
-        name: "Celine B",
-        avatar: "https://randomuser.me/api/portraits/women/34.jpg",
-        initials: "CB"
-      },
-      date: "Feb 3",
-      content: "Make sure to get dues in by the end of the week",
-      tag: "High Importance",
-      tagColor: "bg-purple-700 text-white"
-    },
-    {
-      id: 5,
-      sender: {
-        name: "Automatic",
-        avatar: "https://randomuser.me/api/portraits/women/35.jpg",
-        initials: "A"
-      },
-      date: "Feb 3",
-      content: "Your event \"Bake Sale\" is coming up in 1 hour",
-      tag: "High Importance",
-      tagColor: "bg-purple-700 text-white"
-    }
-  ];
+  ]);
 
   const handleBack = () => {
-    navigate(-1);
+    navigation.goBack();
   };
 
-  const handleCreateNotification = () => {
-    // Handle creating a new notification
-    console.log("Create new notification");
+  const handleNotificationPress = (notification: Notification) => {
+    // Mark as read
+    setNotifications(prev =>
+      prev.map(n =>
+        n.id === notification.id ? { ...n, read: true } : n
+      )
+    );
+
+    // Navigate based on type
+    switch (notification.type) {
+      case "event":
+        navigation.navigate("EventDetails", { eventId: notification.id });
+        break;
+      case "task":
+        navigation.navigate("TaskDetail", { taskId: notification.id });
+        break;
+      default:
+        break;
+    }
   };
 
-  const handleDismissNotification = (id: number) => {
-    // Handle dismissing a notification
-    console.log("Dismiss notification", id);
+  const handleMarkAllRead = () => {
+    setNotifications(prev =>
+      prev.map(n => ({ ...n, read: true }))
+    );
+  };
+
+  const getNotificationIcon = (type: Notification["type"]) => {
+    switch (type) {
+      case "event":
+        return "calendar";
+      case "task":
+        return "check-square";
+      case "system":
+        return "info";
+      default:
+        return "bell";
+    }
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <header className="flex items-center px-6 py-4 bg-white">
-        <button onClick={handleBack} className="mr-4">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <h1 className="text-2xl font-semibold">Notifications</h1>
-        <div className="ml-2 h-6 w-6 bg-gray-200 text-gray-800 rounded-full flex items-center justify-center text-sm">
-          {notifications.length}
-        </div>
-      </header>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Notifications</Text>
+        <TouchableOpacity onPress={handleMarkAllRead} style={styles.markAllButton}>
+          <Text style={styles.markAllText}>Mark all read</Text>
+        </TouchableOpacity>
+      </View>
 
-      <div className="px-6 py-4">
-        <Button 
-          variant="ghost" 
-          className="flex items-center text-purple-700 mb-4 pl-0"
-          onClick={handleCreateNotification}
-        >
-          <Plus className="w-5 h-5 mr-1" />
-          Create Notification
-        </Button>
-      </div>
-
-      <div className="flex-1 overflow-auto px-6 pb-20">
-        <div className="space-y-4">
-          {notifications.map((notification) => (
-            <div 
-              key={notification.id} 
-              className="bg-white rounded-lg p-4 flex items-start justify-between"
-            >
-              <div className="flex items-start">
-                <Avatar className="h-10 w-10 mr-3">
-                  <AvatarImage src={notification.sender.avatar} alt={notification.sender.name} />
-                  <AvatarFallback>{notification.sender.initials}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium">{notification.sender.name}</p>
-                    {notification.tag && (
-                      <span className={`${notification.tagColor || "bg-gray-200"} text-xs px-3 py-1 rounded-full`}>
-                        {notification.tag}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-500">{notification.date}</p>
-                  <p className="mt-1">{notification.content}</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => handleDismissNotification(notification.id)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+      <ScrollView style={styles.content}>
+        {notifications.map((notification) => (
+          <TouchableOpacity
+            key={notification.id}
+            style={[
+              styles.notificationItem,
+              !notification.read && styles.unreadNotification,
+            ]}
+            onPress={() => handleNotificationPress(notification)}
+          >
+            <View style={styles.notificationIcon}>
+              <Icon
+                name={getNotificationIcon(notification.type)}
+                size={24}
+                color="#7C3AED"
+              />
+            </View>
+            <View style={styles.notificationContent}>
+              <Text style={styles.notificationTitle}>{notification.title}</Text>
+              <Text style={styles.notificationMessage}>{notification.message}</Text>
+              <Text style={styles.notificationTime}>{notification.time}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  markAllButton: {
+    padding: 4,
+  },
+  markAllText: {
+    color: "#7C3AED",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  notificationItem: {
+    flexDirection: "row",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  unreadNotification: {
+    backgroundColor: "#F3E8FF",
+  },
+  notificationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#EDE9FE",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  notificationContent: {
+    flex: 1,
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  notificationMessage: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginBottom: 4,
+  },
+  notificationTime: {
+    fontSize: 12,
+    color: "#9CA3AF",
+  },
+});
 
 export default NotificationsPage;

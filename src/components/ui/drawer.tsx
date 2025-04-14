@@ -1,116 +1,223 @@
-import * as React from "react"
-import { Drawer as DrawerPrimitive } from "vaul"
+import React, { useState, useRef } from 'react'
+import {
+  View,
+  Text,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  Animated,
+  PanResponder,
+  Dimensions,
+  ScrollView,
+} from 'react-native'
 
-import { cn } from "@/lib/utils"
+interface DrawerProps {
+  children: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  style?: ViewStyle
+}
 
-const Drawer = ({
-  shouldScaleBackground = true,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root
-    shouldScaleBackground={shouldScaleBackground}
-    {...props}
-  />
-)
-Drawer.displayName = "Drawer"
+interface DrawerContentProps {
+  children: React.ReactNode
+  style?: ViewStyle
+}
 
-const DrawerTrigger = DrawerPrimitive.Trigger
+interface DrawerHeaderProps {
+  children: React.ReactNode
+  style?: ViewStyle
+}
 
-const DrawerPortal = DrawerPrimitive.Portal
+interface DrawerFooterProps {
+  children: React.ReactNode
+  style?: ViewStyle
+}
 
-const DrawerClose = DrawerPrimitive.Close
+interface DrawerTitleProps {
+  children: React.ReactNode
+  style?: TextStyle
+}
 
-const DrawerOverlay = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Overlay
-    ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
-    {...props}
-  />
-))
-DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
+interface DrawerDescriptionProps {
+  children: React.ReactNode
+  style?: TextStyle
+}
 
-const DrawerContent = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DrawerPortal>
-    <DrawerOverlay />
-    <DrawerPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
-        className
-      )}
-      {...props}
+interface DrawerCloseProps {
+  children: React.ReactNode
+  style?: ViewStyle
+  onPress?: () => void
+}
+
+const SCREEN_HEIGHT = Dimensions.get('window').height
+const DRAWER_HEIGHT = SCREEN_HEIGHT * 0.7
+
+const Drawer = ({ children, open, onOpenChange, style }: DrawerProps) => {
+  return (
+    <Modal
+      visible={open}
+      transparent
+      animationType="none"
+      onRequestClose={() => onOpenChange?.(false)}
     >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
       {children}
-    </DrawerPrimitive.Content>
-  </DrawerPortal>
-))
-DrawerContent.displayName = "DrawerContent"
+    </Modal>
+  )
+}
 
-const DrawerHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
-    {...props}
-  />
-)
-DrawerHeader.displayName = "DrawerHeader"
+const DrawerContent = ({ children, style }: DrawerContentProps) => {
+  const pan = useRef(new Animated.ValueXY()).current
+  const [isOpen, setIsOpen] = useState(true)
 
-const DrawerFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("mt-auto flex flex-col gap-2 p-4", className)}
-    {...props}
-  />
-)
-DrawerFooter.displayName = "DrawerFooter"
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dy > 0) {
+          pan.setValue({ x: 0, y: gestureState.dy })
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dy > 100) {
+          Animated.timing(pan, {
+            toValue: { x: 0, y: DRAWER_HEIGHT },
+            duration: 200,
+            useNativeDriver: true,
+          }).start(() => setIsOpen(false))
+        } else {
+          Animated.spring(pan, {
+            toValue: { x: 0, y: 0 },
+            useNativeDriver: true,
+          }).start()
+        }
+      },
+    })
+  ).current
 
-const DrawerTitle = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Title
-    ref={ref}
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-))
-DrawerTitle.displayName = DrawerPrimitive.Title.displayName
+  return (
+    <View style={styles.overlay}>
+      <Animated.View
+        style={[
+          styles.content,
+          style,
+          {
+            transform: [{ translateY: pan.y }],
+          },
+        ]}
+        {...panResponder.panHandlers}
+      >
+        <View style={styles.handle} />
+        {children}
+      </Animated.View>
+    </View>
+  )
+}
 
-const DrawerDescription = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Description
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-DrawerDescription.displayName = DrawerPrimitive.Description.displayName
+const DrawerHeader = ({ children, style }: DrawerHeaderProps) => {
+  return (
+    <View style={[styles.header, style]}>
+      {children}
+    </View>
+  )
+}
+
+const DrawerFooter = ({ children, style }: DrawerFooterProps) => {
+  return (
+    <View style={[styles.footer, style]}>
+      {children}
+    </View>
+  )
+}
+
+const DrawerTitle = ({ children, style }: DrawerTitleProps) => {
+  return (
+    <Text style={[styles.title, style]}>
+      {children}
+    </Text>
+  )
+}
+
+const DrawerDescription = ({ children, style }: DrawerDescriptionProps) => {
+  return (
+    <Text style={[styles.description, style]}>
+      {children}
+    </Text>
+  )
+}
+
+const DrawerClose = ({ children, style, onPress }: DrawerCloseProps) => {
+  return (
+    <TouchableOpacity
+      style={[styles.closeButton, style]}
+      onPress={onPress}
+    >
+      {children}
+    </TouchableOpacity>
+  )
+}
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  content: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    height: DRAWER_HEIGHT,
+    padding: 16,
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  handle: {
+    width: 100,
+    height: 8,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 4,
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  header: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  footer: {
+    marginTop: 'auto',
+    padding: 16,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
+    padding: 4,
+  },
+})
 
 export {
   Drawer,
-  DrawerPortal,
-  DrawerOverlay,
-  DrawerTrigger,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerFooter,
   DrawerTitle,
   DrawerDescription,
+  DrawerClose,
 }

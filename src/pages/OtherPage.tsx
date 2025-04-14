@@ -1,109 +1,114 @@
-
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronRight, Cake, Star, Users, Image, CheckCircle, DollarSign } from "lucide-react";
-import TabBar from "@/components/TabBar";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
+import { NavigationProp } from "@/types/navigation";
 
 const OtherPage = () => {
-  const navigate = useNavigate();
+  const navigation = useNavigation<NavigationProp>();
+
+  const handleBack = () => {
+    navigation.goBack();
+  };
 
   const menuItems = [
     {
-      icon: <Cake className="h-6 w-6 text-purple-700" />,
-      title: "Birthdays",
-      description: "Wish other actives a happy birthday",
-      path: "/birthdays"
+      title: "Settings",
+      icon: "settings",
+      onPress: () => navigation.navigate("Settings"),
     },
     {
-      icon: <Star className="h-6 w-6 text-purple-700" />,
-      title: "Sister Points",
-      description: "Give candidates sister points!",
-      path: "/sister-points"
+      title: "Help & Support",
+      icon: "help-circle",
+      onPress: () => navigation.navigate("Help"),
     },
     {
-      icon: <Users className="h-6 w-6 text-purple-700" />,
-      title: "Members",
-      description: "View member directory",
-      path: "/members"
+      title: "About",
+      icon: "info",
+      onPress: () => navigation.navigate("About"),
     },
     {
-      icon: <Image className="h-6 w-6 text-purple-700" />,
-      title: "Gallery",
-      description: "Image gallery across all events",
-      path: "/gallery"
+      title: "Privacy Policy",
+      icon: "shield",
+      onPress: () => navigation.navigate("Privacy"),
     },
     {
-      icon: <CheckCircle className="h-6 w-6 text-purple-700" />,
-      title: "Requirements",
-      description: "View your requirements for the semester",
-      path: "/requirements"
+      title: "Terms of Service",
+      icon: "file-text",
+      onPress: () => navigation.navigate("Terms"),
     },
-    {
-      icon: <DollarSign className="h-6 w-6 text-purple-700" />,
-      title: "Dues",
-      description: "View your dues for the semester",
-      path: "/dues"
-    }
   ];
 
-  const handleProfileClick = () => {
-    navigate("/profile");
-  };
-
-  const handleMenuItemClick = (path: string) => {
-    navigate(path);
-  };
-
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <header className="px-6 py-6 bg-white">
-        <h1 className="text-2xl font-semibold">Other</h1>
-      </header>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>More</Text>
+      </View>
 
-      <div className="px-6 py-4 flex-1 overflow-auto pb-20">
-        <div 
-          className="bg-white rounded-lg p-4 flex items-center justify-between mb-6 shadow-sm"
-          onClick={handleProfileClick}
-        >
-          <div className="flex items-center">
-            <Avatar className="h-12 w-12 mr-3">
-              <AvatarImage src="https://randomuser.me/api/portraits/women/32.jpg" alt="Bella Yu" />
-              <AvatarFallback>BY</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-medium">Bella Yu</p>
-              <p className="text-sm text-gray-500">View Profile</p>
-            </div>
-          </div>
-          <ChevronRight className="h-5 w-5 text-gray-400" />
-        </div>
-
-        <div className="space-y-3">
-          {menuItems.map((item, index) => (
-            <div 
-              key={index}
-              className="bg-white rounded-lg p-4 flex items-center justify-between shadow-sm"
-              onClick={() => handleMenuItemClick(item.path)}
-            >
-              <div className="flex items-center">
-                <div className="h-10 w-10 rounded-md flex items-center justify-center mr-3">
-                  {item.icon}
-                </div>
-                <div>
-                  <p className="font-medium text-purple-900">{item.title}</p>
-                  <p className="text-sm text-gray-600">{item.description}</p>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 text-gray-400" />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <TabBar />
-    </div>
+      <ScrollView style={styles.content}>
+        {menuItems.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.menuItem}
+            onPress={item.onPress}
+          >
+            <View style={styles.menuItemContent}>
+              <Icon name={item.icon} size={24} color="#7C3AED" />
+              <Text style={styles.menuItemText}>{item.title}</Text>
+            </View>
+            <Icon name="chevron-right" size={24} color="#9CA3AF" />
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginLeft: 12,
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  menuItemContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  menuItemText: {
+    fontSize: 16,
+    marginLeft: 12,
+  },
+});
 
 export default OtherPage;

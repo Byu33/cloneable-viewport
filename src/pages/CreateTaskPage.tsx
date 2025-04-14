@@ -1,12 +1,8 @@
-
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar as CalendarIcon, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
+import { View, Text, TouchableOpacity, TextInput, ScrollView, StyleSheet, Switch, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
+import { NavigationProp } from "@/types/navigation";
 import MemberSearchModal from "@/components/MemberSearchModal";
 
 interface Member {
@@ -19,7 +15,7 @@ interface Member {
 }
 
 const CreateTaskPage = () => {
-  const navigate = useNavigate();
+  const navigation = useNavigation<NavigationProp>();
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -28,16 +24,16 @@ const CreateTaskPage = () => {
   const [isMemberSearchOpen, setIsMemberSearchOpen] = useState(false);
 
   const handleBack = () => {
-    navigate(-1);
+    navigation.goBack();
   };
 
   const handleCreateTask = () => {
     if (!taskName) {
-      toast({
-        title: "Task name required",
-        description: "Please enter a name for the task",
-        variant: "destructive"
-      });
+      Alert.alert(
+        "Task name required",
+        "Please enter a name for the task",
+        [{ text: "OK" }]
+      );
       return;
     }
 
@@ -49,13 +45,9 @@ const CreateTaskPage = () => {
       isRequired,
       assignees
     });
-
-    toast({
-      title: "Task created successfully",
-      description: "The task has been added to your tasks",
-    });
-
-    navigate("/todo");
+    
+    // Navigate back after creating task
+    navigation.goBack();
   };
 
   const handleAssigneeSelection = (selectedMembers: Member[]) => {
@@ -63,97 +55,100 @@ const CreateTaskPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <header className="flex items-center px-6 py-4 bg-white">
-        <button onClick={handleBack} className="mr-4">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <h1 className="text-2xl font-semibold">Create Task</h1>
-      </header>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Create Task</Text>
+        <View style={{ width: 24 }} />
+      </View>
 
-      <div className="flex-1 overflow-auto px-6 py-4 pb-24">
-        <div className="bg-white rounded-lg p-4 shadow-sm mb-4">
-          <label className="block mb-1 text-lg font-medium">Task Name</label>
-          <input
-            type="text"
+      <ScrollView style={styles.content}>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Task Name</Text>
+          <TextInput
+            style={styles.input}
             placeholder="Enter task name"
-            className="w-full p-3 rounded-md border border-gray-300 mb-4"
             value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
+            onChangeText={setTaskName}
+            placeholderTextColor="#9CA3AF"
           />
+        </View>
 
-          <label className="block mb-1 text-lg font-medium">Description</label>
-          <textarea
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Description</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
             placeholder="Enter task description"
-            className="w-full p-3 rounded-md border border-gray-300 mb-4 h-24"
             value={taskDescription}
-            onChange={(e) => setTaskDescription(e.target.value)}
+            onChangeText={setTaskDescription}
+            multiline
+            numberOfLines={4}
+            placeholderTextColor="#9CA3AF"
           />
+        </View>
 
-          <label className="block mb-1 text-lg font-medium">Due Date</label>
-          <div className="relative mb-4">
-            <div className="absolute right-3 top-3">
-              <CalendarIcon className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="date"
-              className="w-full p-3 rounded-md border border-gray-300"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Due Date</Text>
+          <TouchableOpacity 
+            style={styles.dateButton}
+            onPress={() => {/* Open date picker */}}
+          >
+            <Icon name="calendar" size={20} color="#6B7280" />
+            <Text style={styles.dateText}>
+              {dueDate || "Select due date"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.formGroup}>
+          <View style={styles.switchContainer}>
+            <Text style={styles.label}>Required Task</Text>
+            <Switch
+              value={isRequired}
+              onValueChange={setIsRequired}
+              trackColor={{ false: "#E5E7EB", true: "#7C3AED" }}
+              thumbColor="#FFFFFF"
             />
-          </div>
+          </View>
+        </View>
 
-          <div className="flex flex-col gap-4">
-            <Button 
-              variant="outline" 
-              className="flex items-center justify-center gap-2 text-purple-700 border-purple-300 hover:bg-purple-50"
-              onClick={() => setIsMemberSearchOpen(true)}
-            >
-              <Users className="h-5 w-5" />
-              Add Assignees to the Task
-            </Button>
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>Assignees</Text>
+          <TouchableOpacity 
+            style={styles.assigneesButton}
+            onPress={() => setIsMemberSearchOpen(true)}
+          >
+            <Icon name="users" size={20} color="#6B7280" />
+            <Text style={styles.assigneesText}>
+              {assignees.length > 0 
+                ? `${assignees.length} member${assignees.length !== 1 ? 's' : ''} selected` 
+                : "Select members"}
+            </Text>
+          </TouchableOpacity>
+          
+          {assignees.length > 0 && (
+            <View style={styles.assigneesList}>
+              {assignees.map(member => (
+                <View key={member.id} style={styles.assigneeItem}>
+                  <View style={styles.avatar}>
+                    <Text style={styles.avatarText}>{member.initials}</Text>
+                  </View>
+                  <Text style={styles.assigneeName}>{member.name}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
 
-            {assignees.length > 0 && (
-              <div className="mt-2">
-                <p className="text-sm text-gray-600 mb-2">Assigned to:</p>
-                <div className="flex flex-wrap gap-2">
-                  {assignees.map(assignee => (
-                    <div 
-                      key={assignee.id} 
-                      className="flex items-center bg-gray-100 rounded-full px-3 py-1"
-                    >
-                      <Avatar className="h-6 w-6 mr-2">
-                        <AvatarImage src={assignee.avatar} alt={assignee.name} />
-                        <AvatarFallback>{assignee.initials}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm">{assignee.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="required-task" className="text-base font-medium">Required Task</Label>
-                <span className="text-xs text-gray-500">(for all users)</span>
-              </div>
-              <Switch
-                id="required-task"
-                checked={isRequired}
-                onCheckedChange={setIsRequired}
-              />
-            </div>
-          </div>
-        </div>
-
-        <Button 
-          className="w-full bg-purple-700 hover:bg-purple-800 py-6 text-base"
-          onClick={handleCreateTask}
+        <TouchableOpacity 
+          style={styles.createButton}
+          onPress={handleCreateTask}
         >
-          Create Task
-        </Button>
-      </div>
+          <Text style={styles.createButtonText}>Create Task</Text>
+        </TouchableOpacity>
+      </ScrollView>
 
       <MemberSearchModal 
         open={isMemberSearchOpen}
@@ -161,8 +156,130 @@ const CreateTaskPage = () => {
         onMembersSelected={handleAssigneeSelection}
         selectedMembers={assignees}
       />
-    </div>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  formGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "500",
+    marginBottom: 8,
+    color: "#374151",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: "top",
+  },
+  dateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: "#FFFFFF",
+  },
+  dateText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: "#6B7280",
+  },
+  switchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  assigneesButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 8,
+    padding: 12,
+    backgroundColor: "#FFFFFF",
+  },
+  assigneesText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: "#6B7280",
+  },
+  assigneesList: {
+    marginTop: 12,
+  },
+  assigneeItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#E9D5FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  avatarText: {
+    color: "#7C3AED",
+    fontWeight: "600",
+  },
+  assigneeName: {
+    fontSize: 16,
+  },
+  createButton: {
+    backgroundColor: "#7C3AED",
+    borderRadius: 8,
+    padding: 16,
+    alignItems: "center",
+    marginBottom: 32,
+  },
+  createButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});
 
 export default CreateTaskPage;

@@ -1,15 +1,18 @@
-
-import React from "react";
-import { X } from "lucide-react";
+import React from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-} from "@/components/ui/dialog";
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import { format } from 'date-fns';
 
 interface CheckInDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  visible: boolean;
+  onClose: () => void;
   event: {
     title: string;
     date: Date;
@@ -20,66 +23,151 @@ interface CheckInDialogProps {
   };
 }
 
-const CheckInDialog = ({ open, onOpenChange, event }: CheckInDialogProps) => {
-  const formatDate = (date: Date) => {
-    const month = date.toLocaleString('default', { month: 'short' });
-    const day = date.getDate();
-    return `${month} ${day}`;
-  };
+const CheckInDialog: React.FC<CheckInDialogProps> = ({
+  visible,
+  onClose,
+  event,
+}) => {
+  const formattedDate = format(event.date, 'MMM d, yyyy');
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-0 overflow-auto max-w-md max-h-[90vh]">
-        <div className="p-6">
-          <div className="flex justify-between items-start mb-6">
-            <h2 className="text-2xl font-semibold">Check In</h2>
-            <DialogClose className="rounded-full focus:outline-none">
-              <X className="h-6 w-6" />
-            </DialogClose>
-          </div>
-          
-          <div className="bg-gray-50 rounded-xl p-5 mb-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold text-lg">{event.title}</h3>
-                <p className="text-gray-600">
-                  {`${formatDate(event.date)} ${event.time}`}
-                </p>
-                <p className="text-gray-600">{event.location}</p>
-              </div>
-              {event.tag && (
-                <span className={`${event.tagColor || "bg-purple-200 text-purple-700"} text-xs px-3 py-1 rounded-full font-bold`}>
-                  {event.tag}
-                </span>
-              )}
-            </div>
-          </div>
-          
-          <div className="mb-4">
-            <div className="bg-green-100 text-green-800 px-4 py-2 rounded-md inline-block mb-4">
-              Success!
-            </div>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.overlay}>
+          <TouchableWithoutFeedback>
+            <View style={styles.dialog}>
+              <View style={styles.header}>
+                <Text style={styles.title}>Check In</Text>
+                <TouchableOpacity onPress={onClose}>
+                  <Icon name="x" size={24} color="#000000" />
+                </TouchableOpacity>
+              </View>
 
-            <p className="text-base mb-2">
-              We see that you are close to{" "}
-              <span className="text-purple-700 font-medium">{event.location}</span>.
-            </p>
-            <p className="text-base">
-              We hope you have fun and enjoy the event!
-            </p>
-          </div>
+              <View style={styles.content}>
+                <Text style={styles.eventTitle}>{event.title}</Text>
+                <Text style={styles.eventDate}>{formattedDate}</Text>
 
-          <div className="w-full h-60 rounded-xl overflow-hidden mt-4">
-            <img 
-              src="/lovable-uploads/d20c356f-dd9f-4875-948a-59e12462ea56.png" 
-              alt="Map showing location"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+                <View style={styles.details}>
+                  <View style={styles.detailRow}>
+                    <Icon name="clock" size={16} color="#6B7280" />
+                    <Text style={styles.detailText}>{event.time}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Icon name="map-pin" size={16} color="#6B7280" />
+                    <Text style={styles.detailText}>{event.location}</Text>
+                  </View>
+                </View>
+
+                {event.tag && (
+                  <View style={[styles.tag, { backgroundColor: event.tagColor }]}>
+                    <Text style={styles.tagText}>{event.tag}</Text>
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.footer}>
+                <TouchableOpacity
+                  style={styles.checkInButton}
+                  onPress={() => {
+                    // Handle check in
+                    onClose();
+                  }}
+                >
+                  <Text style={styles.checkInText}>Check In</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dialog: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    width: '90%',
+    maxWidth: 400,
+    padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  content: {
+    marginBottom: 16,
+  },
+  eventTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 4,
+  },
+  eventDate: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 12,
+  },
+  details: {
+    gap: 8,
+    marginBottom: 12,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  detailText: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  tag: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  tagText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#FFFFFF',
+  },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingTop: 16,
+  },
+  checkInButton: {
+    backgroundColor: '#000000',
+    paddingVertical: 12,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  checkInText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+});
 
 export default CheckInDialog;

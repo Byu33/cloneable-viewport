@@ -1,43 +1,133 @@
-import { GripVertical } from "lucide-react"
-import * as ResizablePrimitive from "react-resizable-panels"
+import React, { useState, useRef } from "react"
+import { View, StyleSheet, ViewStyle, PanResponder, Animated, Dimensions } from "react-native"
+import { Feather } from "@expo/vector-icons"
 
-import { cn } from "@/lib/utils"
+interface ResizablePanelGroupProps {
+  children: React.ReactNode
+  direction?: "horizontal" | "vertical"
+  style?: ViewStyle
+}
 
-const ResizablePanelGroup = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) => (
-  <ResizablePrimitive.PanelGroup
-    className={cn(
-      "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
-      className
-    )}
-    {...props}
-  />
-)
+interface ResizablePanelProps {
+  children: React.ReactNode
+  defaultSize?: number
+  minSize?: number
+  maxSize?: number
+  style?: ViewStyle
+}
 
-const ResizablePanel = ResizablePrimitive.Panel
-
-const ResizableHandle = ({
-  withHandle,
-  className,
-  ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+interface ResizableHandleProps {
   withHandle?: boolean
-}) => (
-  <ResizablePrimitive.PanelResizeHandle
-    className={cn(
-      "relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
-      className
-    )}
-    {...props}
-  >
-    {withHandle && (
-      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-        <GripVertical className="h-2.5 w-2.5" />
-      </div>
-    )}
-  </ResizablePrimitive.PanelResizeHandle>
+  style?: ViewStyle
+}
+
+const ResizablePanelGroup = React.forwardRef<View, ResizablePanelGroupProps>(
+  ({ children, direction = "horizontal", style }, ref) => {
+    return (
+      <View 
+        ref={ref} 
+        style={[
+          styles.panelGroup, 
+          direction === "vertical" && styles.panelGroupVertical,
+          style
+        ]}
+      >
+        {children}
+      </View>
+    )
+  }
 )
+ResizablePanelGroup.displayName = "ResizablePanelGroup"
+
+const ResizablePanel = React.forwardRef<View, ResizablePanelProps>(
+  ({ children, defaultSize = 100, minSize = 30, maxSize = 100, style }, ref) => {
+    const [size, setSize] = useState(defaultSize)
+    const sizeAnim = useRef(new Animated.Value(defaultSize)).current
+
+    const updateSize = (newSize: number) => {
+      const clampedSize = Math.min(Math.max(newSize, minSize), maxSize)
+      setSize(clampedSize)
+      Animated.timing(sizeAnim, {
+        toValue: clampedSize,
+        duration: 200,
+        useNativeDriver: false,
+      }).start()
+    }
+
+    return (
+      <Animated.View 
+        ref={ref} 
+        style={[
+          styles.panel,
+          { flex: size },
+          style
+        ]}
+      >
+        {children}
+      </Animated.View>
+    )
+  }
+)
+ResizablePanel.displayName = "ResizablePanel"
+
+const ResizableHandle = React.forwardRef<View, ResizableHandleProps>(
+  ({ withHandle, style }, ref) => {
+    const panResponder = useRef(
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderMove: (evt, gestureState) => {
+          // Handle resize logic here
+          // This would need to be implemented based on the specific use case
+        },
+      })
+    ).current
+
+    return (
+      <View
+        ref={ref}
+        style={[styles.handle, style]}
+        {...panResponder.panHandlers}
+      >
+        {withHandle && (
+          <View style={styles.handleIcon}>
+            <Feather name="grip-vertical" size={10} color="#6B7280" />
+          </View>
+        )}
+      </View>
+    )
+  }
+)
+ResizableHandle.displayName = "ResizableHandle"
+
+const styles = StyleSheet.create({
+  panelGroup: {
+    flex: 1,
+    flexDirection: "row",
+    width: "100%",
+  },
+  panelGroupVertical: {
+    flexDirection: "column",
+  },
+  panel: {
+    flex: 1,
+  },
+  handle: {
+    width: 1,
+    backgroundColor: "#E5E7EB",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  handleIcon: {
+    width: 12,
+    height: 16,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    backgroundColor: "#F9FAFB",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+})
 
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle }

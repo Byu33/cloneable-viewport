@@ -1,127 +1,212 @@
-
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, LogOut, Settings } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import TabBar from "@/components/TabBar";
+import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
+import { NavigationProp } from "@/types/navigation";
 
 const ProfilePage = () => {
-  const navigate = useNavigate();
+  const navigation = useNavigation<NavigationProp>();
 
   const handleBack = () => {
-    navigate(-1);
+    navigation.goBack();
   };
 
   const handleEditProfile = () => {
-    // Navigate to edit profile page
-    navigate("/edit-profile");
+    navigation.navigate("EditProfile");
   };
 
-  const handleLogout = () => {
-    // Logout logic
-    navigate("/");
-  };
+  const menuItems = [
+    {
+      title: "Account Settings",
+      icon: "settings",
+      onPress: () => navigation.navigate("Settings"),
+    },
+    {
+      title: "Notifications",
+      icon: "bell",
+      onPress: () => navigation.navigate("Notifications"),
+    },
+    {
+      title: "Privacy",
+      icon: "shield",
+      onPress: () => navigation.navigate("Privacy"),
+    },
+    {
+      title: "Help & Support",
+      icon: "help-circle",
+      onPress: () => navigation.navigate("Help"),
+    },
+    {
+      title: "About",
+      icon: "info",
+      onPress: () => navigation.navigate("About"),
+    },
+  ];
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <header className="flex items-center justify-between px-6 py-4 bg-white">
-        <div className="flex items-center">
-          <button onClick={handleBack} className="mr-4">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-2xl font-semibold">Profile</h1>
-        </div>
-        <button onClick={handleEditProfile}>
-          <Edit className="w-5 h-5" />
-        </button>
-      </header>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Profile</Text>
+        <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
+          <Icon name="edit" size={24} color="#7C3AED" />
+        </TouchableOpacity>
+      </View>
 
-      <div className="px-6 py-8 flex-1 overflow-auto pb-20">
-        <div className="flex flex-col items-center mb-8">
-          <Avatar className="h-24 w-24 mb-4">
-            <AvatarImage src="https://randomuser.me/api/portraits/women/32.jpg" alt="Bella Yu" />
-            <AvatarFallback>BY</AvatarFallback>
-          </Avatar>
-          <h2 className="text-xl font-semibold mb-1">Bella Yu</h2>
-          <p className="text-gray-600">Marketing VP</p>
-        </div>
+      <ScrollView style={styles.content}>
+        <View style={styles.profileSection}>
+          <Image
+            source={{ uri: "https://randomuser.me/api/portraits/women/32.jpg" }}
+            style={styles.avatar}
+          />
+          <Text style={styles.name}>Bella Yu</Text>
+          <Text style={styles.role}>Active Member</Text>
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>12</Text>
+              <Text style={styles.statLabel}>Events</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>5</Text>
+              <Text style={styles.statLabel}>Tasks</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>3</Text>
+              <Text style={styles.statLabel}>Requirements</Text>
+            </View>
+          </View>
+        </View>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
-          
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p>bellayu@example.com</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Phone</p>
-              <p>(123) 456-7890</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Birth Date</p>
-              <p>January 15, 1998</p>
-            </div>
-          </div>
-        </div>
+        <View style={styles.menuSection}>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.menuItem}
+              onPress={item.onPress}
+            >
+              <View style={styles.menuItemContent}>
+                <Icon name={item.icon} size={24} color="#7C3AED" />
+                <Text style={styles.menuItemText}>{item.title}</Text>
+              </View>
+              <Icon name="chevron-right" size={24} color="#9CA3AF" />
+            </TouchableOpacity>
+          ))}
+        </View>
 
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Membership Information</h3>
-          
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm text-gray-500">Big Sister</p>
-              <p>Emma Thompson</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Pledge Class</p>
-              <p>Sigma '21</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Graduation Year</p>
-              <p>2024</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Your Stats</h3>
-          
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="text-purple-900 text-2xl font-bold">12</p>
-              <p className="text-sm text-gray-600">Events</p>
-            </div>
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="text-purple-900 text-2xl font-bold">7/14</p>
-              <p className="text-sm text-gray-600">Requirements</p>
-            </div>
-          </div>
-        </div>
-
-        <Button 
-          variant="outline" 
-          className="w-full flex items-center justify-center gap-2 text-gray-700 mb-4"
-          onClick={() => navigate("/settings")}
-        >
-          <Settings className="h-5 w-5" />
-          Settings
-        </Button>
-
-        <Button 
-          variant="outline" 
-          className="w-full flex items-center justify-center gap-2 text-red-600 border-red-200"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-5 w-5" />
-          Log Out
-        </Button>
-      </div>
-
-      <TabBar />
-    </div>
+        <TouchableOpacity style={styles.logoutButton}>
+          <Icon name="log-out" size={24} color="#EF4444" />
+          <Text style={styles.logoutText}>Log Out</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  editButton: {
+    padding: 4,
+  },
+  content: {
+    flex: 1,
+  },
+  profileSection: {
+    alignItems: "center",
+    padding: 24,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 16,
+  },
+  name: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  role: {
+    fontSize: 16,
+    color: "#6B7280",
+    marginBottom: 16,
+  },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginTop: 16,
+  },
+  statItem: {
+    alignItems: "center",
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#7C3AED",
+  },
+  statLabel: {
+    fontSize: 14,
+    color: "#6B7280",
+  },
+  menuSection: {
+    padding: 16,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  menuItemContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  menuItemText: {
+    fontSize: 16,
+    marginLeft: 12,
+  },
+  logoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    margin: 16,
+    backgroundColor: "#FEE2E2",
+    borderRadius: 8,
+  },
+  logoutText: {
+    color: "#EF4444",
+    fontSize: 16,
+    fontWeight: "500",
+    marginLeft: 8,
+  },
+});
 
 export default ProfilePage;

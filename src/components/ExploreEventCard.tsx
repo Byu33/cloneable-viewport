@@ -1,7 +1,8 @@
-
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { MapPin } from "lucide-react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
+import { NavigationProp } from "@/types/navigation";
 
 interface ExploreEventCardProps {
   event: {
@@ -19,7 +20,7 @@ interface ExploreEventCardProps {
 
 const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
   const { id, title, time, location, tag, tagColor, attendees, date } = event;
-  const navigate = useNavigate();
+  const navigation = useNavigation<NavigationProp>();
 
   // Format date
   const formatDate = (date: Date) => {
@@ -29,53 +30,102 @@ const ExploreEventCard: React.FC<ExploreEventCardProps> = ({ event }) => {
   };
 
   const handleClick = () => {
-    navigate(`/event/${id}`);
+    navigation.navigate("EventDetails", { eventId: id });
   };
 
   return (
-    <div 
-      className="bg-white rounded-xl shadow-sm w-80 overflow-hidden font-figtree cursor-pointer"
-      onClick={handleClick}
-    >
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-3">
-          <div>
-            <h3 className="font-semibold text-lg mb-1">{title}</h3>
-            <p className="text-gray-600 text-sm">
+    <TouchableOpacity style={styles.card} onPress={handleClick}>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.dateTime}>
               {formatDate(date)} {time}
-            </p>
-            <div className="flex items-center text-gray-600 text-sm mt-1">
-              <MapPin className="h-4 w-4 mr-1" />
-              <span>{location}</span>
-            </div>
-          </div>
+            </Text>
+            <View style={styles.locationContainer}>
+              <Icon name="map-pin" size={16} color="#6B7280" />
+              <Text style={styles.location}>{location}</Text>
+            </View>
+          </View>
           {tag && (
-            <span className={`${tagColor || "bg-purple-200 text-purple-700"} text-xs px-3 py-1 rounded-full font-bold`}>
-              {tag}
-            </span>
+            <View style={[styles.tag, { backgroundColor: tagColor || "#7C3AED" }]}>
+              <Text style={styles.tagText}>{tag}</Text>
+            </View>
           )}
-        </div>
-      </div>
-      
-      {attendees && (
-        <div className="bg-gray-50 p-4">
-          <div className="flex justify-between items-center">
-            <div className="flex -space-x-2">
-              {[...Array(Math.min(5, attendees))].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white overflow-hidden"
-                />
-              ))}
-            </div>
-            <span className="text-xs text-gray-500">
-              {attendees} people are attending
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
+        </View>
+
+        {attendees !== undefined && (
+          <View style={styles.footer}>
+            <Text style={styles.attendees}>{attendees} attendees</Text>
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    marginBottom: 16,
+  },
+  content: {
+    padding: 16,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#1A1F2C",
+    marginBottom: 4,
+  },
+  dateTime: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginBottom: 4,
+  },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  location: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginLeft: 4,
+  },
+  tag: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  tagText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  footer: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
+  },
+  attendees: {
+    fontSize: 14,
+    color: "#6B7280",
+  },
+});
 
 export default ExploreEventCard;

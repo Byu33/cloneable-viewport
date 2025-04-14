@@ -1,131 +1,219 @@
-
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, ChevronRight, ChevronUp } from "lucide-react";
-import TabBar from "@/components/TabBar";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
+import { NavigationProp } from "@/types/navigation";
 
 interface Requirement {
-  id: number;
+  id: string;
   title: string;
+  description: string;
+  dueDate: string;
+  completed: boolean;
   category: string;
-  isComplete: boolean;
-  tag?: string;
+  categoryColor: string;
 }
 
 const RequirementsPage = () => {
-  const navigate = useNavigate();
-  const [isMetExpanded, setIsMetExpanded] = useState(false);
-  const [isUnmetExpanded, setIsUnmetExpanded] = useState(true);
-
-  const requirements: Requirement[] = [
-    { id: 1, title: "Attend 1 Sisterhood Event", category: "Sisterhood", isComplete: false, tag: "Sisterhood" },
-    { id: 2, title: "Attend 1 Professional Event", category: "Professional", isComplete: false, tag: "Professional" },
-    { id: 3, title: "Attend 1 Risk Event", category: "Risk", isComplete: false, tag: "Risk" },
-    { id: 4, title: "Attend 1 Risk Event", category: "Risk", isComplete: false, tag: "Risk" },
-    { id: 5, title: "Attend 1 Risk Event", category: "Risk", isComplete: false, tag: "Risk" },
-    { id: 6, title: "Attend 1 Risk Event", category: "Risk", isComplete: false, tag: "Risk" },
-    { id: 7, title: "Fulfill 1 sister hour", category: "Sisterhood", isComplete: false, tag: "Sisterhood" },
-    { id: 8, title: "Attend Chapter Meeting", category: "Required", isComplete: true },
-    { id: 9, title: "Pay Dues", category: "Finance", isComplete: true },
-    { id: 10, title: "Complete Risk Form", category: "Risk", isComplete: true },
-    { id: 11, title: "Attend Initiation", category: "Required", isComplete: true },
-    { id: 12, title: "Complete Academic Form", category: "Academic", isComplete: true },
-    { id: 13, title: "Attend Study Hours", category: "Academic", isComplete: true },
-    { id: 14, title: "Complete Service Hours", category: "Service", isComplete: true },
-  ];
-
-  const metRequirements = requirements.filter(req => req.isComplete);
-  const unmetRequirements = requirements.filter(req => !req.isComplete);
+  const navigation = useNavigation<NavigationProp>();
+  const [requirements] = useState<Requirement[]>([
+    {
+      id: "1",
+      title: "Attend Chapter Meeting",
+      description: "Must attend at least 2 chapter meetings this semester",
+      dueDate: "May 1, 2024",
+      completed: true,
+      category: "Mandatory",
+      categoryColor: "#7C3AED",
+    },
+    {
+      id: "2",
+      title: "Complete Service Hours",
+      description: "Complete 10 hours of community service",
+      dueDate: "April 15, 2024",
+      completed: false,
+      category: "Service",
+      categoryColor: "#10B981",
+    },
+    {
+      id: "3",
+      title: "Attend Social Event",
+      description: "Participate in at least one social event",
+      dueDate: "March 30, 2024",
+      completed: false,
+      category: "Social",
+      categoryColor: "#F59E0B",
+    },
+  ]);
 
   const handleBack = () => {
-    navigate(-1);
+    navigation.goBack();
   };
 
-  const handleRequirementClick = (requirement: Requirement) => {
-    if (requirement.tag) {
-      // Navigate to Explore with the specific tag filter
-      navigate("/explore", { state: { filterTag: requirement.tag } });
-    } else {
-      navigate(`/requirement/${requirement.id}`);
-    }
+  const handleRequirementPress = (requirement: Requirement) => {
+    navigation.navigate("RequirementDetails", { requirementId: requirement.id });
   };
+
+  const completedCount = requirements.filter(r => r.completed).length;
+  const totalCount = requirements.length;
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <header className="flex items-center px-6 py-4 bg-white">
-        <button onClick={handleBack} className="mr-4">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <h1 className="text-2xl font-semibold">Requirements</h1>
-      </header>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Requirements</Text>
+      </View>
 
-      <div className="px-6 py-4 flex-1 overflow-auto pb-20">
-        <Collapsible 
-          open={isMetExpanded} 
-          onOpenChange={setIsMetExpanded}
-          className="mb-4"
-        >
-          <CollapsibleTrigger className="flex w-full justify-between items-center py-3 text-left">
-            <div className="flex items-center">
-              <h2 className="text-xl font-medium">Met Requirements</h2>
-              <div className="ml-2 h-6 w-6 bg-purple-100 text-purple-800 rounded-full flex items-center justify-center text-sm">
-                {metRequirements.length}
-              </div>
-            </div>
-            {isMetExpanded ? <ChevronUp /> : <ChevronDown />}
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent>
-            <div className="space-y-2 mt-2">
-              {metRequirements.map(requirement => (
-                <div 
-                  key={requirement.id}
-                  className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"
-                  onClick={() => handleRequirementClick(requirement)}
-                >
-                  <span className="text-purple-900 font-medium">{requirement.title}</span>
-                  <ChevronRight className="h-5 w-5 text-purple-500" />
-                </div>
-              ))}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-        
-        <Collapsible 
-          open={isUnmetExpanded} 
-          onOpenChange={setIsUnmetExpanded}
-        >
-          <CollapsibleTrigger className="flex w-full justify-between items-center py-3 text-left">
-            <div className="flex items-center">
-              <h2 className="text-xl font-medium">Unmet Requirements</h2>
-              <div className="ml-2 h-6 w-6 bg-purple-100 text-purple-800 rounded-full flex items-center justify-center text-sm">
-                {unmetRequirements.length}
-              </div>
-            </div>
-            {isUnmetExpanded ? <ChevronUp /> : <ChevronDown />}
-          </CollapsibleTrigger>
-          
-          <CollapsibleContent>
-            <div className="space-y-2 mt-2">
-              {unmetRequirements.map(requirement => (
-                <div 
-                  key={requirement.id}
-                  className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"
-                  onClick={() => handleRequirementClick(requirement)}
-                >
-                  <span className="text-purple-900 font-medium">{requirement.title}</span>
-                  <ChevronRight className="h-5 w-5 text-purple-500" />
-                </div>
-              ))}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
+      <ScrollView style={styles.content}>
+        <View style={styles.progressSection}>
+          <Text style={styles.progressTitle}>Progress</Text>
+          <View style={styles.progressBar}>
+            <View 
+              style={[
+                styles.progressFill,
+                { width: `${(completedCount / totalCount) * 100}%` }
+              ]} 
+            />
+          </View>
+          <Text style={styles.progressText}>
+            {completedCount} of {totalCount} completed
+          </Text>
+        </View>
 
-      <TabBar />
-    </div>
+        <View style={styles.requirementsList}>
+          {requirements.map((requirement) => (
+            <TouchableOpacity
+              key={requirement.id}
+              style={styles.requirementCard}
+              onPress={() => handleRequirementPress(requirement)}
+            >
+              <View style={styles.requirementHeader}>
+                <View style={styles.requirementTitleContainer}>
+                  <Text style={styles.requirementTitle}>{requirement.title}</Text>
+                  <View style={[styles.categoryTag, { backgroundColor: requirement.categoryColor }]}>
+                    <Text style={styles.categoryText}>{requirement.category}</Text>
+                  </View>
+                </View>
+                <Icon
+                  name={requirement.completed ? "check-circle" : "circle"}
+                  size={24}
+                  color={requirement.completed ? "#10B981" : "#9CA3AF"}
+                />
+              </View>
+              <Text style={styles.requirementDescription}>{requirement.description}</Text>
+              <View style={styles.requirementFooter}>
+                <Icon name="calendar" size={16} color="#6B7280" />
+                <Text style={styles.dueDate}>Due {requirement.dueDate}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginLeft: 12,
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  progressSection: {
+    backgroundColor: "#FFFFFF",
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  progressTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  progressBar: {
+    height: 8,
+    backgroundColor: "#E5E7EB",
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#7C3AED",
+  },
+  progressText: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginTop: 8,
+  },
+  requirementsList: {
+    gap: 8,
+  },
+  requirementCard: {
+    backgroundColor: "#FFFFFF",
+    padding: 16,
+    borderRadius: 8,
+  },
+  requirementHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 8,
+  },
+  requirementTitleContainer: {
+    flex: 1,
+    marginRight: 8,
+  },
+  requirementTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  categoryTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: "flex-start",
+  },
+  categoryText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  requirementDescription: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginBottom: 12,
+  },
+  requirementFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  dueDate: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginLeft: 4,
+  },
+});
 
 export default RequirementsPage;

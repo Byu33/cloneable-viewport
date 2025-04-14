@@ -1,53 +1,117 @@
 import * as React from "react"
-import * as TabsPrimitive from "@radix-ui/react-tabs"
+import { View, Text, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from "react-native"
 
-import { cn } from "@/lib/utils"
+interface TabsProps {
+  defaultValue?: string
+  value?: string
+  onValueChange?: (value: string) => void
+  children: React.ReactNode
+  style?: ViewStyle
+}
 
-const Tabs = TabsPrimitive.Root
+interface TabsListProps {
+  children: React.ReactNode
+  style?: ViewStyle
+}
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
-      className
-    )}
-    {...props}
-  />
-))
-TabsList.displayName = TabsPrimitive.List.displayName
+interface TabsTriggerProps {
+  value: string
+  children: React.ReactNode
+  style?: ViewStyle
+  textStyle?: TextStyle
+}
 
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
-      className
-    )}
-    {...props}
-  />
-))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+interface TabsContentProps {
+  value: string
+  children: React.ReactNode
+  style?: ViewStyle
+}
 
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      className
-    )}
-    {...props}
-  />
-))
-TabsContent.displayName = TabsPrimitive.Content.displayName
+const TabsContext = React.createContext<{
+  value: string
+  onValueChange: (value: string) => void
+}>({
+  value: "",
+  onValueChange: () => {},
+})
+
+const Tabs = ({ defaultValue, value, onValueChange, children, style }: TabsProps) => {
+  const [internalValue, setInternalValue] = React.useState(defaultValue || "")
+  const currentValue = value || internalValue
+  const handleValueChange = (newValue: string) => {
+    if (!value) {
+      setInternalValue(newValue)
+    }
+    onValueChange?.(newValue)
+  }
+
+  return (
+    <TabsContext.Provider value={{ value: currentValue, onValueChange: handleValueChange }}>
+      <View style={[styles.tabs, style]}>{children}</View>
+    </TabsContext.Provider>
+  )
+}
+
+const TabsList = ({ children, style }: TabsListProps) => {
+  return <View style={[styles.tabsList, style]}>{children}</View>
+}
+
+const TabsTrigger = ({ value, children, style, textStyle }: TabsTriggerProps) => {
+  const { value: selectedValue, onValueChange } = React.useContext(TabsContext)
+  const isSelected = selectedValue === value
+
+  return (
+    <TouchableOpacity
+      style={[styles.tabsTrigger, isSelected && styles.tabsTriggerActive, style]}
+      onPress={() => onValueChange(value)}
+    >
+      <Text style={[styles.tabsTriggerText, isSelected && styles.tabsTriggerTextActive, textStyle]}>
+        {children}
+      </Text>
+    </TouchableOpacity>
+  )
+}
+
+const TabsContent = ({ value, children, style }: TabsContentProps) => {
+  const { value: selectedValue } = React.useContext(TabsContext)
+  const isSelected = selectedValue === value
+
+  if (!isSelected) return null
+
+  return <View style={[styles.tabsContent, style]}>{children}</View>
+}
+
+const styles = StyleSheet.create({
+  tabs: {
+    width: "100%",
+  },
+  tabsList: {
+    flexDirection: "row",
+    backgroundColor: "#F3F4F6",
+    borderRadius: 8,
+    padding: 4,
+  },
+  tabsTrigger: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    borderRadius: 6,
+  },
+  tabsTriggerActive: {
+    backgroundColor: "#FFFFFF",
+  },
+  tabsTriggerText: {
+    fontSize: 14,
+    color: "#6B7280",
+    fontWeight: "500",
+  },
+  tabsTriggerTextActive: {
+    color: "#000000",
+  },
+  tabsContent: {
+    marginTop: 8,
+  },
+})
 
 export { Tabs, TabsList, TabsTrigger, TabsContent }

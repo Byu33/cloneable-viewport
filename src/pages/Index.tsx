@@ -1,25 +1,28 @@
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
+import EventCard from '@/components/EventCard';
+import TabBar from '@/components/TabBar';
+import CalendarView from '@/components/CalendarView';
+import CheckInDialog from '@/components/CheckInDialog';
+import { NavigationProp } from '@/types/navigation';
 
-import React, { useState } from "react";
-import { Calendar, User, ChevronDown, ChevronUp, Bell } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import EventCard from "@/components/EventCard";
-import TabBar from "@/components/TabBar";
-import CalendarView from "@/components/CalendarView";
-import CheckInDialog from "@/components/CheckInDialog";
+type IconName = keyof typeof Feather.glyphMap;
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("Going");
+  const [activeTab, setActiveTab] = useState('Going');
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
-  const tabs = ["Going", "Explore", "Your Events"];
-  const navigate = useNavigate();
+  const tabs = ['Going', 'Explore', 'Your Events'];
+  const navigation = useNavigation<NavigationProp>();
 
   const handleTabClick = (tab: string) => {
-    if (tab === "Explore") {
-      navigate("/explore");
-    } else if (tab === "Your Events") {
-      navigate("/your-events");
+    if (tab === 'Explore') {
+      navigation.navigate('Explore' as keyof NavigationProp['navigate']);
+    } else if (tab === 'Your Events') {
+      navigation.navigate('YourEvents' as keyof NavigationProp['navigate']);
     } else {
       setActiveTab(tab);
     }
@@ -29,139 +32,150 @@ const Index = () => {
     setSelectedEvent(event);
     setIsCheckInOpen(true);
   };
-  
+
   const handleCalendarClick = () => {
-    navigate("/calendar");
+    navigation.navigate('Calendar' as keyof NavigationProp['navigate']);
   };
-  
+
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigation.navigate('Profile' as keyof NavigationProp['navigate']);
   };
-  
+
   const handleNotificationsClick = () => {
-    navigate("/notifications");
+    navigation.navigate('Notifications' as keyof NavigationProp['navigate']);
   };
 
   // Mock data for events
   const upcomingEvents = [
     {
       id: 1,
-      title: "Chapter Meeting",
-      time: "5:00-6:00PM",
-      location: "Everitt Labratory",
-      tag: "Required",
-      tagColor: "bg-purple-200 text-purple-700",
+      title: 'Chapter Meeting',
+      time: '5:00-6:00PM',
+      location: 'Everitt Labratory',
+      tag: 'Required',
+      tagColor: 'purple',
       date: new Date(),
-      status: "upcoming" as const
+      status: 'upcoming' as const,
     },
     {
       id: 2,
-      title: "Daily Standup Call",
-      time: "5:00-6:00PM",
-      location: "Everitt Labratory",
-      tag: "Sisterhood",
-      tagColor: "bg-purple-200 text-purple-700",
+      title: 'Daily Standup Call',
+      time: '5:00-6:00PM',
+      location: 'Everitt Labratory',
+      tag: 'Sisterhood',
+      tagColor: 'purple',
       attendees: 7,
       date: new Date(),
-      status: "upcoming" as const
-    }
+      status: 'upcoming' as const,
+    },
   ];
 
   const pastEvents = [
     {
       id: 3,
-      title: "Decorating Cakes",
-      time: "5:00-6:00PM",
-      location: "Everitt Labratory",
-      date: new Date("2024-02-16"),
-      tag: "Risk",
-      tagColor: "bg-purple-200 text-purple-700",
-      status: "past" as const
-    }
+      title: 'Decorating Cakes',
+      time: '5:00-6:00PM',
+      location: 'Everitt Labratory',
+      date: new Date('2024-02-16'),
+      tag: 'Risk',
+      tagColor: 'purple',
+      status: 'past' as const,
+    },
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 font-figtree">
+    <View style={styles.container}>
       {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4 bg-white">
-        <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
-        <div className="flex gap-4">
-          <button 
-            className="p-1 bg-white rounded-full"
-            onClick={handleNotificationsClick}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Events</Text>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={handleNotificationsClick}
           >
-            <Bell className="w-6 h-6" />
-          </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleCalendarClick}>
-            <Calendar className="w-6 h-6" />
-          </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleProfileClick}>
-            <User className="w-6 h-6" />
-          </button>
-        </div>
-      </header>
+            <Feather name="bell" size={24} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={handleCalendarClick}
+          >
+            <Feather name="calendar" size={24} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={handleProfileClick}
+          >
+            <Feather name="user" size={24} color="#000" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       {/* Tabs */}
-      <div className="flex border-b bg-white">
+      <View style={styles.tabs}>
         {tabs.map((tab) => (
-          <button
+          <TouchableOpacity
             key={tab}
-            className={`flex-1 py-3 text-center bg-white ${
-              activeTab === tab
-                ? "text-black font-medium border-b-2 border-black"
-                : "text-gray-500"
-            }`}
-            onClick={() => handleTabClick(tab)}
+            style={[
+              styles.tab,
+              activeTab === tab && styles.activeTab,
+            ]}
+            onPress={() => handleTabClick(tab)}
           >
-            {tab}
-          </button>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === tab && styles.activeTabText,
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
         ))}
-      </div>
+      </View>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto px-6 py-4 pb-24">
+      <ScrollView style={styles.content}>
         {/* Calendar Section */}
-        <div className="mb-6">
-          {/* Calendar */}
-          <CalendarView 
-            isExpanded={isCalendarExpanded} 
+        <View style={styles.section}>
+          <CalendarView
+            isExpanded={isCalendarExpanded}
             title="Upcoming Events"
             onToggleExpand={() => setIsCalendarExpanded(!isCalendarExpanded)}
           />
 
           {/* Event Cards */}
-          <div className="space-y-4 mt-4">
+          <View style={styles.eventCards}>
             {upcomingEvents.map((event) => (
-              <EventCard 
-                key={event.id} 
-                event={event} 
+              <EventCard
+                key={event.id}
+                event={event}
                 onCheckIn={() => handleCheckIn(event)}
                 source="going"
               />
             ))}
-          </div>
-        </div>
+          </View>
+        </View>
 
         {/* Past Events Section */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Past Events</h2>
-          <div className="space-y-4">
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Past Events</Text>
+          <View style={styles.eventCards}>
             {pastEvents.map((event) => (
-              <EventCard 
-                key={event.id} 
-                event={event} 
+              <EventCard
+                key={event.id}
+                event={event}
                 source="past"
               />
             ))}
-          </div>
-        </div>
-      </div>
+          </View>
+        </View>
+      </ScrollView>
 
       {/* Check In Dialog */}
       {selectedEvent && (
         <CheckInDialog
-          open={isCheckInOpen}
-          onOpenChange={setIsCheckInOpen}
+          visible={isCheckInOpen}
+          onClose={() => setIsCheckInOpen(false)}
           event={{
             title: selectedEvent.title,
             date: selectedEvent.date,
@@ -175,8 +189,74 @@ const Index = () => {
 
       {/* Bottom Tab Bar */}
       <TabBar />
-    </div>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    fontFamily: 'BigShoulders',
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  headerButton: {
+    padding: 4,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+  },
+  tabs: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#000000',
+  },
+  tabText: {
+    color: '#6B7280',
+    fontSize: 16,
+  },
+  activeTabText: {
+    color: '#000000',
+    fontWeight: '500',
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  eventCards: {
+    gap: 16,
+  },
+});
 
 export default Index;

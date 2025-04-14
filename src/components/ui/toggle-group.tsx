@@ -1,59 +1,106 @@
 import * as React from "react"
-import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group"
-import { type VariantProps } from "class-variance-authority"
+import { View, StyleSheet, ViewStyle } from "react-native"
 
-import { cn } from "@/lib/utils"
-import { toggleVariants } from "@/components/ui/toggle"
+export interface ToggleGroupProps {
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  variant?: "default" | "outline"
+  size?: "default" | "sm" | "lg"
+  style?: ViewStyle
+  children?: React.ReactNode
+}
 
-const ToggleGroupContext = React.createContext<
-  VariantProps<typeof toggleVariants>
->({
-  size: "default",
-  variant: "default",
+interface ToggleGroupContextValue {
+  value?: string
+  onValueChange?: (value: string) => void
+  variant?: "default" | "outline"
+  size?: "default" | "sm" | "lg"
+}
+
+const ToggleGroupContext = React.createContext<ToggleGroupContextValue>({})
+
+const ToggleGroup = React.forwardRef<View, ToggleGroupProps>(
+  ({ 
+    value, 
+    defaultValue, 
+    onValueChange, 
+    variant = "default", 
+    size = "default", 
+    style, 
+    children 
+  }, ref) => {
+    const [internalValue, setInternalValue] = React.useState(defaultValue)
+    const currentValue = value ?? internalValue
+
+    const handleValueChange = (newValue: string) => {
+      if (value === undefined) {
+        setInternalValue(newValue)
+      }
+      onValueChange?.(newValue)
+    }
+
+    return (
+      <ToggleGroupContext.Provider value={{ value: currentValue, onValueChange: handleValueChange, variant, size }}>
+        <View ref={ref} style={[styles.group, style]}>
+          {children}
+        </View>
+      </ToggleGroupContext.Provider>
+    )
+  }
+)
+
+ToggleGroup.displayName = "ToggleGroup"
+
+export interface ToggleGroupItemProps {
+  value: string
+  disabled?: boolean
+  style?: ViewStyle
+  children?: React.ReactNode
+}
+
+interface ToggleChildProps {
+  pressed?: boolean
+  onPressedChange?: (pressed: boolean) => void
+  disabled?: boolean
+  variant?: "default" | "outline"
+  size?: "default" | "sm" | "lg"
+}
+
+const ToggleGroupItem = React.forwardRef<View, ToggleGroupItemProps>(
+  ({ value, disabled, style, children }, ref) => {
+    const context = React.useContext(ToggleGroupContext)
+    const isSelected = context.value === value
+
+    return (
+      <View ref={ref} style={[styles.item, style]}>
+        {React.Children.map(children, child => {
+          if (React.isValidElement<ToggleChildProps>(child)) {
+            return React.cloneElement(child, {
+              pressed: isSelected,
+              onPressedChange: () => context.onValueChange?.(value),
+              disabled,
+              variant: context.variant,
+              size: context.size,
+            })
+          }
+          return child
+        })}
+      </View>
+    )
+  }
+)
+
+ToggleGroupItem.displayName = "ToggleGroupItem"
+
+const styles = StyleSheet.create({
+  group: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  item: {
+    marginRight: 1,
+  },
 })
-
-const ToggleGroup = React.forwardRef<
-  React.ElementRef<typeof ToggleGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
-    VariantProps<typeof toggleVariants>
->(({ className, variant, size, children, ...props }, ref) => (
-  <ToggleGroupPrimitive.Root
-    ref={ref}
-    className={cn("flex items-center justify-center gap-1", className)}
-    {...props}
-  >
-    <ToggleGroupContext.Provider value={{ variant, size }}>
-      {children}
-    </ToggleGroupContext.Provider>
-  </ToggleGroupPrimitive.Root>
-))
-
-ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName
-
-const ToggleGroupItem = React.forwardRef<
-  React.ElementRef<typeof ToggleGroupPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> &
-    VariantProps<typeof toggleVariants>
->(({ className, children, variant, size, ...props }, ref) => {
-  const context = React.useContext(ToggleGroupContext)
-
-  return (
-    <ToggleGroupPrimitive.Item
-      ref={ref}
-      className={cn(
-        toggleVariants({
-          variant: context.variant || variant,
-          size: context.size || size,
-        }),
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </ToggleGroupPrimitive.Item>
-  )
-})
-
-ToggleGroupItem.displayName = ToggleGroupPrimitive.Item.displayName
 
 export { ToggleGroup, ToggleGroupItem }

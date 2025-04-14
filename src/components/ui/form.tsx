@@ -1,6 +1,5 @@
 import * as React from "react"
-import * as LabelPrimitive from "@radix-ui/react-label"
-import { Slot } from "@radix-ui/react-slot"
+import { View, Text, StyleSheet, ViewStyle, TextStyle, StyleProp } from "react-native"
 import {
   Controller,
   ControllerProps,
@@ -10,7 +9,6 @@ import {
   useFormContext,
 } from "react-hook-form"
 
-import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 
 const Form = FormProvider
@@ -70,80 +68,98 @@ const FormItemContext = React.createContext<FormItemContextValue>(
   {} as FormItemContextValue
 )
 
-const FormItem = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+interface FormItemProps {
+  children: React.ReactNode
+  style?: StyleProp<ViewStyle>
+}
+
+const FormItem = React.forwardRef<View, FormItemProps>(({ style, children }, ref) => {
   const id = React.useId()
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <View ref={ref} style={[styles.formItem, style]}>
+        {children}
+      </View>
     </FormItemContext.Provider>
   )
 })
 FormItem.displayName = "FormItem"
 
-const FormLabel = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(({ className, ...props }, ref) => {
+interface FormLabelProps {
+  children: React.ReactNode
+  style?: StyleProp<TextStyle>
+}
+
+const FormLabel = React.forwardRef<Text, FormLabelProps>(({ style, children }, ref) => {
   const { error, formItemId } = useFormField()
+
+  const combinedStyle: StyleProp<TextStyle> = [
+    styles.label,
+    error && styles.labelError,
+    style,
+  ]
 
   return (
     <Label
       ref={ref}
-      className={cn(error && "text-destructive", className)}
-      htmlFor={formItemId}
-      {...props}
-    />
+      style={combinedStyle}
+      nativeID={formItemId}
+    >
+      {children}
+    </Label>
   )
 })
 FormLabel.displayName = "FormLabel"
 
-const FormControl = React.forwardRef<
-  React.ElementRef<typeof Slot>,
-  React.ComponentPropsWithoutRef<typeof Slot>
->(({ ...props }, ref) => {
+interface FormControlProps {
+  children: React.ReactNode
+  style?: StyleProp<ViewStyle>
+}
+
+const FormControl = React.forwardRef<View, FormControlProps>(({ style, children }, ref) => {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
   return (
-    <Slot
+    <View
       ref={ref}
-      id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
-      {...props}
-    />
+      nativeID={formItemId}
+      accessibilityLabel={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
+      accessibilityState={{ disabled: !!error }}
+      style={style}
+    >
+      {children}
+    </View>
   )
 })
 FormControl.displayName = "FormControl"
 
-const FormDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => {
+interface FormDescriptionProps {
+  children: React.ReactNode
+  style?: StyleProp<TextStyle>
+}
+
+const FormDescription = React.forwardRef<Text, FormDescriptionProps>(({ style, children }, ref) => {
   const { formDescriptionId } = useFormField()
 
   return (
-    <p
+    <Text
       ref={ref}
-      id={formDescriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-    />
+      nativeID={formDescriptionId}
+      style={[styles.description, style]}
+    >
+      {children}
+    </Text>
   )
 })
 FormDescription.displayName = "FormDescription"
 
-const FormMessage = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, children, ...props }, ref) => {
+interface FormMessageProps {
+  children?: React.ReactNode
+  style?: StyleProp<TextStyle>
+}
+
+const FormMessage = React.forwardRef<Text, FormMessageProps>(({ style, children }, ref) => {
   const { error, formMessageId } = useFormField()
   const body = error ? String(error?.message) : children
 
@@ -152,17 +168,41 @@ const FormMessage = React.forwardRef<
   }
 
   return (
-    <p
+    <Text
       ref={ref}
-      id={formMessageId}
-      className={cn("text-sm font-medium text-destructive", className)}
-      {...props}
+      nativeID={formMessageId}
+      style={[styles.message, style]}
     >
       {body}
-    </p>
+    </Text>
   )
 })
 FormMessage.displayName = "FormMessage"
+
+const styles = StyleSheet.create({
+  formItem: {
+    marginVertical: 8,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 4,
+  },
+  labelError: {
+    color: "#ef4444",
+  },
+  description: {
+    fontSize: 14,
+    color: "#6b7280",
+    marginTop: 4,
+  },
+  message: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#ef4444",
+    marginTop: 4,
+  },
+})
 
 export {
   useFormField,

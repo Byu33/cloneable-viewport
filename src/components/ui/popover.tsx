@@ -1,29 +1,176 @@
-import * as React from "react"
-import * as PopoverPrimitive from "@radix-ui/react-popover"
+import React, { useState } from "react"
+import {
+  View,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+  ViewStyle,
+  Animated,
+  Pressable,
+  Dimensions,
+  LayoutRectangle,
+} from "react-native"
 
-import { cn } from "@/lib/utils"
+interface PopoverProps {
+  children: React.ReactNode
+  style?: ViewStyle
+}
 
-const Popover = PopoverPrimitive.Root
+interface PopoverTriggerProps {
+  children: React.ReactNode
+  onPress?: () => void
+  style?: ViewStyle
+}
 
-const PopoverTrigger = PopoverPrimitive.Trigger
+interface PopoverContentProps {
+  children: React.ReactNode
+  visible: boolean
+  onClose: () => void
+  triggerRef: React.RefObject<View>
+  style?: ViewStyle
+}
 
-const PopoverContent = React.forwardRef<
-  React.ElementRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
-  <PopoverPrimitive.Portal>
-    <PopoverPrimitive.Content
-      ref={ref}
-      align={align}
-      sideOffset={sideOffset}
-      className={cn(
-        "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        className
-      )}
-      {...props}
-    />
-  </PopoverPrimitive.Portal>
-))
-PopoverContent.displayName = PopoverPrimitive.Content.displayName
+const Popover = React.forwardRef<View, PopoverProps>(
+  ({ children, style }, ref) => {
+    return (
+      <View ref={ref} style={[styles.popover, style]}>
+        {children}
+      </View>
+    )
+  }
+)
+Popover.displayName = "Popover"
+
+const PopoverTrigger = React.forwardRef<TouchableOpacity, PopoverTriggerProps>(
+  ({ children, onPress, style }, ref) => {
+    return (
+      <TouchableOpacity
+        ref={ref}
+        onPress={onPress}
+        style={[styles.trigger, style]}
+      >
+        {children}
+      </TouchableOpacity>
+    )
+  }
+)
+PopoverTrigger.displayName = "PopoverTrigger"
+
+const PopoverContent = React.forwardRef<View, PopoverContentProps>(
+  ({ children, visible, onClose, triggerRef, style }, ref) => {
+    const [fadeAnim] = useState(new Animated.Value(0))
+    const [position, setPosition] = useState({ top: 0, left: 0 })
+    const [contentSize, setContentSize] = useState<LayoutRectangle | null>(null)
+
+    React.useEffect(() => {
+      if (visible) {
+        updatePosition()
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }).start()
+      } else {
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }).start()
+      }
+    }, [visible])
+
+    const updatePosition = () => {
+      if (triggerRef.current && contentSize) {
+        triggerRef.current.measureInWindow((x, y, width, height) => {
+          const windowWidth = Dimensions.get("window").width
+          const windowHeight = Dimensions.get("window").height
+
+          let top = y + height + 8
+          let left = x
+
+          // Check if popover would go off screen to the right
+          if (left + contentSize.width > windowWidth) {
+            left = windowWidth - contentSize.width - 8
+          }
+
+          // Check if popover would go off screen at the bottom
+          if (top + contentSize.height > windowHeight) {
+            top = y - contentSize.height - 8
+          }
+
+          setPosition({ top, left })
+        })
+      }
+    }
+
+    const handleLayout = (event: any) => {
+      setContentSize(event.nativeEvent.layout)
+    }
+
+    return (
+      <Modal
+        visible={visible}
+        transparent
+        animationType="none"
+        onRequestClose={onClose}
+      >
+        <Pressable style={styles.modalOverlay} onPress={onClose}>
+          <Animated.View
+            ref={ref}
+            onLayout={handleLayout}
+            style={[
+              styles.content,
+              {
+                top: position.top,
+                left: position.left,
+                opacity: fadeAnim,
+                transform: [
+                  {
+                    scale: fadeAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.95, 1],
+                    }),
+                  },
+                ],
+              },
+              style,
+            ]}
+          >
+            {children}
+          </Animated.View>
+        </Pressable>
+      </Modal>
+    )
+  }
+)
+PopoverContent.displayName = "PopoverContent"
+
+const styles = StyleSheet.create({
+  popover: {
+    position: "relative",
+  },
+  trigger: {
+    backgroundColor: "transparent",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "transparent",
+  },
+  content: {
+    position: "absolute",
+    minWidth: 180,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 8,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+})
 
 export { Popover, PopoverTrigger, PopoverContent }

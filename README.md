@@ -1,69 +1,96 @@
-# Welcome to your Lovable project
+# Cloneable Viewport - React Native
 
-## Project info
+A React Native mobile application for managing events and tasks.
 
-**URL**: https://lovable.dev/projects/c73445d4-3724-4e32-8e47-9975fb745b7d
+## Prerequisites
 
-## How can I edit this code?
+- Node.js (v14 or later)
+- npm or yarn
+- Expo CLI (`npm install -g expo-cli`)
+- iOS Simulator (for Mac) or Android Studio (for Android development)
 
-There are several ways of editing your application.
+## Installation
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/c73445d4-3724-4e32-8e47-9975fb745b7d) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/cloneable-viewport.git
+cd cloneable-viewport
 ```
 
-**Edit a file directly in GitHub**
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Running the App
 
-**Use GitHub Codespaces**
+1. Start the development server:
+```bash
+npm start
+# or
+yarn start
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. Run on iOS:
+```bash
+npm run ios
+# or
+yarn ios
+```
 
-## What technologies are used for this project?
+3. Run on Android:
+```bash
+npm run android
+# or
+yarn android
+```
 
-This project is built with .
+4. Run on Web:
+```bash
+npm run web
+# or
+yarn web
+```
 
-- Vite
+## Project Structure
+
+```
+src/
+  ├── components/     # Reusable UI components
+  ├── pages/         # Screen components
+  ├── hooks/         # Custom React hooks
+  ├── utils/         # Utility functions
+  └── App.tsx        # Main application component
+```
+
+## Features
+
+- Event management
+- Calendar view
+- Task tracking
+- User profiles
+- Check-in system
+- Notifications
+
+## Technologies Used
+
+- React Native
+- Expo
 - TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- React Navigation
+- React Query
+- date-fns
 
-## How can I deploy this project?
+## Contributing
 
-Simply open [Lovable](https://lovable.dev/projects/c73445d4-3724-4e32-8e47-9975fb745b7d) and click on Share -> Publish.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## I want to use a custom domain - is that possible?
+## License
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+This project is licensed under the MIT License - see the LICENSE file for details.

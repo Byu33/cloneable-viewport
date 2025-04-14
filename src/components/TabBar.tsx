@@ -1,78 +1,49 @@
+import React from 'react';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
+import { NavigationProp } from '@/types/navigation';
 
-import React from "react";
-import { Home, Calendar, ClipboardList, MessageSquare, Menu } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+type IconName = keyof typeof Feather.glyphMap;
 
 const TabBar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigation = useNavigation<NavigationProp>();
 
-  const isHomeActive = location.pathname === "/home";
-  const isEventsActive = location.pathname === "/" || 
-                          location.pathname === "/explore" || 
-                          location.pathname === "/your-events";
-  const isToDoActive = location.pathname === "/todo";
-  const isChatsActive = location.pathname === "/chat";
-  const isOtherActive = location.pathname === "/other";
-
-  const handleNavigation = (path: string) => {
-    navigate(path);
-  };
+  const tabs = [
+    { name: 'Home', icon: 'home' as IconName },
+    { name: 'Calendar', icon: 'calendar' as IconName },
+    { name: 'Tasks', icon: 'check-square' as IconName },
+    { name: 'Profile', icon: 'user' as IconName },
+  ];
 
   return (
-    <div className="flex justify-around items-center py-3 px-6 border-t bg-white font-figtree fixed bottom-0 left-0 right-0 z-20">
-      <TabItem 
-        icon={<Home className="w-5 h-5" />} 
-        label="Home" 
-        active={isHomeActive}
-        onClick={() => handleNavigation("/home")} 
-      />
-      <TabItem 
-        icon={<Calendar className="w-5 h-5" />} 
-        label="Events" 
-        active={isEventsActive}
-        onClick={() => handleNavigation("/")} 
-      />
-      <TabItem 
-        icon={<ClipboardList className="w-5 h-5" />} 
-        label="To Do" 
-        active={isToDoActive}
-        onClick={() => handleNavigation("/todo")} 
-      />
-      <TabItem 
-        icon={<MessageSquare className="w-5 h-5" />} 
-        label="Chat" 
-        active={isChatsActive}
-        onClick={() => handleNavigation("/chat")} 
-      />
-      <TabItem 
-        icon={<Menu className="w-5 h-5" />} 
-        label="Other" 
-        active={isOtherActive}
-        onClick={() => handleNavigation("/other")} 
-      />
-    </div>
+    <View style={styles.container}>
+      {tabs.map((tab) => (
+        <TouchableOpacity
+          key={tab.name}
+          style={styles.tab}
+          onPress={() => navigation.navigate(tab.name as keyof NavigationProp['navigate'])}
+        >
+          <Feather name={tab.icon} size={24} color="#000000" />
+        </TouchableOpacity>
+      ))}
+    </View>
   );
 };
 
-interface TabItemProps {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-  onClick: () => void;
-}
-
-const TabItem: React.FC<TabItemProps> = ({ icon, label, active, onClick }) => {
-  return (
-    <button className="flex flex-col items-center text-xs" onClick={onClick}>
-      <div className={`mb-1 ${active ? "text-purple-900" : "text-gray-500"}`}>
-        {icon}
-      </div>
-      <span className={active ? "text-purple-900" : "text-gray-500"}>
-        {label}
-      </span>
-    </button>
-  );
-};
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingBottom: 20, // Add padding for safe area
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+});
 
 export default TabBar;

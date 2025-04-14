@@ -1,10 +1,11 @@
-
 import React from "react";
-import { MapPin } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
+import { NavigationProp } from "@/types/navigation";
 import { Event } from "@/utils/eventStorage";
+
+type IconName = keyof typeof Feather.glyphMap;
 
 interface YourEventCardProps {
   event: Event;
@@ -12,7 +13,7 @@ interface YourEventCardProps {
 }
 
 const YourEventCard = ({ event, index }: YourEventCardProps) => {
-  const navigate = useNavigate();
+  const navigation = useNavigation<NavigationProp>();
 
   const formatDate = (date: Date) => {
     const month = date.toLocaleString('default', { month: 'short' });
@@ -21,122 +22,115 @@ const YourEventCard = ({ event, index }: YourEventCardProps) => {
   };
 
   const handleEventClick = (eventId: number) => {
-    navigate(`/event/${eventId}?source=your-events`);
+    navigation.navigate("EventDetails", { eventId: eventId.toString(), source: "your-events" });
   };
 
-  const handleAttendance = (e: React.MouseEvent, eventId: number) => {
-    e.stopPropagation();
-    navigate(`/event-attendance/${eventId}`);
+  const handleAttendance = (eventId: number) => {
+    navigation.navigate("EventAttendance", { eventId: eventId.toString() });
   };
 
-  const handleEditEvent = (e: React.MouseEvent, eventId: number) => {
-    e.stopPropagation();
-    navigate(`/edit-event/${eventId}`);
+  const handleEditEvent = (eventId: number) => {
+    navigation.navigate("EditEvent", { eventId: eventId.toString() });
   };
 
   return (
-    <div 
-      className="bg-white rounded-lg p-4 shadow-sm relative"
-      onClick={() => handleEventClick(event.id)}
+    <TouchableOpacity 
+      style={styles.card}
+      onPress={() => handleEventClick(event.id)}
     >
-      <div className="flex justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-[#1A1F2C]">{event.title}</h3>
-          <p className="text-gray-600">
-            <span className="font-bold">{formatDate(event.date)}</span> {event.time}
-          </p>
-          <p className="text-gray-600 flex items-center">
-            <MapPin className="h-4 w-4 mr-1" />
-            {event.location}
-          </p>
-          
-          <div className="flex flex-col mt-3">
-            {index === 1 ? (
-              <>
-                <div className="flex -space-x-2">
-                  {[...Array(Math.min(5, event.attendees || 0))].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
-                    >
-                      <Avatar className="w-full h-full">
-                        <AvatarImage 
-                          src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
-                          alt="Attendee"
-                        />
-                        <AvatarFallback>U{i+1}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  ))}
-                </div>
-                <span className="text-sm text-[#1A1F2C] mt-1">
-                  {event.attendees || 0} people have signed up
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="text-sm text-[#1A1F2C] mb-1">
-                  {event.attendees || 0} people have signed up
-                </span>
-                <div className="flex -space-x-2">
-                  {[...Array(Math.min(5, event.attendees || 0))].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white overflow-hidden"
-                    >
-                      <Avatar className="w-full h-full">
-                        <AvatarImage 
-                          src={`https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg`} 
-                          alt="Attendee"
-                        />
-                        <AvatarFallback>U{i+1}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-          
-          {index === 0 ? (
-            <div className="flex gap-2 mt-3">
-              <Button 
-                className="bg-purple-900 hover:bg-purple-800 text-white text-sm px-4 py-1 rounded-md"
-                onClick={(e) => handleAttendance(e, event.id)}
-              >
-                Attendance
-              </Button>
-              <Button 
-                variant="ghost" 
-                className="text-purple-700 text-sm"
-                onClick={(e) => handleEditEvent(e, event.id)}
-              >
-                Edit Event
-              </Button>
-            </div>
-          ) : (
-            <div className="mt-3">
-              <Button 
-                variant="ghost" 
-                className="text-purple-700 text-sm px-0 py-2"
-                onClick={(e) => handleEditEvent(e, event.id)}
-              >
-                Edit Event
-              </Button>
-            </div>
-          )}
-        </div>
-        
-        <div className="flex flex-col items-end">
-          {event.tag && (
-            <span className={`${event.tagColor || "bg-purple-200 text-purple-700"} text-xs px-3 py-1 rounded-full font-bold text-[13px]`}>
-              {event.tag}
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.title}>{event.title}</Text>
+          <Text style={styles.dateTime}>
+            <Text style={styles.date}>{formatDate(event.date)}</Text> {event.time}
+          </Text>
+          <View style={styles.locationContainer}>
+            <Feather name="map-pin" size={16} color="#6B7280" />
+            <Text style={styles.location}>{event.location}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.footer}>
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={() => handleAttendance(event.id)}
+        >
+          <Feather name="users" size={16} color="#7C3AED" />
+          <Text style={styles.buttonText}>Attendance</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={() => handleEditEvent(event.id)}
+        >
+          <Feather name="edit-2" size={16} color="#7C3AED" />
+          <Text style={styles.buttonText}>Edit</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  header: {
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#1A1F2C",
+    marginBottom: 4,
+  },
+  dateTime: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginBottom: 4,
+  },
+  date: {
+    fontWeight: "600",
+  },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  location: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginLeft: 4,
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 12,
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 8,
+    borderRadius: 6,
+    backgroundColor: "#F3F4F6",
+  },
+  buttonText: {
+    marginLeft: 4,
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#7C3AED",
+  },
+});
 
 export default YourEventCard;

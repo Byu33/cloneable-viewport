@@ -1,25 +1,22 @@
-
 import React from "react";
-import { X, MapPin } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { saveEvent } from "@/utils/eventStorage";
+import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet, Alert } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
+import { NavigationProp } from "@/types/navigation";
 
 const EventPreviewPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigation = useNavigation<NavigationProp>();
+  const route = useRoute();
   
   // Use hardcoded event data when no state is provided
-  const event = location.state?.event || {
+  const event = route.params?.event || {
     title: "Daily Standup Call",
     date: new Date("2024-02-16"),
     time: "5:00-6:00PM",
     location: "Everitt Laboratory",
     address: "1016 E Green St, Champaign IL",
     tag: "Sisterhood",
-    tagColor: "bg-purple-200 text-purple-700",
+    tagColor: "#7C3AED",
     description: "Lorem Ipsum Blah por qua a fish jumped over the ocean and swam back to shore. Please join our event for a day of fun and games.",
     hosts: [
       { id: 1, name: "Aparna Patel", avatar: "https://randomuser.me/api/portraits/women/32.jpg" },
@@ -33,83 +30,196 @@ const EventPreviewPage = () => {
   };
 
   const handlePublish = () => {
-    // Save the event to localStorage
-    saveEvent(event);
+    // Save the event to storage
+    // saveEvent(event);
     
-    toast.success("Your event has been created successfully!", {
-      description: "Now others can view and register for your event."
-    });
-    navigate("/your-events");
+    Alert.alert(
+      "Success",
+      "Your event has been created successfully! Now others can view and register for your event.",
+      [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("YourEvents")
+        }
+      ]
+    );
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <header className="border-b border-gray-200 p-4 bg-gray-50 flex justify-end">
-        <button onClick={() => navigate("/your-events")}>
-          <X className="h-6 w-6" />
-        </button>
-      </header>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate("YourEvents")}
+          style={styles.closeButton}
+        >
+          <Icon name="x" size={24} color="#000" />
+        </TouchableOpacity>
+      </View>
 
-      <div className="flex-1 px-6 py-8 overflow-auto pb-24">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
-          <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
+      <ScrollView style={styles.content}>
+        <View style={styles.card}>
+          <Text style={styles.title}>{event.title}</Text>
           
-          {event.tag && (
-            <span className={`${event.tagColor} text-xs px-4 py-2 rounded-full font-medium inline-block mb-4`}>
+          <View style={styles.tagContainer}>
+            <Text style={[styles.tag, { color: event.tagColor }]}>
               {event.tag}
-            </span>
-          )}
-          
-          <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-2">
-            <div className="mr-3 mt-1">
-              <MapPin className="h-6 w-6 text-gray-500" />
-            </div>
-            <div>
-              <h3 className="font-medium text-gray-800">Address</h3>
-              <p className="text-gray-600">{event.address}</p>
-            </div>
-          </div>
-        </div>
+            </Text>
+          </View>
 
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-2">Description</h2>
-          <p className="text-gray-700">{event.description}</p>
-        </div>
+          <View style={styles.infoSection}>
+            <View style={styles.infoRow}>
+              <Icon name="calendar" size={20} color="#6B7280" />
+              <Text style={styles.infoText}>
+                {formatDate(event.date)}
+              </Text>
+            </View>
 
-        <div className="mt-6 mb-8">
-          <h2 className="text-xl font-semibold mb-3">Event Hosts</h2>
-          <div className="space-y-3">
-            {event.hosts.map(host => (
-              <div key={host.id} className="flex items-center">
-                <Avatar className="h-8 w-8 mr-3">
-                  <AvatarImage src={host.avatar} alt={host.name} />
-                  <AvatarFallback>{host.name.substring(0, 2)}</AvatarFallback>
-                </Avatar>
-                <span className="text-gray-800">{host.name}</span>
-              </div>
+            <View style={styles.infoRow}>
+              <Icon name="clock" size={20} color="#6B7280" />
+              <Text style={styles.infoText}>{event.time}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Icon name="map-pin" size={20} color="#6B7280" />
+              <View>
+                <Text style={styles.infoText}>{event.location}</Text>
+                <Text style={styles.addressText}>{event.address}</Text>
+              </View>
+            </View>
+          </View>
+
+          <Text style={styles.sectionTitle}>Description</Text>
+          <Text style={styles.description}>{event.description}</Text>
+
+          <Text style={styles.sectionTitle}>Hosts</Text>
+          <View style={styles.hostsContainer}>
+            {event.hosts.map((host) => (
+              <View key={host.id} style={styles.hostItem}>
+                <Image 
+                  source={{ uri: host.avatar }} 
+                  style={styles.hostAvatar}
+                />
+                <Text style={styles.hostName}>{host.name}</Text>
+              </View>
             ))}
-          </div>
-        </div>
-      </div>
+          </View>
+        </View>
 
-      <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white border-t border-gray-200 flex justify-between">
-        <Button 
-          variant="outline" 
-          className="px-6"
-          onClick={() => navigate("/create-event/logistics")}
+        <TouchableOpacity 
+          style={styles.publishButton}
+          onPress={handlePublish}
         >
-          Edit
-        </Button>
-        <Button 
-          className="bg-purple-700 hover:bg-purple-800 text-white px-6"
-          onClick={handlePublish}
-        >
-          Publish
-        </Button>
-      </div>
-    </div>
+          <Text style={styles.publishButtonText}>Publish Event</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    padding: 16,
+    backgroundColor: "#F9FAFB",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  closeButton: {
+    padding: 4,
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 12,
+  },
+  tagContainer: {
+    marginBottom: 16,
+  },
+  tag: {
+    fontSize: 14,
+    fontWeight: "500",
+    backgroundColor: "#F3E8FF",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+    alignSelf: "flex-start",
+  },
+  infoSection: {
+    marginBottom: 24,
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  infoText: {
+    fontSize: 16,
+    marginLeft: 12,
+    color: "#374151",
+  },
+  addressText: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginLeft: 12,
+    marginTop: 2,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+    color: "#374151",
+  },
+  description: {
+    fontSize: 16,
+    color: "#4B5563",
+    marginBottom: 24,
+    lineHeight: 24,
+  },
+  hostsContainer: {
+    marginBottom: 24,
+  },
+  hostItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  hostAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  hostName: {
+    fontSize: 16,
+    color: "#374151",
+  },
+  publishButton: {
+    backgroundColor: "#7C3AED",
+    borderRadius: 8,
+    padding: 16,
+    alignItems: "center",
+    marginBottom: 32,
+  },
+  publishButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});
 
 export default EventPreviewPage;

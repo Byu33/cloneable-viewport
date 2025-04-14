@@ -1,19 +1,21 @@
-
 import React from "react";
-import { ArrowLeft, Share2, User, MapPin, X, MessageSquare, Edit } from "lucide-react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import TabBar from "@/components/TabBar";
-import { toast } from "@/hooks/use-toast";
+import { View, Text, TouchableOpacity, ScrollView, Image, StyleSheet, Alert } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
+import { NavigationProp } from "@/types/navigation";
+
+type EventDetailsParams = {
+  source?: string;
+  eventId?: string;
+};
 
 const EventDetails = () => {
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const location = useLocation();
+  const navigation = useNavigation<NavigationProp>();
+  const route = useRoute();
+  const params = route.params as EventDetailsParams;
   
-  const isAlreadyAttending = location.search.includes("source=going");
-  const isYourEvent = location.search.includes("source=your-events");
+  const isAlreadyAttending = params?.source === "going";
+  const isYourEvent = params?.source === "your-events";
   
   const event = {
     id: 1,
@@ -23,7 +25,7 @@ const EventDetails = () => {
     location: "Everitt Laboratory",
     address: "1016 E Green St, Champaign IL",
     tag: "Sisterhood",
-    tagColor: "bg-purple-200 text-purple-700",
+    tagColor: "#7C3AED",
     description: "Lorem Ipsum Blah por qua a fish jumped over the ocean and swam back to shore. Please join our event for a day of fun and games.",
     hosts: [
       { id: 1, name: "Aparna Patel", avatar: "https://randomuser.me/api/portraits/women/32.jpg" },
@@ -43,179 +45,415 @@ const EventDetails = () => {
   };
 
   const handleCancelAttendance = () => {
-    toast({
-      title: "Attendance Cancelled",
-      description: "You are no longer attending this event",
-    });
-    navigate('/');
+    Alert.alert(
+      "Attendance Cancelled",
+      "You are no longer attending this event",
+      [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Home")
+        }
+      ]
+    );
   };
 
   const handleSignUp = () => {
-    navigate(`/signup/${id}`);
+    Alert.alert(
+      "Success",
+      "You have successfully signed up for this event!",
+      [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Home")
+        }
+      ]
+    );
   };
-  
+
   const handleViewAttendees = () => {
-    navigate(`/event/${id}/attendees`);
+    navigation.navigate("EventAttendees", { eventId: event.id.toString() });
   };
-  
+
   const handleMessageAttendees = () => {
-    // Handle messaging attendees
-    console.log("Message attendees about event");
+    // Logic to message attendees would go here
+    console.log("Messaging attendees");
   };
-  
+
   const handleEditEvent = () => {
-    navigate(`/edit-event/${id}`);
+    navigation.navigate("EditEvent", { eventId: event.id.toString() });
   };
-  
+
   const handleCancelEvent = () => {
-    // Handle cancelling the event
-    toast({
-      title: "Event Cancelled",
-      description: "The event has been cancelled",
-    });
-    navigate('/your-events');
+    Alert.alert(
+      "Cancel Event",
+      "Are you sure you want to cancel this event? This action cannot be undone.",
+      [
+        {
+          text: "No",
+          style: "cancel"
+        },
+        {
+          text: "Yes, Cancel Event",
+          style: "destructive",
+          onPress: () => {
+            // Logic to cancel event would go here
+            console.log("Cancelling event");
+            navigation.navigate("YourEvents");
+          }
+        }
+      ]
+    );
+  };
+
+  const handleShare = () => {
+    // Logic to share event would go here
+    console.log("Sharing event");
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <header className="flex justify-between items-center px-4 py-3 bg-gray-100">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-1 rounded-full"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </button>
-        <button className="p-1 rounded-full">
-          <Share2 className="w-6 h-6" />
-        </button>
-      </header>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Event Details</Text>
+        <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
+          <Icon name="share-2" size={24} color="#7C3AED" />
+        </TouchableOpacity>
+      </View>
 
-      <div className="flex-grow overflow-auto pb-24">
-        <div className="px-6 py-8">
-          <div className="flex justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-gray-800 mb-1">{event.title}</h1>
-              <p className="text-gray-700 mb-2">{formatDate(event.date)} {event.time}</p>
-            </div>
-            
-            {event.tag && (
-              <span className={`${event.tagColor || "bg-purple-200 text-purple-700"} text-xs px-3 py-1 rounded-full font-medium inline-block`}>
-                {event.tag}
-              </span>
-            )}
-          </div>
+      <ScrollView style={styles.content}>
+        <View style={styles.card}>
+          <Text style={styles.title}>{event.title}</Text>
           
-          <div className="border border-gray-200 rounded-lg p-4 flex items-start mt-4">
-            <div className="mr-3 mt-1">
-              <MapPin className="h-6 w-6 text-gray-500" />
-            </div>
-            <div>
-              <h3 className="font-medium text-gray-800">Address</h3>
-              <p className="text-gray-600">{event.address}</p>
-            </div>
-          </div>
-        </div>
+          <View style={styles.tagContainer}>
+            <Text style={[styles.tag, { color: event.tagColor }]}>
+              {event.tag}
+            </Text>
+          </View>
 
-        <div className="px-6 mb-6">
-          <h2 className="text-xl font-semibold mb-2">Description</h2>
-          <p className="text-gray-700">{event.description}</p>
-        </div>
+          <View style={styles.infoSection}>
+            <View style={styles.infoRow}>
+              <Icon name="calendar" size={20} color="#6B7280" />
+              <Text style={styles.infoText}>
+                {formatDate(event.date)}
+              </Text>
+            </View>
 
-        <div className="px-6 mb-6">
-          <h2 className="text-xl font-semibold mb-3">Event Hosts</h2>
-          <div className="space-y-3">
-            {event.hosts.map(host => (
-              <div key={host.id} className="flex items-center">
-                <Avatar className="h-8 w-8 mr-3">
-                  <AvatarImage src={host.avatar} alt={host.name} />
-                  <AvatarFallback>{host.name.substring(0, 2)}</AvatarFallback>
-                </Avatar>
-                <span className="text-gray-800">{host.name}</span>
-              </div>
+            <View style={styles.infoRow}>
+              <Icon name="clock" size={20} color="#6B7280" />
+              <Text style={styles.infoText}>{event.time}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Icon name="map-pin" size={20} color="#6B7280" />
+              <View>
+                <Text style={styles.infoText}>{event.location}</Text>
+                <Text style={styles.addressText}>{event.address}</Text>
+              </View>
+            </View>
+          </View>
+
+          <Text style={styles.sectionTitle}>Description</Text>
+          <Text style={styles.description}>{event.description}</Text>
+
+          <Text style={styles.sectionTitle}>Hosts</Text>
+          <View style={styles.hostsContainer}>
+            {event.hosts.map((host) => (
+              <View key={host.id} style={styles.hostItem}>
+                <Image 
+                  source={{ uri: host.avatar }} 
+                  style={styles.hostAvatar}
+                />
+                <Text style={styles.hostName}>{host.name}</Text>
+              </View>
             ))}
-          </div>
-        </div>
+          </View>
 
-        <div className="px-6 mb-6">
-          <div className="bg-white rounded-lg p-5">
-            <h2 className="text-xl font-semibold mb-3">Attendees</h2>
-            <button 
-              className="text-sm text-gray-600 mb-3 flex items-center"
-              onClick={handleViewAttendees}
-            >
-              <span>{event.attendees.length} people are attending</span>
-            </button>
-            
-            <div className="space-y-3">
-              {event.attendees.map(attendee => (
-                <div key={attendee.id} className="flex items-center">
-                  <Avatar className="h-8 w-8 mr-3">
-                    <AvatarImage src={attendee.avatar} alt={attendee.name} />
-                    <AvatarFallback>{attendee.name.substring(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-gray-800">{attendee.name}</span>
-                </div>
-              ))}
-            </div>
-            
-            <Button 
-              className="w-full bg-purple-700 hover:bg-purple-800 mt-4"
-              onClick={handleMessageAttendees}
-            >
-              <MessageSquare className="h-5 w-5 mr-2" />
-              Message attendees about event
-            </Button>
-          </div>
-        </div>
-      </div>
+          <Text style={styles.sectionTitle}>Attendees</Text>
+          <View style={styles.attendeesContainer}>
+            {event.attendees.map((attendee) => (
+              <View key={attendee.id} style={styles.attendeeItem}>
+                <Image 
+                  source={{ uri: attendee.avatar }} 
+                  style={styles.attendeeAvatar}
+                />
+                <Text style={styles.attendeeName}>{attendee.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
 
-      <div className="fixed bottom-0 left-0 right-0 px-6 py-4 bg-white shadow-lg">
-        {isYourEvent ? (
-          <div className="space-y-2">
-            <Button 
-              variant="outline" 
-              className="w-full border-purple-300 text-purple-700 hover:bg-purple-50 hover:text-purple-800 py-6 text-base"
-              onClick={handleEditEvent}
+        <View style={styles.actionButtons}>
+          {isYourEvent ? (
+            <>
+              <TouchableOpacity 
+                style={styles.editButton}
+                onPress={handleEditEvent}
+              >
+                <Icon name="edit" size={20} color="#FFFFFF" />
+                <Text style={styles.editButtonText}>Edit Event</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={handleCancelEvent}
+              >
+                <Icon name="x" size={20} color="#FFFFFF" />
+                <Text style={styles.cancelButtonText}>Cancel Event</Text>
+              </TouchableOpacity>
+            </>
+          ) : isAlreadyAttending ? (
+            <TouchableOpacity 
+              style={styles.cancelAttendanceButton}
+              onPress={handleCancelAttendance}
             >
-              <Edit className="w-5 h-5 mr-2" />
-              Edit Event
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 py-6 text-base"
-              onClick={handleCancelEvent}
+              <Icon name="x" size={20} color="#FFFFFF" />
+              <Text style={styles.cancelAttendanceButtonText}>Cancel Attendance</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity 
+              style={styles.signUpButton}
+              onPress={handleSignUp}
             >
-              <X className="w-5 h-5 mr-2" />
-              Cancel Event
-            </Button>
-          </div>
-        ) : isAlreadyAttending ? (
-          <div className="space-y-2">
-            <p className="text-center text-purple-600 font-medium text-base">
-              <span className="font-bold">You are attending this event</span>
-            </p>
-            <Button 
-              variant="outline" 
-              className="w-full border-2 border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-600 py-6 text-base"
-              onClick={handleCancelAttendance}
-            >
-              <X className="w-5 h-5 mr-2 text-gray-400" />
-              Cancel Attendance
-            </Button>
-          </div>
-        ) : (
-          <Button 
-            className="w-full bg-purple-700 hover:bg-purple-800 text-white py-6"
-            onClick={handleSignUp}
+              <Icon name="check" size={20} color="#FFFFFF" />
+              <Text style={styles.signUpButtonText}>Sign Up</Text>
+            </TouchableOpacity>
+          )}
+          
+          <TouchableOpacity 
+            style={styles.viewAttendeesButton}
+            onPress={handleViewAttendees}
           >
-            Sign Up
-          </Button>
-        )}
-      </div>
-
-      <TabBar />
-    </div>
+            <Icon name="users" size={20} color="#7C3AED" />
+            <Text style={styles.viewAttendeesButtonText}>View Attendees</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.messageButton}
+            onPress={handleMessageAttendees}
+          >
+            <Icon name="message-square" size={20} color="#7C3AED" />
+            <Text style={styles.messageButtonText}>Message Attendees</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#FFFFFF",
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+  },
+  shareButton: {
+    padding: 4,
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 12,
+  },
+  tagContainer: {
+    marginBottom: 16,
+  },
+  tag: {
+    fontSize: 14,
+    fontWeight: "500",
+    backgroundColor: "#F3E8FF",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+    alignSelf: "flex-start",
+  },
+  infoSection: {
+    marginBottom: 24,
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  infoText: {
+    fontSize: 16,
+    marginLeft: 12,
+    color: "#374151",
+  },
+  addressText: {
+    fontSize: 14,
+    color: "#6B7280",
+    marginLeft: 12,
+    marginTop: 2,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+    color: "#374151",
+  },
+  description: {
+    fontSize: 16,
+    color: "#4B5563",
+    marginBottom: 24,
+    lineHeight: 24,
+  },
+  hostsContainer: {
+    marginBottom: 24,
+  },
+  hostItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  hostAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  hostName: {
+    fontSize: 16,
+    color: "#374151",
+  },
+  attendeesContainer: {
+    marginBottom: 24,
+  },
+  attendeeItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  attendeeAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  attendeeName: {
+    fontSize: 16,
+    color: "#374151",
+  },
+  actionButtons: {
+    marginBottom: 32,
+  },
+  editButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#7C3AED",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+  },
+  editButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  cancelButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#EF4444",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+  },
+  cancelButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  cancelAttendanceButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#EF4444",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+  },
+  cancelAttendanceButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  signUpButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#7C3AED",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+  },
+  signUpButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  viewAttendeesButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#7C3AED",
+  },
+  viewAttendeesButtonText: {
+    color: "#7C3AED",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  messageButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#7C3AED",
+  },
+  messageButtonText: {
+    color: "#7C3AED",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+});
 
 export default EventDetails;
