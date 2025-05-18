@@ -20,7 +20,7 @@ const TabBar = () => {
   };
 
   return (
-    <div className="flex justify-around items-center py-3 px-6 border-t bg-white font-figtree fixed bottom-0 left-0 right-0 z-20 shadow-sm">
+    <div className="flex justify-around items-center py-3 px-6 border-t bg-white font-figtree fixed bottom-0 left-0 right-0 z-20">
       <TabItem 
         icon={<Home className="w-5 h-5" />} 
         label="Home" 
@@ -65,10 +65,10 @@ interface TabItemProps {
 const TabItem: React.FC<TabItemProps> = ({ icon, label, active, onClick }) => {
   return (
     <button className="flex flex-col items-center text-xs" onClick={onClick}>
-      <div className={`mb-1 ${active ? "text-brand-purple" : "text-gray-500"}`}>
+      <div className={`mb-1 ${active ? "text-purple-900" : "text-gray-500"}`}>
         {icon}
       </div>
-      <span className={active ? "text-brand-purple font-medium" : "text-gray-500"}>
+      <span className={active ? "text-purple-900" : "text-gray-500"}>
         {label}
       </span>
     </button>

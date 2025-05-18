@@ -62,33 +62,6 @@ export default {
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
-        },
-        brand: {
-          purple: '#9b87f5',
-          lavender: '#d5cae8',
-          light: '#f5f2ff'
-        },
-        tag: {
-          purple: {
-            bg: '#e0bbff',
-            text: '#6a1b9a'
-          },
-          blue: {
-            bg: '#b3e5fc',
-            text: '#01579b'
-          },
-          green: {
-            bg: '#c8e6c9',
-            text: '#2e7d32'
-          },
-          orange: {
-            bg: '#ffe0b2',
-            text: '#e65100'
-          },
-          red: {
-            bg: '#ffcdd2',
-            text: '#c62828'
-          }
         }
       },
       borderRadius: {
@@ -98,12 +71,20 @@ export default {
       },
       keyframes: {
         'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' }
+          from: {
+            height: '0'
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)'
+          }
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' }
+          from: {
+            height: 'var(--radix-accordion-content-height)'
+          },
+          to: {
+            height: '0'
+          }
         }
       },
       animation: {
