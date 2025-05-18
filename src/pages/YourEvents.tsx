@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Calendar, Search, Bell, Filter } from "lucide-react";
+import { User, Calendar, Search, Bell, Filter, Plus } from "lucide-react";
 import TabBar from "@/components/TabBar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -175,77 +174,54 @@ const YourEvents = () => {
   const finalFilteredEvents = applyFilters(filteredEvents);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <header className="flex justify-between items-center px-6 py-4 bg-white">
-        <h1 className="text-2xl font-semibold font-big-shoulders">Events</h1>
-        <div className="flex gap-4">
-          <button 
-            className="p-1 bg-white rounded-full"
-            onClick={handleNotificationsClick}
-          >
-            <Bell className="w-6 h-6" />
-          </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleCalendarClick}>
-            <Calendar className="w-6 h-6" />
-          </button>
-          <button className="p-1 bg-white rounded-full" onClick={handleProfileClick}>
-            <User className="w-6 h-6" />
-          </button>
-        </div>
-      </header>
-
-      <div className="flex border-b bg-white">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            className={`flex-1 py-3 text-center bg-white ${
-              activeTab === tab
-                ? "text-black font-medium border-b-2 border-black"
-                : "text-gray-500"
-            }`}
-            onClick={() => handleTabClick(tab)}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      <div className="px-6 py-4">
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+    <div className="flex flex-col h-screen bg-brand-light">
+      <header className="flex flex-col px-6 pt-6 pb-4 bg-brand-light">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Your Events</h1>
+          <div className="flex gap-4">
+            <button 
+              className="p-1 bg-white rounded-full shadow-sm"
+              onClick={handleNotificationsClick}
+            >
+              <Bell className="w-6 h-6 text-gray-700" />
+            </button>
+            <div className="w-10 h-10 rounded-full bg-brand-lavender border-2 border-white overflow-hidden">
+              {/* This would be a user profile image */}
             </div>
-            <input
-              type="text"
-              placeholder="Search events..."
-              className="pl-10 pr-4 py-3 w-full rounded-full border border-gray-300 bg-white"
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
           </div>
+        </div>
+
+        <div className="relative flex items-center w-full mb-4">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search your events..."
+            className="pl-12 pr-4 py-3 w-full rounded-full border border-gray-200 bg-white shadow-sm"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
           <button 
-            className="p-2 bg-gray-100 rounded-full"
+            className="absolute right-4 p-1 bg-transparent rounded-full"
             onClick={handleFilter}
             aria-label="Filter events"
           >
-            <Filter className="h-5 w-5 text-gray-600" />
+            <Filter className="h-5 w-5 text-gray-500" />
           </button>
         </div>
-      </div>
 
-      <div className="px-6 mb-4">
         <button 
-          className="bg-purple-700 text-white py-3 px-4 rounded-md w-full flex items-center justify-center"
+          className="bg-brand-purple text-white py-3 px-4 rounded-full w-full flex items-center justify-center shadow-sm"
           onClick={handleCreateEvent}
         >
-          <span className="mr-2">+</span>
+          <Plus className="mr-2 h-5 w-5" />
           Create New Event
         </button>
-      </div>
+      </header>
 
       <div className="flex-1 overflow-auto px-6 pb-24">
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
           {finalFilteredEvents.map((event, index) => (
             <YourEventCard key={event.id} event={event} index={index} />
           ))}
